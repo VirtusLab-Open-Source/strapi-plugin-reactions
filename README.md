@@ -1,0 +1,547 @@
+<div align="center" width="150px">
+  <!-- <img style="width: 150px; height: auto;" src="public/assets/logo.png" alt="Logo - Strapi Reaction plugin" /> -->
+</div>
+<div align="center">
+  <h1>Strapi - Reactions plugin - BETA</h1>
+  <p>All-in-One reactions plugin for any Content Type. Simple & flexible</p>
+  <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
+    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions?label=npm&logo=npm">
+  </a>
+  <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
+    <img src="https://img.shields.io/npm/dm/strapi-plugin-reactions.svg" alt="Monthly download on NPM" />
+  </a>
+  <a href="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
+    <img src="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions.svg?style=shield" alt="CircleCI" />
+  </a>
+  <a href="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
+    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg?branch=master" alt="codecov.io" />
+  </a>
+</div>
+
+---
+
+<!-- <div style="margin: 20px 0" align="center">
+  <img style="width: 100%; height: auto;" src="public/assets/preview.png" alt="UI preview" />
+</div> -->
+
+A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provides flexible &amp; configurable reactions experience to any Content Types.
+
+### Table of Contents
+
+1. [✨ Features](#-features)
+2. [⏳ Installation](#-installation)
+3. [🖐 Requirements](#-requirements)
+4. [🔧 Configuration](#-configuration)
+5. [🕸️ Public API - REST](#%EF%B8%8F-public-rest-api-specification)
+7. [🔌 Enrich service for Strapi extensions](#-enrich-service-for-strapi-extensions)
+8. [🤝 Contributing](#-contributing)
+9. [👨‍💻 Community support](#-community-support)
+
+## ✨ Features
+
+- **Public REST:** Listing, setting, unsetting, toggling and much more via REST. Easy to integrate with.
+- **Any Content Type relation:** Reactions can be used to any of your Content Types without any special configuration.
+- **Emoji &amp; Image reactions:** You can define reaction types using predefined set of [Emoji](https://github.com/ealush/emoji-picker-react) or use your own.
+
+### Roadmap from Beta to RC
+Before releasing the RC and first Public Release we would like to introduce:
+
+- GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
+- Examples created - in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
+
+**Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
+
+## ⏳ Installation
+
+### Prerequisites
+
+#### Database connection update
+
+Because of Emoji usage, you will need (or maybe you already did it because of earlier requirements) to extend the database connection section in your Strapi project configuration.
+
+```ts
+// config/database.ts
+// config/<env>/database.ts
+
+connection: {
+    charset: 'utf8mb4',
+    collation: 'utf8mb4_unicode_ci',
+    // your database credentials
+}
+```
+
+Based on this specific charset, your emoji reactions are going to be saved in the database like a charm. See the [reference issue](https://github.com/strapi/strapi/issues/10676#issuecomment-1642204275) raised on Strapi repository.
+
+### Via command line
+
+(Use **yarn** to install this plugin within your Strapi project (recommended). [Install yarn with these docs](https://yarnpkg.com/lang/en/docs/install/).)
+
+```bash
+yarn add strapi-plugin-reactions@latest
+```
+
+After successful installation you've to re-build your Strapi instance. To archive that simply use:
+
+```bash
+yarn build
+yarn develop
+```
+
+or just run Strapi in the development mode with `--watch-admin` option:
+
+```bash
+yarn develop --watch-admin
+```
+
+The **Reactions** plugin should appear in the **Settings** section of Strapi after you run app again.
+
+As a next step you must configure your the plugin by adding types of reactions you want to use. See [**Configuration**](#🔧-configuration) section.
+
+All done. Enjoy 🎉
+
+### Working in development mode
+
+1. Clone repository
+
+   ```
+   git clone git@github.com:VirtusLab-Open-Source/strapi-plugin-reactions.git
+   ```
+
+2. Create a soft link in your strapi project to plugin `dist` folder
+
+   ```sh
+   ln -s <your path>/strapi-plugin-reactions/dist <your path>/strapi-project/src/plugins/reactions
+   ```
+
+3. Run develop or build command
+
+   ```ts
+   // Watch for file changes
+   yarn develop
+   // or run build without nodemon
+   yarn build:dev
+   ```
+
+## 🖐 Requirements
+
+Complete installation requirements are exact same as for Strapi itself and can be found in the documentation under [Installation Requirements](https://docs.strapi.io/developer-docs/latest/getting-started/introduction.html).
+
+**Minimum environment requirements**
+
+- Node.js `>=14.19.1 <=18.x.x`
+- NPM `>=7.x.x`
+
+In our minimum support we're following [official Node.js releases timelines](https://nodejs.org/en/about/releases/).
+
+**Supported Strapi versions**:
+
+- Strapi v4.14.x (recently tested)
+- Strapi v4.x
+
+**We recommend always using the latest version of Strapi to start your new projects**.
+
+## 🔧 Configuration
+
+To start your journey with **Reactions plugin** you must first setup types of reactions using the dedicated Settings page.
+
+There is no need to provide any specific changed in the plugin configuration files extept enabling it.
+
+```js
+module.exports = ({ env }) => ({
+  //...
+  reactions: {
+    enabled: true,
+  },
+  //...
+});
+```
+
+## 👤 RBAC
+
+Plugin provides granular permissions based on Strapi RBAC functionality.
+
+### Mandatory permissions
+
+For any role different than **Super Admin**, to access the **Reactions settings** you must set following permissions:
+
+- _Plugins_ -> _Reactions_ -> _Reactions: Read_ - gives you the basic read access to **Reactions settings**
+- _Plugins_ -> _Reactions_ -> _Reactions: Change_ - you're able to change the configuration of plugin
+
+
+## Data models
+
+### Reaction kind / type
+```json
+{
+  "id": 1,
+  "name": "Like",
+  "slug": "like",
+  "emoji": "👍",
+  "emojiFallbackUrl": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f44d.png",
+  "createdAt": "2023-09-14T20:13:01.649Z",
+  "updatedAt": "2023-09-14T20:13:01.670Z",
+  "icon": null
+}
+```
+
+### Reaction
+
+```json
+{
+  "id": 1,
+  "kind": { // Type of reaction, not provided when listing by exact kind
+    "id": 1,
+    "slug": "like",
+    "name": "Like" 
+  },
+  "user": { // User who trigger reaction, not provided when listing by exact user
+    "id": 1,
+    "username": "Joe Doe",
+    "email": "jdoe@sample.com",
+  },
+  "createdAt": "2023-09-14T20:13:01.649Z",
+  "updatedAt": "2023-09-14T20:13:01.670Z",
+}
+```
+
+## 🕸️ Public REST API specification
+
+### Get reaction kinds / types
+
+`GET <host>/api/reactions/kinds`
+
+Return a list of available reaction kinds to use on the end user interface and expose for interaction with users.
+
+**Example URL**: `https://localhost:1337/api/reactions/kinds`
+
+**Example response body**
+
+```json
+[
+  {
+  "id": 1,
+  "name": "Like",
+  "slug": "like",
+  "emoji": "👍",
+  "emojiFallbackUrl": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f44d.png",
+  "createdAt": "2023-09-14T20:13:01.649Z",
+  "updatedAt": "2023-09-14T20:13:01.670Z",
+  "icon": null
+  },
+  // ...
+]
+```
+
+### List all reactions associated with Content Type
+
+`GET <host>/api/reactions/list/<collection type UID>/<id>`
+
+Return all reactions assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+- all - if you're not providing the user context via `Authorization` header
+- all related with user - if call is done with user context via `Authorization` header
+
+**Example URL**: `https://localhost:1337/api/reactions/list/api::blog-post.blog-post/1`
+
+**Example response body**
+
+```json
+[
+  {
+    "id": 1,
+    "createdAt": "2023-09-14T20:13:01.649Z",
+    "updatedAt": "2023-09-14T20:13:01.670Z",
+    "kind":{
+      "id": 1,
+      "slug": "like",
+      "name": "Like"
+    },
+    "user":{ // Added if no user context provided to identify who made such reaction
+      "id": 1,
+      "username": "mziarko+1@virtuslab.com",
+      "email": "mziarko+1@virtuslab.com"
+    }
+  },
+  // ...
+]
+```
+
+### List all reactions of kind / type associated with Content Type
+
+`GET <host>/api/reactions/list/<type slug>/<collection type UID>/<id>`
+
+Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+- all - if you're not providing the user context via `Authorization` header
+- all related with user - if call is done with user context via `Authorization` header
+
+**Example URL**: `https://localhost:1337/api/reactions/list/like/api::blog-post.blog-post/1`
+
+**Example response body**
+
+```json
+[
+  {
+    "id": 1,
+    "createdAt": "2023-09-14T20:13:01.649Z",
+    "updatedAt": "2023-09-14T20:13:01.670Z",
+    "user":{ // Added if no user context provided to identify who made such reaction
+      "id": 1,
+      "username": "mziarko+1@virtuslab.com",
+      "email": "mziarko+1@virtuslab.com"
+    }
+  },
+  // ...
+]
+```
+
+### Set reaction for Content Type
+
+`GET <host>/api/reactions/set/<type slug>/<collection type UID>/<id>`
+
+Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+
+`Authorization` header is required
+
+**Example URL**: `https://localhost:1337/api/reactions/set/like/api::blog-post.blog-post/1`
+
+**Example response body**
+
+```json
+{
+  "id": 1,
+  "createdAt": "2023-09-14T20:13:01.649Z",
+  "updatedAt": "2023-09-14T20:13:01.670Z",
+  "relatedUid": "api::blog-post.blog-post:1"
+}
+```
+
+### Unset reaction for Content Type
+
+`GET <host>/api/reactions/unset/<type slug>/<collection type UID>/<id>`
+
+Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+
+`Authorization` header is required
+
+**Example URL**: `https://localhost:1337/api/reactions/unset/like/api::blog-post.blog-post/1`
+
+**Example response body**
+
+```json
+true
+```
+
+### Toggle reaction for Content Type
+
+`GET <host>/api/reactions/toggle/<type slug>/<collection type UID>/<id>`
+
+Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+
+`Authorization` header is required
+
+**Example URL**: `https://localhost:1337/api/reactions/set/like/api::blog-post.blog-post/1`
+
+**Example response body**
+
+```json
+{
+  "id": 1,
+  "createdAt": "2023-09-14T20:13:01.649Z",
+  "updatedAt": "2023-09-14T20:13:01.670Z",
+  "relatedUid": "api::blog-post.blog-post:1"
+}
+
+// or
+
+true
+```
+
+### Possible scenarios
+1. No reaction set yet - after `toggle` reaction is set
+2. Single reaction already set - after `toogle` no reaction is set
+3. Multiple reactions already set - after `toggle` just specified reaction stays, rest becomes unset
+
+## 🔌 Enrich service for Strapi extensions
+
+### Enrich One
+
+You can use this service method for example in your **Strapi Content API** `findOne` method to enrich the metadata of retrieved entity by associated reactions.
+
+What is important, service method does not modify default `data` schema of **Strapi Content API**. All additions are made in the `meta` property in the form of:
+
+```json
+// ...
+"meta": {
+  // ...
+  "reactions": {
+    "<type slug>": [
+      // list of reactions
+    ],
+    // ...
+  }
+}
+```
+
+#### Example extension
+```ts
+// src/api/blog-post/controllers/blog-post.js
+
+'use strict';
+
+/**
+ *  blog-post controller
+ */
+
+const { createCoreController } = require('@strapi/strapi').factories;
+
+module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) => ({
+  async findOne(ctx) {
+    const response = await super.findOne(ctx);
+
+    return strapi.plugin("reactions").services.enrich.enrichOne('api::blog-post.blog-post', response);
+  },
+}));
+```
+
+#### Example response
+```json
+{
+  "data":{
+    "id": 1,
+    "attributes":{
+      // Content type attributes 
+    }
+  },
+  "meta":{
+    "reactions":{
+      "like":[{
+          "id": 1,
+          "createdAt": "2023-09-14T20:13:01.649Z",
+          "updatedAt": "2023-09-14T20:13:01.670Z",
+          "relatedUid": "api::blog-post.blog-post:2",
+          "kind":{
+            "id": 1,
+            "name": "Like",
+            "slug": "like",
+            "emoji": "👍",
+            "emojiFallbackUrl": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f44d.png",
+            "icon": null
+          },
+          "user":{
+            "id": 1,
+            "username": "mziarko+1@virtuslab.com",
+            "email": "mziarko+1@virtuslab.com"
+          }
+        },
+        // ...
+      ],
+    // ...
+    }
+  }
+}
+```
+
+### Enrich Many
+
+You can use this service method for example in your **Strapi Content API** `find` method to enrich the metadata of retrieved entities set by associated reactions.
+
+What is important, service method does not modify default `data` schema of **Strapi Content API**. All additions are made in the `meta` property in the form of:
+
+```json
+// ...
+"meta": {
+  // ...
+  "reactions": {
+    "<content type id>": {
+      "<type slug>": [
+        // list of reactions
+      ],
+      // ...
+    }
+  }
+}
+```
+
+#### Example extension
+```ts
+// src/api/blog-post/controllers/blog-post.js
+
+'use strict';
+
+/**
+ *  blog-post controller
+ */
+
+const { createCoreController } = require('@strapi/strapi').factories;
+
+module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) => ({
+  async find(ctx) {
+    const response = await super.find(ctx);
+
+    return strapi.plugin("reactions").services.enrich.enrichMany('api::blog-post.blog-post', response);
+  },
+}));
+```
+
+#### Example response
+```json
+{
+  "data": [{
+      "id": 1,
+      "attributes":{
+        // Content type attributes 
+      }
+    }, {
+      "id": 2,
+      "attributes":{
+        // Content type attributes 
+      }
+    }
+  ],
+  "meta":{
+    "reactions":{
+      "1": {
+        "like":[{
+            "id": 1,
+            "createdAt": "2023-09-14T20:13:01.649Z",
+            "updatedAt": "2023-09-14T20:13:01.670Z",
+            "relatedUid": "api::blog-post.blog-post:2",
+            "kind":{
+              "id": 1,
+              "name": "Like",
+              "slug": "like",
+              "emoji": "👍",
+              "emojiFallbackUrl": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f44d.png",
+              "icon": null
+            },
+            "user":{
+              "id": 1,
+              "username": "mziarko+1@virtuslab.com",
+              "email": "mziarko+1@virtuslab.com"
+            }
+          },
+          // ...
+        ],
+      // ...
+      },
+      "2": {}
+    }
+  }
+}
+```
+
+## 🤝 Contributing
+
+Feel free to fork and make a Pull Request to this plugin project. All the input is warmly welcome!
+
+## 👨‍💻 Community support
+
+For general help using Strapi, please refer to [the official Strapi documentation](https://strapi.io/documentation/). For additional help, you can use one of these channels to ask a question:
+
+- [Discord](https://discord.strapi.io/) We're present on official Strapi Discord workspace. Find us by `[VirtusLab]` prefix and DM.
+- [Slack - VirtusLab Open Source](https://virtuslab-oss.slack.com) We're present on a public channel #strapi-molecules
+- [GitHub](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues) (Bug reports, Contributions, Questions and Discussions)
+- [E-mail](mailto:strapi@virtuslab.com) - we will respond back as soon as possible
+
+## 📝 License
+
+[MIT License](LICENSE.md) Copyright (c) [VirtusLab Sp. z o.o.](https://virtuslab.com/) &amp; [Strapi Solutions](https://strapi.io/).

@@ -1,0 +1,46 @@
+import { StrapiRoute } from "strapi-typed";
+
+const routes: StrapiRoute[] = [
+  {
+    method: 'GET',
+    path: '/settings/config',
+    handler: 'settingsController.fetch',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'POST',
+    path: '/settings/config',
+    handler: 'settingsController.create',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/settings/config',
+    handler: 'settingsController.update',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/settings/config/reaction-type/:id',
+    handler: 'settingsController.deleteReactionType',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
+    path: '/utils/slug',
+    handler: 'settingsController.generateSlug',
+    config: {
+      policies: [],
+    },
+  },
+];
+
+export default routes;

@@ -1,0 +1,53 @@
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.1.1
+jobs:
+  build-and-test:
+    environment:
+      CODECOV_TOKEN: 02e2d4e8-88c4-4e5d-99da-a9a2888634c6
+    docker:
+      - image: cimg/node:16.20.2
+    working_directory: ~/repo
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: set GIT name and email
+          command: |
+            git config --global -l
+            git config --global user.email "$GIT_COMMITTER_EMAIL"
+            git config --global user.name "$GIT_COMMITTER_NAME"
+            git config --global -l
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - strapi-plugin-comments-v2-{{ checksum "yarn.lock" }}
+            - strapi-plugin-comments-
+      - run:
+          name: Echo versions
+          command: |
+            node --version
+            yarn --version
+      - run:
+          name: Install
+          command: |
+            yarn install
+      - run:
+          name: Test
+          command: |
+            yarn test:unit:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/
+      - store_test_results:
+          path: ./reports/
+      - codecov/upload:
+          flags: unittest
+          file:
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: strapi-plugin-comments-v2-{{ checksum "yarn.lock" }}
+workflows:
+  build-and-test:
+    jobs:
+      - build-and-test
