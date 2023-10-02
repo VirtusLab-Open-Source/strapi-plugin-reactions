@@ -19,7 +19,7 @@ describe("handleAPIError()", () => {
     expect(notify.mock.calls[0]).toMatchInlineSnapshot(`
       [
         {
-          "message": "comments.message",
+          "message": "reactions.message",
           "type": "warning",
         },
       ]

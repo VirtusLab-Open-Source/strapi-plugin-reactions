@@ -1,5 +1,6 @@
-import { ContentType } from "@strapi/strapi/lib/types/core/uid";
+import { UID } from "@strapi/types";
 
-export const getModelUid = (name: string): ContentType => {
-    return strapi.plugin("reactions").contentTypes[name]?.uid;
-  };
+export const getModelUid = (name: string): UID.ContentType => {
+  const contentType = strapi.plugin("reactions").contentTypes[name];
+  return (contentType as any).uid;
+};

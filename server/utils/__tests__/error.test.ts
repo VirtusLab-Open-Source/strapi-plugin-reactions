@@ -8,9 +8,9 @@ describe("PluginError", () => {
           item: "comment",
           random: "value",
         }).toString()
-      ).toMatchInlineSnapshot(`"Strapi:Plugin:Comments - Not found"`);
+      ).toMatchInlineSnapshot(`"Strapi:Plugin:Reactions - Not found"`);
       expect(new PluginError(0, "").toString()).toMatchInlineSnapshot(
-        `"Strapi:Plugin:Comments - Internal error"`
+        `"Strapi:Plugin:Reactions - Internal error"`
       );
     });
   });
@@ -25,15 +25,15 @@ describe("PluginError", () => {
         {
           "item": "comment",
           "message": "Not found",
-          "name": "Strapi:Plugin:Comments",
+          "name": "Strapi:Plugin:Reactions",
           "random": "value",
         }
       `);
       expect(new PluginError(404, "Not found").toJSON()).toMatchInlineSnapshot(
-        `[Strapi:Plugin:Comments: Not found]`
+        `[Strapi:Plugin:Reactions: Not found]`
       );
       expect(new PluginError(0, "").toJSON()).toMatchInlineSnapshot(
-        `[Strapi:Plugin:Comments: Internal error]`
+        `[Strapi:Plugin:Reactions: Internal error]`
       );
     });
   });

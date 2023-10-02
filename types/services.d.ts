@@ -4,6 +4,7 @@ import { StrapiId } from "./common";
 import { AnyEntity } from "@strapi/strapi/lib/services/entity-service";
 import { ContentType } from "@strapi/strapi/lib/types/core/uid";
 import { StrapiReactions } from "../server/services/enrich";
+import { ReactionsCount } from "../server/services/zone";
 
 export interface IServiceAdmin {
   getPluginStore(): Promise<StrapiStore>;
@@ -22,7 +23,7 @@ export interface IServiceClient {
   create(kind: string, uid: ContentType, id: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity>;
   delete(kind: string, uid: ContentType, id: StrapiId, user: StrapiUser | undefined): Promise<boolean>;
   toggle(kind: string, uid: ContentType, id: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity | boolean>;
-  prefetchConditions(type: string, uid: string, id: StrapiId): Promise<[AnyEntity, AnyEntity]>;
+  prefetchConditions(type: string, uid?: string, id?: StrapiId): Promise<[AnyEntity, AnyEntity]>;
   directCreate(uid: ContentType, kind: AnyEntity, related: AnyEntity, user: StrapiUser | undefined): Promise<AnyEntity>;
   directDelete(uid: ContentType, kind: AnyEntity, related: AnyEntity, user: StrapiUser | undefined): Promise<boolean>;
 }
@@ -32,4 +33,8 @@ export interface IServiceEnrich {
   enrichMany<T extends AnyEntity, M extends any>(uid: ContentType, response: T, populate: PopulateClause): Promise<T>;
   findReactions(filters: any, populate: PopulateClause): null | AnyEntity | Array<AnyEntity>;
   composeReactionsMeta(acc: { [slug: string]: StrapiReactions }, curr: AnyEntity): { [slug: string]: StrapiReactions };
+}
+
+export interface IServiceZone {
+  count(uid: ContentType, id: StrapiId): Promise<ReactionsCount>;
 }

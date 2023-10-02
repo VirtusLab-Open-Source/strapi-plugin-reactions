@@ -1,13 +1,12 @@
 import { Strapi } from '@strapi/strapi';
-import { ContentType } from "@strapi/strapi/lib/types/core/uid";
-import { AnyEntity } from '@strapi/strapi/lib/services/entity-service';
+import { UID } from "@strapi/types";
 
 import { PopulateClause } from 'strapi-typed';
 
-import { IServiceEnrich } from "../../types";
+import { IServiceEnrich, ReactionEntity } from "../../types";
 import { getModelUid } from './utils/functions';
 
-export type StrapiReactions = Array<AnyEntity>;
+export type StrapiReactions = Array<ReactionEntity>;
 
 export type StrapiReactionsMeta<M = any> = M & {
   reactions: {
@@ -32,9 +31,9 @@ const DEFAULT_POPULATE = {
 
 export default ({ strapi }: { strapi: Strapi }) => ({
 
-  async enrichOne<T extends AnyEntity, M extends any>(
+  async enrichOne<T extends ReactionEntity, M extends any>(
     this: IServiceEnrich,
-    uid: ContentType,
+    uid: UID.ContentType,
     response: StrapiContentAPIResponse<T, M>,
     populate: PopulateClause = DEFAULT_POPULATE,
   ): Promise<StrapiContentAPIResponse<T, M>> {
@@ -54,9 +53,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     };
   },
 
-  async enrichMany<T extends AnyEntity, M extends any>(
+  async enrichMany<T extends ReactionEntity, M extends any>(
     this: IServiceEnrich,
-    uid: ContentType,
+    uid: UID.ContentType,
     response: StrapiContentAPIResponse<Array<T>, M>,
     populate: PopulateClause = DEFAULT_POPULATE,
   ): Promise<StrapiContentAPIResponse<Array<T>, M>> {
@@ -82,15 +81,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     };
   },
 
-  async findReactions(filters: any, populate: PopulateClause): Promise<null | AnyEntity | Array<AnyEntity>> {
+  async findReactions(filters: any, populate: PopulateClause): Promise<undefined | null | ReactionEntity | Array<ReactionEntity>> {
     return strapi.entityService
-      .findMany(getModelUid('reaction'), {
+      ?.findMany(getModelUid('reaction'), {
         filters,
         populate: populate as any,
       });
   },
 
-  composeReactionsMeta(acc: { [slug: string]: StrapiReactions }, curr: AnyEntity): { [slug: string]: StrapiReactions } {
+  composeReactionsMeta(acc: { [slug: string]: StrapiReactions }, curr: any): { [slug: string]: StrapiReactions } {
     const kindAcc = acc[curr.kind.slug] || [];
     return {
       ...acc,

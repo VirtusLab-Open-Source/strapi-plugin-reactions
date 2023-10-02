@@ -35,6 +35,14 @@ const routes: StrapiRoute[] = [
   },
   {
     method: 'GET',
+    path: '/zone/count/:uid/:id',
+    handler: 'zoneController.count',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
     path: '/utils/slug',
     handler: 'settingsController.generateSlug',
     config: {
