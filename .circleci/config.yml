@@ -21,8 +21,8 @@ jobs:
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - strapi-plugin-comments-v2-{{ checksum "yarn.lock" }}
-            - strapi-plugin-comments-
+            - strapi-plugin-reactions-v2-{{ checksum "yarn.lock" }}
+            - strapi-plugin-reactions-
       - run:
           name: Echo versions
           command: |
@@ -46,7 +46,7 @@ jobs:
       - save_cache:
           paths:
             - ./node_modules
-          key: strapi-plugin-comments-v2-{{ checksum "yarn.lock" }}
+          key: strapi-plugin-reactions-v2-{{ checksum "yarn.lock" }}
 workflows:
   build-and-test:
     jobs:
