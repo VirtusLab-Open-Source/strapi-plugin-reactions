@@ -4,7 +4,7 @@ orbs:
 jobs:
   build-and-test:
     environment:
-      CODECOV_TOKEN: 02e2d4e8-88c4-4e5d-99da-a9a2888634c6
+      CODECOV_TOKEN: 08a98f72-f099-432a-a6b5-49c1f134fe90
     docker:
       - image: cimg/node:16.20.2
     working_directory: ~/repo
