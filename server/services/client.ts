@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { Strapi } from '@strapi/strapi';
-import { ContentType } from "@strapi/strapi/lib/types/core/uid";
+import { UID } from "@strapi/types";
 import { StrapiUser } from 'strapi-typed';
 import { isArray, isNil, first } from "lodash";
 
@@ -23,17 +23,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async list(
     this: IServiceClient,
     kind?: string,
-    uid: ContentType,
+    uid: UID.ContentType,
     id: StrapiId,
     user?: StrapiUser,
   ): Promise<Array<AnyEntity>> {
-    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind || null, uid, id);
+    const [reactionKind] = await this.prefetchConditions(kind || null);
 
     let fields = ['createdAt', 'updatedAt'];
-    let filters = {};
-    let populate = {
-      related: true
+    let filters = {
+      relatedUid: `${uid}:${id}`,
     };
+    let populate = {};
 
     // Filter by provided `kind` or get all reactionswith `kind` population
     if (!isNil(kind)) {
@@ -76,22 +76,13 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return [];
     }
 
-    return (!isArray(entities) ? [entities] : entities)
-      .reduce((acc, curr) => {
-        const { related, ...rest } = curr;
-        const { __type: relatedType, id: relatedId } = first(related);
-
-        if ((relatedId === id) && (relatedType === uid)) {
-          return [...acc, rest];
-        }
-        return acc;
-      }, []);
+    return (!isArray(entities) ? [entities] : entities);
   },
 
   async create(
     this: IServiceClient,
     kind: string,
-    uid: ContentType,
+    uid: UID.ContentType,
     id: StrapiId,
     user: StrapiUser,
   ): Promise<AnyEntity> {
@@ -109,7 +100,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async delete(
     this: IServiceClient,
     kind: string,
-    uid: ContentType,
+    uid: UID.ContentType,
     id: StrapiId,
     user: StrapiUser,
   ): Promise<boolean> {
@@ -128,7 +119,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async toggle(
     this: IServiceClient,
     kind: string,
-    uid: ContentType,
+    uid: UID.ContentType,
     id: StrapiId,
     user: StrapiUser,
   ): Promise<AnyEntity | boolean> {
@@ -164,9 +155,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async prefetchConditions(
     this: IServiceClient,
     kind: string | null,
-    uid: ContentType,
-    id: StrapiId,
-  ): Promise<[AnyEntity, AnyEntity]> {
+    uid?: UID.ContentType,
+    id?: StrapiId,
+  ): Promise<[AnyEntity, AnyEntity | undefined]> {
 
     let result = [];
 
@@ -185,14 +176,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       result = [...result, null];
     }
 
-    const relatedEntity = await strapi.entityService
-      .findOne(uid, id);
+    if (uid && id) {
+      const relatedEntity = await strapi.entityService
+        .findOne(uid, id);
 
-    if (!relatedEntity) {
-      throw new PluginError(404, `Entity with ID: ${id} of type: ${uid} does not exits`);
+      if (!relatedEntity) {
+        throw new PluginError(404, `Entity with ID: ${id} of type: ${uid} does not exits`);
+      }
+
+      return [...result, relatedEntity];
     }
-
-    return [...result, relatedEntity];
+    return result;
   },
 
   async directCreate(

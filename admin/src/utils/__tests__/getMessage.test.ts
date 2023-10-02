@@ -14,13 +14,13 @@ describe("getMessage()", () => {
     expect(getMessage("message.key")).toMatchInlineSnapshot(`
       {
         "defaultMessage": "",
-        "id": "comments.message.key",
+        "id": "reactions.message.key",
       }
     `);
     expect(getMessage("message.key", "message.default")).toMatchInlineSnapshot(`
       {
         "defaultMessage": "message.default",
-        "id": "comments.message.key",
+        "id": "reactions.message.key",
       }
     `);
   });
@@ -35,7 +35,7 @@ describe("getMessage()", () => {
     ).toMatchInlineSnapshot(`
       {
         "defaultMessage": "message.default",
-        "id": "comments.message.key",
+        "id": "reactions.message.key",
       }
     `);
   });

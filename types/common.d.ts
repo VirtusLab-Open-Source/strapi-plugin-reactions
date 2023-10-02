@@ -1,6 +1,7 @@
-import { ID } from "@strapi/strapi/lib/services/entity-service/types/params/attributes";
+import { Attribute } from "@strapi/types";
+
 import { Id } from "strapi-typed";
 
 export type ToBeFixed = any;
 
-export type StrapiId = Id | ID;
+export type StrapiId = Id & Attribute.ID;

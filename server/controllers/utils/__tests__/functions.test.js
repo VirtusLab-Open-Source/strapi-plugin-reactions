@@ -4,7 +4,7 @@ const { throwError } = require("../functions");
 
 jest.mock;
 
-describe("Test Comments controller functions utils", () => {
+describe("Test Reaction controller functions utils", () => {
   describe("Errors serialization", () => {
     test("Should throw error PluginError", () => {
       try {
@@ -16,7 +16,7 @@ describe("Test Comments controller functions utils", () => {
       } catch (e) {
         expect(e).toBeInstanceOf(PluginError.default);
         expect(e).toHaveProperty("status", 400);
-        expect(e).toHaveProperty("name", "Strapi:Plugin:Comments");
+        expect(e).toHaveProperty("name", "Strapi:Plugin:Reactions");
         expect(e).toHaveProperty("message", "Error message");
         expect(e).toHaveProperty("payload");
         expect(e.payload).toEqual(
@@ -32,11 +32,11 @@ describe("Test Comments controller functions utils", () => {
         } catch (eFinal) {
           const stringifiedError = eFinal.toString();
           expect(stringifiedError.includes("BadRequestError")).toEqual(true);
-          expect(stringifiedError.includes("Strapi:Plugin:Comments")).toEqual(
+          expect(stringifiedError.includes("Strapi:Plugin:Reactions")).toEqual(
             true
           );
           expect(stringifiedError.includes("Error message")).toEqual(true);
-          expect(stringifiedError.includes("Strapi:Plugin:Comments")).toEqual(
+          expect(stringifiedError.includes("Strapi:Plugin:Reactions")).toEqual(
             true
           );
           expect(stringifiedError.includes("content")).toEqual(true);

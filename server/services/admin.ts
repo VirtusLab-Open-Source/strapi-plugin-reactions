@@ -1,26 +1,27 @@
 import { Strapi } from '@strapi/strapi';
-import { StrapiStore } from 'strapi-typed';
+import { CoreStore } from '@strapi/types';
 
 import { ReactionsPluginConfig, IServiceAdmin, StrapiId } from "../../types";
 import { getModelUid } from './utils/functions';
 import { isArray, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 import PluginError from '../utils/error';
-import { ID } from '@strapi/strapi/lib/services/entity-service/types/params/attributes';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async getPluginStore(): Promise<StrapiStore> {
-    return strapi.store({ type: "plugin", name: "reactions" });
+  getPluginStore(): CoreStore | undefined {
+    if (!isNil(strapi.store)) {
+      return strapi.store({ type: "plugin", name: "reactions" }) as CoreStore;
+    }
   },
 
   async fetchConfig() {
-    const pluginStore = await this.getPluginStore();
-    const config: ReactionsPluginConfig = await pluginStore.get({
+    const pluginStore = this.getPluginStore();
+    const config: ReactionsPluginConfig | unknown = await pluginStore?.get({
       key: "config",
     });
 
     const types = await strapi.entityService
-      .findMany(getModelUid("reaction-type"), {
+      ?.findMany(getModelUid("reaction-type"), {
         populate: ['icon']
       });
 
@@ -37,14 +38,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     if (isNil(body.id)) {
       return await strapi.entityService
-        .create(getModelUid("reaction-type"), {
+        ?.create(getModelUid("reaction-type"), {
           data: body,
         });
     }
 
     const { id, ...rest } = body;
     return await strapi.entityService
-      .update(getModelUid("reaction-type"), id, {
+      ?.update(getModelUid("reaction-type"), id, {
         data: rest,
       });
   },
@@ -55,14 +56,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   ): Promise<boolean> {
 
     const reactionKind = await strapi.entityService
-      .findOne(getModelUid("reaction-type"), id as ID);
+      ?.findOne(getModelUid("reaction-type"), id);
 
     if (!reactionKind) {
       throw new PluginError(404, `Reaction type does not exist. You can't use it.`);
     }
 
     const entitiesToDelete = await strapi.entityService
-      .findMany(getModelUid("reaction"), {
+      ?.findMany(getModelUid("reaction"), {
         fields: ['id'],
         filters: {
           kind: reactionKind,
@@ -70,7 +71,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
 
     if (isArray(entitiesToDelete)) {
-      await strapi.db.query(getModelUid("reaction")).deleteMany({
+      await strapi.db?.query(getModelUid("reaction")).deleteMany({
         where: {
           id: entitiesToDelete.map(_ => _.id),
         },
@@ -78,7 +79,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     }
 
     const removed = await strapi.entityService
-      .delete(getModelUid("reaction-type"), id as ID);
+      ?.delete(getModelUid("reaction-type"), id);
 
     return !isNil(removed) && (removed.id === id);
   },
@@ -111,7 +112,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         };
       }
       const entities = await strapi.entityService
-        .findMany(getModelUid("reaction-type"), {
+        ?.findMany(getModelUid("reaction-type"), {
           filters,
         });
       if (entities && (entities.length > 0)) {

@@ -46,6 +46,7 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 ### Roadmap from Beta to RC
 Before releasing the RC and first Public Release we would like to introduce:
 
+- Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
 - GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
 - Examples created - in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
 

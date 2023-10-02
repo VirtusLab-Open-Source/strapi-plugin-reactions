@@ -1,4 +1,5 @@
-import { ContentType } from "@strapi/strapi/lib/types/core/uid";
+
+import { UID } from "@strapi/types";
 import { getPluginService, parseParams } from '../utils/functions';
 import { StrapiRequestContext } from "strapi-typed";
 
@@ -7,7 +8,7 @@ import { IServiceClient, StrapiId } from '../../types';
 
 type ReactionListUrlProps = {
   kind?: string;
-  uid: ContentType;
+  uid: UID.ContentType;
   id: StrapiId;
 };
 

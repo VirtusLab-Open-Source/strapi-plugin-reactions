@@ -11,8 +11,8 @@ afterEach(resetStrapi);
 
 describe("Test plugin functions utils", () => {
   describe("Get plugin service", () => {
-    test("Should get common service", () => {
-      expect(getPluginService("common")).toHaveProperty("findAllFlat");
+    test("Should get client service", () => {
+      expect(getPluginService("client")).toHaveProperty("list");
     });
   });
   describe("parseParams()", () => {
