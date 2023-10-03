@@ -11,9 +11,11 @@ import { Box } from '@strapi/design-system/Box';
 import { Divider } from '@strapi/design-system/Divider';
 import { Grid, GridItem } from '@strapi/design-system/Grid';
 import { Typography } from '@strapi/design-system/Typography';
+
+import { ReactionCounter } from "./components/ReactionCounter";
+
 import useContentManager from "../../hooks/useContentManager";
 import useConfig from "../../hooks/useConfig";
-import { ReactionCounter } from "./components/ReactionCounter";
 
 const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/(?<id>\d*)/;
 

@@ -39,5 +39,6 @@
     "page.settings.notification.submit.error": "Something went wrong. Try again",
     "page.settings.notification.generate-slug.error": "Cant't generate a unique slug",
     "page.settings.notification.reaction.delete.success": "Reaction type removed successfully",
-    "page.settings.notification.reaction.delete.error": "Something went wrong. Try again"
+    "page.settings.notification.reaction.delete.error": "Something went wrong. Try again",
+    "page.injection.notification.fetch.error": "Something went wrong. Try again"
 }

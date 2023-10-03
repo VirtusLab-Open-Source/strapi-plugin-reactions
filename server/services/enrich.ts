@@ -38,6 +38,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     populate: PopulateClause = DEFAULT_POPULATE,
   ): Promise<StrapiContentAPIResponse<T, M>> {
 
+    if (!response) {
+      return response;
+    }
+
     const { data } = response;
 
     const reactions = await this.findReactions({
@@ -59,6 +63,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     response: StrapiContentAPIResponse<Array<T>, M>,
     populate: PopulateClause = DEFAULT_POPULATE,
   ): Promise<StrapiContentAPIResponse<Array<T>, M>> {
+
+    if (!response) {
+      return response;
+    }
 
     const reactions = await this.findReactions({
       relatedUid: {
