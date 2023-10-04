@@ -40,16 +40,18 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 
 ## ✨ Features
 
-- **Public REST:** Listing, setting, unsetting, toggling and much more via REST. Easy to integrate with.
+- **Public REST & GraphQL API:** Listing, setting, unsetting, toggling and much more via *REST* or *GraphQL* API. Easy to integrate with.
 - **Any Content Type relation:** Reactions can be used to any of your Content Types without any special configuration.
 - **Emoji &amp; Image reactions:** You can define reaction types using predefined set of [Emoji](https://github.com/ealush/emoji-picker-react) or use your own.
-
+- **Content Manager Injection Zone:** Making use of Strapi built-in batteries like *Injection Zones* to provide you highers user experience. Visual representation of reactions counter for any Content Types - useful!
+- **Developer Experience boosted:** A dedicated *Enrich* service provided to let you extend your Content API controllers by a single line to get reactions per each!
+ 
 ### Roadmap from Beta to RC
 Before releasing the RC and first Public Release we would like to introduce:
 
-- Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
-- GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
-- Examples created - in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
+✅ Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
+✅ GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
+⌛ Examples created - in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
 
 **Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
 
