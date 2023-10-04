@@ -51,6 +51,7 @@ Before releasing the RC and first Public Release we would like to introduce:
 
 - ✅ Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
 - ✅ GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
+- ⌛ Associations sync - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/7)
 - ⌛ Examples created - in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
 
 **Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
