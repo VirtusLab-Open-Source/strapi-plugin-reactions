@@ -213,7 +213,7 @@ For any role different than **Super Admin**, to access the **Reactions settings*
 
 ### Get reaction kinds / types
 
-_GraphQL equivalent: [Public GraphQL API -> Get reaction kinds / types](#get-reaction-kings--types-1)_
+_GraphQL equivalent: [Public GraphQL API -> Get reaction kinds / types](#get-reaction-kinds--types-1)_
 
 `GET <host>/api/reactions/kinds`
 
@@ -385,7 +385,7 @@ true
 
 ### Get reaction kinds / types
 
-_REST API equivalent: [Public REST API -> Get reaction kinds / types](#get-reaction-kings--types)_
+_REST API equivalent: [Public REST API -> Get reaction kinds / types](#get-reaction-kinds--types)_
 
 Return a list of available reaction kinds to use on the end user interface and expose for interaction with users.
 
