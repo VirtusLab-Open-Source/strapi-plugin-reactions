@@ -6,8 +6,11 @@ import { ContentType } from "@strapi/strapi/lib/types/core/uid";
 import { StrapiReactions } from "../server/services/enrich";
 import { ReactionsCount } from "../server/services/zone";
 
+export interface IServiceCommon {
+  getPluginStore(): StrapiStore;
+}
+
 export interface IServiceAdmin {
-  getPluginStore(): Promise<StrapiStore>;
   fetchConfig<T extends ReactionsPluginConfig>(): Promise<T>;
   updateConfig(
     body: ReactionsPluginConfig | undefined,

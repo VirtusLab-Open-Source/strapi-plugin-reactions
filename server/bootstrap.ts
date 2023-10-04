@@ -1,17 +1,14 @@
 import { StrapiContext } from "strapi-typed";
 import permissions from "./../permissions";
+import { IServiceAdmin, ReactionsPluginConfig } from "../types";
+import { getPluginService } from "./utils/functions";
+import { graphQLSetupStrategy } from './graphql';
 
 export = async ({ strapi }: StrapiContext) => {
   // Provide GQL support
-  // if (strapi.plugin("graphql")) {
-  //   const config: CommentsPluginConfig = await getPluginService<IServiceCommon>(
-  //     "common"
-  //   ).getConfig();
-  //   const { enabledCollections } = config;
-  //   if (!isEmpty(enabledCollections)) {
-  //     await require("./graphql")({ strapi, config });
-  //   }
-  // }
+  const config: ReactionsPluginConfig = await getPluginService<IServiceAdmin>("admin")
+    .fetchConfig();
+  await graphQLSetupStrategy({ strapi, config });
 
   // Check if the plugin users-permissions is installed because the navigation needs it
   if (Object.keys(strapi.plugins).indexOf("users-permissions") === -1) {
