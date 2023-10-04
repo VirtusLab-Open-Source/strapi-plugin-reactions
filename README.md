@@ -33,6 +33,7 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 3. [🖐 Requirements](#-requirements)
 4. [🔧 Configuration](#-configuration)
 5. [🕸️ Public API - REST](#%EF%B8%8F-public-rest-api-specification)
+5. [🕸️ Public API - GraphQL](#%EF%B8%8F-public-graphql-api-specification)
 7. [🔌 Enrich service for Strapi extensions](#-enrich-service-for-strapi-extensions)
 8. [🤝 Contributing](#-contributing)
 9. [👨‍💻 Community support](#-community-support)
@@ -139,6 +140,9 @@ In our minimum support we're following [official Node.js releases timelines](htt
 - Strapi v4.14.x (recently tested)
 - Strapi v4.x
 
+**Plugin dependencies**
+- `@strapi/plugin-graphql` - required to run because built-in support for GraphQL handled by this plugin 
+
 **We recommend always using the latest version of Strapi to start your new projects**.
 
 ## 🔧 Configuration
@@ -209,6 +213,8 @@ For any role different than **Super Admin**, to access the **Reactions settings*
 
 ### Get reaction kinds / types
 
+_GraphQL equivalent: [Public GraphQL API -> Get reaction kinds / types](#get-reaction-kings--types-1)_
+
 `GET <host>/api/reactions/kinds`
 
 Return a list of available reaction kinds to use on the end user interface and expose for interaction with users.
@@ -234,6 +240,8 @@ Return a list of available reaction kinds to use on the end user interface and e
 ```
 
 ### List all reactions associated with Content Type
+
+_GraphQL equivalent: [Public GraphQL API -> List all reactions associated with Content Type](#list-all-reactions-associated-with-content-type-1)_
 
 `GET <host>/api/reactions/list/<collection type UID>/<id>`
 
@@ -268,6 +276,8 @@ Return all reactions assiciated with provided Collection / Single Type UID and C
 
 ### List all reactions of kind / type associated with Content Type
 
+_GraphQL equivalent: [Public GraphQL API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type-1)_
+
 `GET <host>/api/reactions/list/<type slug>/<collection type UID>/<id>`
 
 Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
@@ -296,6 +306,8 @@ Return all reactions of specific kind / type assiciated with provided Collection
 
 ### Set reaction for Content Type
 
+_GraphQL equivalent: [Public GraphQL API -> Set reaction for Content Type](#set-reaction-for-content-type-1)_
+
 `GET <host>/api/reactions/set/<type slug>/<collection type UID>/<id>`
 
 Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
@@ -317,6 +329,8 @@ Create reaction of specific kind / type assiciated with provided Collection / Si
 
 ### Unset reaction for Content Type
 
+_GraphQL equivalent: [Public GraphQL API -> Unset reaction for Content Type](#unset-reaction-for-content-type-1)_
+
 `GET <host>/api/reactions/unset/<type slug>/<collection type UID>/<id>`
 
 Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
@@ -332,6 +346,8 @@ true
 ```
 
 ### Toggle reaction for Content Type
+
+_GraphQL equivalent: [Public GraphQL API -> Toggle reaction for Content Type](#toggle-reaction-for-content-type-1)_
 
 `GET <host>/api/reactions/toggle/<type slug>/<collection type UID>/<id>`
 
@@ -354,6 +370,311 @@ Toggle reaction of specific kind / type assiciated with provided Collection / Si
 // or
 
 true
+```
+
+### Possible scenarios
+1. No reaction set yet - after `toggle` reaction is set
+2. Single reaction already set - after `toogle` no reaction is set
+3. Multiple reactions already set - after `toggle` just specified reaction stays, rest becomes unset
+
+## 🕸️ Public GraphQL API specification
+
+**Testing**
+
+> To test all queries and understand the schemas use GraphQL Playground exposed by `@strapi/plugin-graphql` on `http://localhost:1337/graphql`
+
+### Get reaction kinds / types
+
+_REST API equivalent: [Public REST API -> Get reaction kinds / types](#get-reaction-kings--types)_
+
+Return a list of available reaction kinds to use on the end user interface and expose for interaction with users.
+
+**Example request**
+
+```graphql
+query {
+  reactionKinds {
+      slug
+      name
+      emoji
+    icon {
+      url
+    }
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionKinds": [
+      {
+        "slug": "like",
+        "name": "Like",
+        "emoji": "👍",
+        "icon": null
+      }
+    ]
+  }
+}
+```
+
+### List all reactions associated with Content Type
+
+_REST API equivalent: [Public REST API -> List all reactions associated with Content Type](#list-all-reactions-associated-with-content-type)_
+
+Return all reactions assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+- Query `reactionsListAll` - no `Authorization` header provided (open for public)
+- Query `reactionsListPerUser` - an `Authorization` header is mandatory
+
+**Example request**
+
+```graphql
+query {
+  reactionsListAll(uid: "api::blog-post.blog-post", id: 1) {
+    id
+    kind {
+      slug
+      name
+      emoji
+    }
+    user {
+      email
+    }
+  }
+}
+```
+
+```graphql
+query {
+  reactionsListPerUser(uid: "api::blog-post.blog-post", id: 1) {
+    id
+    kind {
+      slug
+      name
+      emoji
+    }
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionsListAll": [
+      {
+        "id": 1,
+        "kind": {
+          "slug": "like",
+          "name": "Like",
+          "emoji": "👍"
+        },
+        "user": {
+          "email": "mziarko+1@virtuslab.com"
+        },
+        "createdAt": "2023-09-14T20:13:01.670Z"
+      }
+    ]
+  }
+}
+// --------------------------------
+{
+  "data": {
+    "reactionsListPerUser": [
+      {
+        "id": 1,
+        "kind": {
+          "slug": "like",
+          "name": "Like",
+          "emoji": "👍"
+        },
+        "createdAt": "2023-09-14T20:13:01.670Z"
+      }
+    ]
+  }
+}
+```
+
+### List all reactions of kind / type associated with Content Type
+
+_REST API equivalent: [Public REST API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type)_
+
+Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+- Query `reactionsListAll` - no `Authorization` header provided (open for public)
+- Query `reactionsListPerUser` - an `Authorization` header is mandatory
+
+**Example request**
+
+```graphql
+query {
+  reactionsListAll(kind: "like", uid: "api::blog-post.blog-post", id: 1) {
+    id
+    user {
+      email
+    }
+    createdAt
+  }
+}
+```
+
+```graphql
+query {
+  reactionsListPerUser(kind: "like", uid: "api::blog-post.blog-post", id: 1) {
+    id
+    createdAt
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionsListAll": [
+      {
+        "id": 1,
+        "user": {
+          "email": "mziarko+1@virtuslab.com"
+        },
+        "createdAt": "2023-09-14T20:13:01.670Z"
+      }
+    ]
+  }
+}
+// --------------------------------
+{
+  "data": {
+    "reactionsListPerUser": [
+      {
+        "id": 1,
+        "createdAt": "2023-09-14T20:13:01.670Z"
+      }
+    ]
+  }
+}
+```
+
+### Set reaction for Content Type
+
+_REST API equivalent: [Public REST API -> Set reaction for Content Type](#set-reaction-for-content-type)_
+
+Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+
+`Authorization` header is required
+
+**Example request**
+
+```graphql
+mutation reactionSet {
+  reactionSet(
+    input: {
+      kind: "like",
+      uid: "api::blog-post.blog-post"
+      id: 1
+    }
+  ) {
+    id
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionSet": {
+      "id": 1
+    }
+  }
+}
+```
+
+### Unset reaction for Content Type
+
+_REST API equivalent: [Public REST API -> Unset reaction for Content Type](#unset-reaction-for-content-type)_
+
+Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+
+`Authorization` header is required
+
+**Example request**
+
+```graphql
+mutation reactionUnset {
+  reactionUnset(
+    input: {
+      kind: "like",
+      uid: "api::blog-post.blog-post"
+      id: 1
+    }
+  ) {
+    id
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionUnset": {
+      "id": null
+    }
+  }
+}
+```
+
+### Toggle reaction for Content Type
+
+_REST API equivalent: [Public REST API -> Toggle reaction for Content Type](#toggle-reaction-for-content-type)_
+
+Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+
+`Authorization` header is required
+
+**Example request**
+
+```graphql
+mutation reactionToggle {
+  reactionToggle(
+    input: {
+      kind: "like",
+      uid: "api::blog-post.blog-post"
+      id: 1
+    }
+  ) {
+    id
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionToggle": {
+      "id": 1
+    }
+  }
+}
+
+// or
+
+{
+  "data": {
+    "reactionToggle": {
+      "id": null
+    }
+  }
+}
 ```
 
 ### Possible scenarios

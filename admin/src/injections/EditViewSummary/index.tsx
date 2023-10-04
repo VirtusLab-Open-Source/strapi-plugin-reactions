@@ -32,8 +32,12 @@ export const EditViewSummary = () => {
         .exec(location.pathname)?.groups as ContentManagerPathProps;
     const { uid, id } = groups;
 
+    if (!id) {
+        return null;
+    }
+
     const { fetch: fetchConfig } = useConfig(toggleNotification);
-    const { fetch: fetchReactions } = useContentManager(uid, id, toggleNotification);
+    const { fetch: fetchReactions } = useContentManager(uid, id);
 
     const { types = [] } = fetchConfig?.data || {};
 
@@ -51,7 +55,7 @@ export const EditViewSummary = () => {
     return (<Box paddingTop={4}>
         <Typography variant="sigma" textColor="neutral600">Reactions</Typography>
         <Divider unsetMargin={false} />
-        <Box paddingTop={4}>
+        <Box paddingTop={2}>
             <Grid gap={4}>
                 {types.map(({ name, slug, icon, emoji }) => (
                     <GridItem key={`reaction-type-${slug}`} col={3} s={4} xs={12}>

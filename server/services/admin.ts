@@ -1,21 +1,16 @@
 import { Strapi } from '@strapi/strapi';
-import { CoreStore } from '@strapi/types';
 
-import { ReactionsPluginConfig, IServiceAdmin, StrapiId } from "../../types";
+import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon } from "../../types";
 import { getModelUid } from './utils/functions';
 import { isArray, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 import PluginError from '../utils/error';
+import { getPluginService } from '../utils/functions';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  getPluginStore(): CoreStore | undefined {
-    if (!isNil(strapi.store)) {
-      return strapi.store({ type: "plugin", name: "reactions" }) as CoreStore;
-    }
-  },
-
   async fetchConfig() {
-    const pluginStore = this.getPluginStore();
+    const pluginStore = getPluginService<IServiceCommon>('common')
+      .getPluginStore();
     const config: ReactionsPluginConfig | unknown = await pluginStore?.get({
       key: "config",
     });
