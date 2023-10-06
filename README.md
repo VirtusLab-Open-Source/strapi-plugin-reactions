@@ -35,8 +35,9 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 5. [🕸️ Public API - REST](#%EF%B8%8F-public-rest-api-specification)
 5. [🕸️ Public API - GraphQL](#%EF%B8%8F-public-graphql-api-specification)
 7. [🔌 Enrich service for Strapi extensions](#-enrich-service-for-strapi-extensions)
-8. [🤝 Contributing](#-contributing)
-9. [👨‍💻 Community support](#-community-support)
+8. [💬 FAQ](#-faq)
+9. [🤝 Contributing](#-contributing)
+10. [👨‍💻 Community support](#-community-support)
 
 ## ✨ Features
 
@@ -104,29 +105,6 @@ As a next step you must configure your the plugin by adding types of reactions y
 
 All done. Enjoy 🎉
 
-### Working in development mode
-
-1. Clone repository
-
-   ```
-   git clone git@github.com:VirtusLab-Open-Source/strapi-plugin-reactions.git
-   ```
-
-2. Create a soft link in your strapi project to plugin `dist` folder
-
-   ```sh
-   ln -s <your path>/strapi-plugin-reactions/dist <your path>/strapi-project/src/plugins/reactions
-   ```
-
-3. Run develop or build command
-
-   ```ts
-   // Watch for file changes
-   yarn develop
-   // or run build without nodemon
-   yarn build:dev
-   ```
-
 ## 🖐 Requirements
 
 Complete installation requirements are exact same as for Strapi itself and can be found in the documentation under [Installation Requirements](https://docs.strapi.io/developer-docs/latest/getting-started/introduction.html).
@@ -174,6 +152,7 @@ For any role different than **Super Admin**, to access the **Reactions settings*
 
 - _Plugins_ -> _Reactions_ -> _Reactions: Read_ - gives you the basic read access to **Reactions settings**
 - _Plugins_ -> _Reactions_ -> _Reactions: Change_ - you're able to change the configuration of plugin
+- _Plugins_ -> _Reactions_ -> _Reactions: Admin_ - you're able to perform administrator action in the global scope of a plugin
 
 
 ## Data models
@@ -858,9 +837,52 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
 }
 ```
 
+## 💬 FAQ
+
+### Import / Export
+
+**Q:** I'm exporting / moving data between environments. Will I lost all reactions?
+
+**A:** No you won't lost anything. Reactions plugin is based on real relations (Polymorphic relations) and all the data should be exported / moved and re-indexed properly on your new environment.
+
+_The only thing you might need to do after import is described below_ ⬇️
+
+---
+
+**Q:** I've imported data to the new instance and I'm not seeing reaction linked to my Content Types or they are wrong. What to do?
+
+**A:** Most probably after the import unique identifiers of your Content Types has changed according to the new environment. 
+
+You might need to use one of special admin actions for the Reactions plugin like **"Synchronize associations"**. To get access to it, you must be **Super Admin** or have assigned **Settings: Admin permission** to any of your roles. 
+
+This is *not destructive* action and it just goes through all existing Reactions and update their search key according to linked Content Type UID and ID like `api::blog-post.blog-post:1`.
+
+---
+
 ## 🤝 Contributing
 
 Feel free to fork and make a Pull Request to this plugin project. All the input is warmly welcome!
+
+1. Clone repository
+
+   ```
+   git clone git@github.com:VirtusLab-Open-Source/strapi-plugin-reactions.git
+   ```
+
+2. Create a soft link in your strapi project to plugin `dist` folder
+
+   ```sh
+   ln -s <your path>/strapi-plugin-reactions/dist <your path>/strapi-project/src/plugins/reactions
+   ```
+
+3. Run develop or build command
+
+   ```ts
+   // Watch for file changes
+   yarn develop
+   // or run build without nodemon
+   yarn build:dev
+   ```
 
 ## 👨‍💻 Community support
 

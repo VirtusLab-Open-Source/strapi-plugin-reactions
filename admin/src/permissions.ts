@@ -10,4 +10,7 @@ export default {
   settingsChange: [
     { action: permissions.render(permissions.settings.change), subject: null },
   ],
+  settingsAdmin: [
+    { action: permissions.render(permissions.settings.admin), subject: null },
+  ],
 };

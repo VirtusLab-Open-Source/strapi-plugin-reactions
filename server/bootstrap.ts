@@ -30,6 +30,12 @@ export = async ({ strapi }: StrapiContext) => {
       uid: permissions.settings.change,
       pluginName: "reactions",
     },
+    {
+      section: "plugins",
+      displayName: "Settings: Admin",
+      uid: permissions.settings.admin,
+      pluginName: "reactions",
+    },
   ];
 
   await strapi.admin.services.permission.actionProvider.registerMany(actions);

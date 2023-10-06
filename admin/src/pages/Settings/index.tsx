@@ -15,6 +15,7 @@ import { Main } from "@strapi/design-system/Main";
 import { ContentLayout, HeaderLayout } from "@strapi/design-system/Layout";
 import { Box } from "@strapi/design-system/Box";
 import { Button } from "@strapi/design-system/Button";
+import { Divider } from "@strapi/design-system/Divider";
 import { Grid, GridItem } from "@strapi/design-system/Grid";
 import { IconButton } from "@strapi/design-system/IconButton";
 import { Flex } from "@strapi/design-system/Flex";
@@ -32,6 +33,7 @@ import CUModal from "./components/Modal";
 import { ReactionIcon } from "./components/ReactionIcon";
 import useUtils from "../../hooks/useUtils";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import { AdminAction } from "./components/AdminAction";
 
 const DEFAULT_BOX_PROPS = {
   background: "neutral0",
@@ -50,13 +52,14 @@ const Settings = () => {
     () => ({
       access: pluginPermissions.settings,
       change: pluginPermissions.settingsChange,
+      admin: pluginPermissions.settingsAdmin,
     }),
     []
   );
 
   const {
     isLoading: isLoadingForPermissions,
-    allowedActions: { canChange },
+    allowedActions: { canChange, canAdmin },
   } = useRBAC(viewPermissions);
 
   const [isModalOpened, setModalOpened] = useState(false);
@@ -139,7 +142,7 @@ const Settings = () => {
   };
 
   const handleSyncAssociations = async () => {
-    if (canChange) {
+    if (canAdmin) {
       lockApp();
       try {
         await syncAssociationsMutation.mutateAsync();
@@ -238,7 +241,7 @@ const Settings = () => {
             </Table>
           </Box>
           <CheckPermissions
-            permissions={pluginPermissions.settingsChange}
+            permissions={pluginPermissions.settingsAdmin}
           >
             <Box {...DEFAULT_BOX_PROPS}>
               <Stack size={4}>
@@ -251,29 +254,36 @@ const Settings = () => {
                   </Typography>
                 </Stack>
                 <Grid gap={4}>
-                  <GridItem col={6}>
-                    <Button
-                      variant="danger-light"
-                      startIcon={<Refresh />}
-                      onClick={handleSyncAssociationsConfirmation}
-                    >
-                      {getMessage("page.settings.action.sync-associations")}
-                    </Button>
+                  <GridItem col={12} s={12} xs={12}>
+                    <Divider unsetMargin={false} />
+                    <AdminAction
+                      title={getMessage("page.settings.action.sync-associations.title")}
+                      description={getMessage("page.settings.action.sync-associations.description")}
+                      tip={getMessage("page.settings.action.sync-associations.tip")}>
+                      <Button
+                        variant="danger-light"
+                        startIcon={<Refresh />}
+                        onClick={handleSyncAssociationsConfirmation}
+                      >
+                        {getMessage("page.settings.action.sync-associations.button")}
+                      </Button>
 
-                    <ConfirmationModal
-                      isVisible={syncAssiciationConfirmationVisible}
-                      isLoading={syncAssociationsMutation.isLoading}
-                      title={getMessage("page.settings.modal.title.sync-associations")}
-                      labelCancel={getMessage("page.settings.modal.action.sync-associations.cancel")}
-                      labelConfirm={getMessage("page.settings.modal.action.sync-associations.submit")}
-                      iconConfirm={<Refresh />}
-                      onConfirm={handleSyncAssociations}
-                      onClose={handleSyncAssociationsCancel}
-                    >
-                      {getMessage(
-                        "page.settings.modal.description.sync-associations"
-                      )}
-                    </ConfirmationModal>
+                      <ConfirmationModal
+                        isVisible={syncAssiciationConfirmationVisible}
+                        isLoading={syncAssociationsMutation.isLoading}
+                        title={getMessage("page.settings.modal.title.sync-associations")}
+                        labelCancel={getMessage("page.settings.modal.action.sync-associations.cancel")}
+                        labelConfirm={getMessage("page.settings.modal.action.sync-associations.submit")}
+                        iconConfirm={<Refresh />}
+                        onConfirm={handleSyncAssociations}
+                        onClose={handleSyncAssociationsCancel}
+                      >
+                        {getMessage(
+                          "page.settings.modal.description.sync-associations"
+                        )}
+                      </ConfirmationModal>
+                    </AdminAction>
+
                   </GridItem>
                 </Grid>
               </Stack>
