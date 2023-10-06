@@ -49,6 +49,15 @@ const routes: StrapiRoute[] = [
       policies: [],
     },
   },
+  {
+    method: 'POST',
+    path: '/utils/sync-associations',
+    handler: 'settingsController.syncAssociations',
+    config: {
+      policies: [],
+    },
+  },
+
 ];
 
 export default routes;

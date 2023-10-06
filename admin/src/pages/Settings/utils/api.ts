@@ -53,3 +53,13 @@ export const generateSlug = async (payload) => {
     throw err;
   }
 };
+
+export const syncAssociations = async () => {
+  try {
+    const { data } = await axiosInstance.post(getApiURL(`utils/sync-associations`));
+
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};

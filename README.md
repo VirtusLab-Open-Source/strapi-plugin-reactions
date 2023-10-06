@@ -722,7 +722,9 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
   async findOne(ctx) {
     const response = await super.findOne(ctx);
 
-    return strapi.plugin("reactions").services.enrich.enrichOne('api::blog-post.blog-post', response);
+    return strapi
+      .service('plugin::reactions.enrich')
+      .enrichMany('api::blog-post.blog-post', response);
   },
 }));
 ```
@@ -802,7 +804,9 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
   async find(ctx) {
     const response = await super.find(ctx);
 
-    return strapi.plugin("reactions").services.enrich.enrichMany('api::blog-post.blog-post', response);
+    return strapi
+      .service('plugin::reactions.enrich')
+      .enrichMany('api::blog-post.blog-post', response);
   },
 }));
 ```

@@ -1,9 +1,9 @@
 import { Strapi } from '@strapi/strapi';
+import { first, isArray, isEmpty, isNil, isString } from 'lodash';
+import slugify from 'slugify';
 
 import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon } from "../../types";
 import { getModelUid } from './utils/functions';
-import { isArray, isNil, isString } from 'lodash';
-import slugify from 'slugify';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
 
@@ -116,6 +116,38 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return slug;
     }
     throw new PluginError(400, "Not valid value for slug");
+  },
+
+  async syncAssociations(this: IServiceAdmin): Promise<number> {
+    const entities = await strapi.entityService
+      ?.findMany(getModelUid("reaction"), {
+        fields: ['id', 'relatedUid'],
+        populate: ['related'],
+      });
+
+    const entitiesToUpdate = (entities || [] as any)
+      .map(_ => ({ ..._, related: first(_.related) }))
+      .filter(({ relatedUid, related }) => relatedUid !== `${related.__type}:${related.id}`);
+
+    if (!entitiesToUpdate || isEmpty(entitiesToUpdate)) {
+      return 0;
+    }
+
+    const entitiesUpdated = await Promise.all(entitiesToUpdate
+      .map(async ({ id, related }) =>
+        strapi.entityService?.
+          update(getModelUid("reaction"), id, {
+            data: {
+              relatedUid: `${related.__type}:${related.id}`,
+            },
+          })
+      ));
+
+    if (entitiesToUpdate.length === entitiesUpdated.length) {
+      return entitiesUpdated.length;
+    }
+
+    throw new PluginError(400, "Action cannot be performed");
   },
 
 });

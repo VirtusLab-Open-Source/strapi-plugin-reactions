@@ -18,6 +18,7 @@ export interface IServiceAdmin {
   deleteReactionType(id: StrapiId): Promise<boolean>;
   generateSlug(subject: string, id?: StrapiId): Promise<string>;
   uniqueSlug(slug: string, id?: StrapiId): Promise<string>;
+  syncAssociations(): Promise<boolean>;
 }
 
 export interface IServiceClient {

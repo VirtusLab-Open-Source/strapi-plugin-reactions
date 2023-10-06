@@ -1,36 +1,40 @@
 import React from "react";
 
-import { isNil } from "lodash";
-
 import { Button } from '@strapi/design-system/Button';
 import { Dialog, DialogBody, DialogFooter } from '@strapi/design-system/Dialog';
 import { Flex } from '@strapi/design-system/Flex';
 import { Typography } from '@strapi/design-system/Typography';
 import { Stack } from '@strapi/design-system/Stack';
-import { ExclamationMarkCircle, Trash } from "@strapi/icons";
-import { getMessage } from "../../../../utils";
-import { Id } from "strapi-typed";
+import { ExclamationMarkCircle } from "@strapi/icons";
 
-
-type DeleteModalProps = {
-  data: any;
+type ConfirmationModalProps = {
+  isVisible: boolean;
   isLoading: boolean;
+  title: string;
+  children: React.ReactNode | Array<React.ReactNode>;
+  labelCancel: string;
+  labelConfirm: string;
+  iconConfirm: React.ReactNode;
   onClose: Function;
-  onSubmit: (id: Id) => void | Promise<any>;
+  onConfirm: Function;
 };
 
-const DeleteModal = ({ data = {}, isLoading = false, onSubmit, onClose }: DeleteModalProps) => {
-  return (<Dialog onClose={onClose} title={getMessage("page.settings.modal.delete.title")} isOpen={!isNil(data)}>
+const ConfirmationModal = ({
+  children,
+  isVisible = false,
+  isLoading = false,
+  title,
+  labelCancel,
+  labelConfirm,
+  iconConfirm,
+  onConfirm,
+  onClose }: ConfirmationModalProps) => {
+  return (<Dialog onClose={onClose} title={title} isOpen={isVisible}>
     <DialogBody icon={<ExclamationMarkCircle />}>
       <Stack size={2}>
         <Flex justifyContent="center">
           <Typography id="confirm-description">
-            {getMessage({
-              id: "page.settings.modal.delete.description",
-              props: {
-                name: data.name,
-              },
-            })}
+            {children}
           </Typography>
         </Flex>
       </Stack>
@@ -39,17 +43,16 @@ const DeleteModal = ({ data = {}, isLoading = false, onSubmit, onClose }: Delete
       onClick={onClose}
       disabled={isLoading}
       variant="tertiary">
-      {getMessage("page.settings.modal.action.delete.cancel")}
+      {labelCancel}
     </Button>} endAction={<Button
-      onClick={() =>
-        onSubmit(data.id)}
+      onClick={onConfirm}
       variant="danger-light"
       loading={isLoading}
       disabled={isLoading}
-      startIcon={<Trash />}>
-      {getMessage("page.settings.modal.action.delete.submit")}
+      startIcon={iconConfirm}>
+      {labelConfirm}
     </Button>} />
   </Dialog>)
 };
 
-export default DeleteModal;
+export default ConfirmationModal;
