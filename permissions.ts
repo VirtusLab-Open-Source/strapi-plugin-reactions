@@ -5,5 +5,6 @@ export default {
   settings: {
     read: "settings.read",
     change: "settings.change",
+    admin: "settings.admin",
   },
 };

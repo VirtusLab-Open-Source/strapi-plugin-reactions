@@ -64,4 +64,13 @@ export default () => ({
       throw throwError(ctx, e);
     }
   },
+
+  async syncAssociations(ctx: StrapiRequestContext) {
+    try {
+      return await this.getService<IServiceAdmin>().syncAssociations();
+    } catch (e) {
+      throw throwError(ctx, e);
+    }
+  },
+  
 });

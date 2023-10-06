@@ -94,7 +94,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       ?.findMany(getModelUid('reaction'), {
         filters,
         populate: populate as any,
-      });
+      }) as any;
   },
 
   composeReactionsMeta(acc: { [slug: string]: StrapiReactions }, curr: any): { [slug: string]: StrapiReactions } {
