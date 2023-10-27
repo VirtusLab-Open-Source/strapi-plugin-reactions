@@ -111,14 +111,14 @@ Complete installation requirements are exact same as for Strapi itself and can b
 
 **Minimum environment requirements**
 
-- Node.js `>=14.19.1 <=18.x.x`
-- NPM `>=7.x.x`
+- Node.js `>=18.0.0 <=20.x.x`
+- NPM `>=6.x.x`
 
 In our minimum support we're following [official Node.js releases timelines](https://nodejs.org/en/about/releases/).
 
 **Supported Strapi versions**:
 
-- Strapi v4.14.x (recently tested)
+- Strapi v4.15.x (recently tested)
 - Strapi v4.x
 
 **Plugin dependencies**

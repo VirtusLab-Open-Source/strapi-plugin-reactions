@@ -58,7 +58,7 @@ export const EditViewSummary = () => {
         <Box paddingTop={2}>
             <Grid gap={4}>
                 {types.map(({ name, slug, icon, emoji }) => (
-                    <GridItem key={`reaction-type-${slug}`} col={3} s={4} xs={12}>
+                    <GridItem key={`reaction-type-${slug}`} col={4} s={6} xs={12}>
                         <ReactionCounter name={name} icon={icon} emoji={emoji} count={reactionsCount[slug]} />
                     </GridItem>
                 ))}
