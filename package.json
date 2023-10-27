@@ -71,7 +71,7 @@
     "url": "https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions"
   },
   "engines": {
-    "node": ">=16.0.0 <=20.x.x",
+    "node": ">=18.0.0 <=20.x.x",
     "npm": ">=6.0.0"
   },
   "keywords": [
