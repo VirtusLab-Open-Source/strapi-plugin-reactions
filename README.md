@@ -1,5 +1,5 @@
 <div align="center" width="150px">
-  <!-- <img style="width: 150px; height: auto;" src="public/assets/logo.png" alt="Logo - Strapi Reaction plugin" /> -->
+  <img style="width: 150px; height: auto;" src="public/assets/logo.png" alt="Logo - Strapi Reaction plugin" />
 </div>
 <div align="center">
   <h1>Strapi - Reactions plugin - BETA</h1>
@@ -20,9 +20,9 @@
 
 ---
 
-<!-- <div style="margin: 20px 0" align="center">
-  <img style="width: 100%; height: auto;" src="public/assets/preview.png" alt="UI preview" />
-</div> -->
+<div style="margin: 20px 0" align="center">
+  <img style="width: 100%; height: auto;" src="public/assets/preview.jpg" alt="UI preview" />
+</div>
 
 A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provides flexible &amp; configurable reactions experience to any Content Types.
 
@@ -52,7 +52,7 @@ Before releasing the RC and first Public Release we would like to introduce:
 
 - ✅ Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
 - ✅ GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
-- ⌛ Associations sync - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/7)
+- ✅ Associations sync - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/7)
 - ⌛ Examples created - in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
 
 **Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
