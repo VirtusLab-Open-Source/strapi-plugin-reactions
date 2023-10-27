@@ -2,7 +2,7 @@
   <img style="width: 150px; height: auto;" src="public/assets/logo.png" alt="Logo - Strapi Reaction plugin" />
 </div>
 <div align="center">
-  <h1>Strapi - Reactions plugin - BETA</h1>
+  <h1>Strapi - Reactions plugin</h1>
   <p>All-in-One reactions plugin for any Content Type. Simple & flexible</p>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
     <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions?label=npm&logo=npm">
@@ -47,13 +47,13 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 - **Content Manager Injection Zone:** Making use of Strapi built-in batteries like *Injection Zones* to provide you highers user experience. Visual representation of reactions counter for any Content Types - useful!
 - **Developer Experience boosted:** A dedicated *Enrich* service provided to let you extend your Content API controllers by a single line to get reactions per each!
  
-### Roadmap from Beta to RC
+### Current backlog
 Before releasing the RC and first Public Release we would like to introduce:
 
 - ✅ Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
 - ✅ GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
 - ✅ Associations sync - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/7)
-- ⌛ Examples created - in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
+- ⌛ Examples created in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
 
 **Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
 
