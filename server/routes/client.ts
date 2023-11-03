@@ -11,7 +11,7 @@ const routes: StrapiRoute[] = [
   },
   {
     method: 'GET',
-    path: '/list/:uid/:id',
+    path: '/list/single/:uid',
     handler: 'clientController.list',
     config: {
       policies: [],
@@ -19,7 +19,23 @@ const routes: StrapiRoute[] = [
   },
   {
     method: 'GET',
-    path: '/list/:kind/:uid/:id',
+    path: '/list/collection/:uid/:id',
+    handler: 'clientController.list',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
+    path: '/list/:kind/single/:uid',
+    handler: 'clientController.list',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
+    path: '/list/:kind/collection/:uid/:id',
     handler: 'clientController.list',
     config: {
       policies: [],
@@ -27,7 +43,15 @@ const routes: StrapiRoute[] = [
   },
   {
     method: 'POST',
-    path: '/set/:kind/:uid/:id',
+    path: '/set/:kind/single/:uid',
+    handler: 'clientController.create',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'POST',
+    path: '/set/:kind/collection/:uid/:id',
     handler: 'clientController.create',
     config: {
       policies: [],
@@ -35,7 +59,15 @@ const routes: StrapiRoute[] = [
   },
   {
     method: 'DELETE',
-    path: '/unset/:kind/:uid/:id',
+    path: '/unset/:kind/single/:uid',
+    handler: 'clientController.delete',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/unset/:kind/collection/:uid/:id',
     handler: 'clientController.delete',
     config: {
       policies: [],
@@ -43,7 +75,15 @@ const routes: StrapiRoute[] = [
   },
   {
     method: 'POST',
-    path: '/toggle/:kind/:uid/:id',
+    path: '/toggle/:kind/single/:uid',
+    handler: 'clientController.toggle',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'POST',
+    path: '/toggle/:kind/collection/:uid/:id',
     handler: 'clientController.toggle',
     config: {
       policies: [],

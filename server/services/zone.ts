@@ -4,7 +4,7 @@ import { UID } from "@strapi/types";
 import { isArray, isNil, first } from "lodash";
 
 import { IServiceZone, ReactionEntity, StrapiId } from "../../types";
-import { getModelUid } from './utils/functions';
+import { buildRelatedId, getModelUid } from './utils/functions';
 
 export type ReactionsCount = {
   [slug: string]: number;
@@ -15,12 +15,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async count(
     this: IServiceZone,
     uid: UID.ContentType,
-    id: StrapiId,
+    id?: StrapiId,
   ): Promise<ReactionsCount> {
     const entities = await strapi.entityService
       ?.findMany(getModelUid("reaction"), {
         filters: {
-          relatedUid: `${uid}:${id}`,
+          relatedUid: buildRelatedId(uid, id),
         },
         populate: {
           kind: {

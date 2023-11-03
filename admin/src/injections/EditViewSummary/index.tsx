@@ -14,14 +14,19 @@ import { Typography } from '@strapi/design-system/Typography';
 
 import { ReactionCounter } from "./components/ReactionCounter";
 
-import useContentManager from "../../hooks/useContentManager";
+import useContentManager, { ContentManagerType } from "../../hooks/useContentManager";
 import useConfig from "../../hooks/useConfig";
 
-const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/(?<id>\d*)/;
+const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<id>\d*)/;
+const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
+    SINGLE_TYPE: 'singleType',
+    COLLECTION_TYPE: 'collectionType',
+};
 
 type ContentManagerPathProps = {
+    type: ContentManagerType;
     uid: UID.ContentType;
-    id: string | number;
+    id?: string | number;
 };
 
 export const EditViewSummary = () => {
@@ -30,9 +35,10 @@ export const EditViewSummary = () => {
 
     const groups: ContentManagerPathProps = new RegExp(CONTENT_MANAGER_PATH_PATTERN, "gm")
         .exec(location.pathname)?.groups as ContentManagerPathProps;
-    const { uid, id } = groups;
+        console.log(groups);
+    const { uid, id, type } = groups;
 
-    if (!id) {
+    if (!id && (type === CONTENT_MANAGER_TYPES.COLLECTION_TYPE)) {
         return null;
     }
 

@@ -3,7 +3,7 @@ import { first, isArray, isEmpty, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 
 import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon } from "../../types";
-import { getModelUid } from './utils/functions';
+import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
 
@@ -127,7 +127,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     const entitiesToUpdate = (entities || [] as any)
       .map(_ => ({ ..._, related: first(_.related) }))
-      .filter(({ relatedUid, related }) => relatedUid !== `${related.__type}:${related.id}`);
+      .filter(({ relatedUid, related }) => relatedUid !== buildRelatedId(related.__type, related.id));
 
     if (!entitiesToUpdate || isEmpty(entitiesToUpdate)) {
       return 0;
@@ -138,7 +138,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         strapi.entityService?.
           update(getModelUid("reaction"), id, {
             data: {
-              relatedUid: `${related.__type}:${related.id}`,
+              relatedUid: buildRelatedId(related.__type, related.id),
             },
           })
       ));

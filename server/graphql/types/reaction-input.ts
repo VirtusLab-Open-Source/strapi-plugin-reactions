@@ -6,6 +6,6 @@ export = ({ nexus }: StrapiGraphQLContext) =>
     definition(t: INexusType) {
       t.nonNull.string("kind");
       t.nonNull.string("uid");
-      t.nonNull.id("id");
+      t.id("id");
     },
   });

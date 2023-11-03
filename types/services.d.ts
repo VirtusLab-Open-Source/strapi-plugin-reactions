@@ -23,10 +23,10 @@ export interface IServiceAdmin {
 
 export interface IServiceClient {
   kinds(): Promise<Array<AnyEntity>>;
-  list(kind?: string, uid: ContentType, id: StrapiId, user?: StrapiUser | undefined): Promise<Array<AnyEntity>>;
-  create(kind: string, uid: ContentType, id: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity>;
-  delete(kind: string, uid: ContentType, id: StrapiId, user: StrapiUser | undefined): Promise<boolean>;
-  toggle(kind: string, uid: ContentType, id: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity | boolean>;
+  list(kind?: string, uid: ContentType, id?: StrapiId, user?: StrapiUser | undefined): Promise<Array<AnyEntity>>;
+  create(kind: string, uid: ContentType, id?: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity>;
+  delete(kind: string, uid: ContentType, id?: StrapiId, user: StrapiUser | undefined): Promise<boolean>;
+  toggle(kind: string, uid: ContentType, id?: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity | boolean>;
   prefetchConditions(type: string, uid?: string, id?: StrapiId): Promise<[AnyEntity, AnyEntity]>;
   directCreate(uid: ContentType, kind: AnyEntity, related: AnyEntity, user: StrapiUser | undefined): Promise<AnyEntity>;
   directDelete(uid: ContentType, kind: AnyEntity, related: AnyEntity, user: StrapiUser | undefined): Promise<boolean>;
@@ -40,5 +40,5 @@ export interface IServiceEnrich {
 }
 
 export interface IServiceZone {
-  count(uid: ContentType, id: StrapiId): Promise<ReactionsCount>;
+  count(uid: ContentType, id?: StrapiId): Promise<ReactionsCount>;
 }
