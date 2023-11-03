@@ -4,7 +4,7 @@ import { UID } from "@strapi/types";
 import { PopulateClause } from 'strapi-typed';
 
 import { IServiceEnrich, ReactionEntity } from "../../types";
-import { getModelUid } from './utils/functions';
+import { buildRelatedId, getModelUid } from './utils/functions';
 
 export type StrapiReactions = Array<ReactionEntity>;
 
@@ -45,7 +45,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const { data } = response;
 
     const reactions = await this.findReactions({
-      relatedUid: `${uid}:${data.id}`,
+      relatedUid: buildRelatedId(uid, data.id),
     }, populate);
 
     return {
@@ -82,7 +82,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           .reduce((accItem, currItem) => ({
             ...accItem,
             [currItem.id]: (reactions || [])
-              .filter(({ relatedUid }) => relatedUid === `${uid}:${currItem.id}`)
+              .filter(({ relatedUid }) => relatedUid === buildRelatedId(uid, currItem.id))
               .reduce(this.composeReactionsMeta, {}),
           }), {}),
       },

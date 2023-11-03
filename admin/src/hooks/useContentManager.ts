@@ -4,6 +4,8 @@ import { UID } from "@strapi/strapi";
 import { fetchReactions } from "../injections/utils/api";
 import { StrapiId } from "../../../types";
 
+export type ContentManagerType = 'singleType' | 'collectionType';
+
 const useContentManager = (uid: UID.ContentType, id: StrapiId) => {
   const fetch = useQuery("get-reactions", () => fetchReactions(uid, id));
 

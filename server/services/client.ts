@@ -5,7 +5,7 @@ import { StrapiUser } from 'strapi-typed';
 import { isArray, isNil, first } from "lodash";
 
 import { IServiceClient } from "../../types";
-import { getModelUid } from './utils/functions';
+import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { AnyEntity } from '@strapi/strapi/lib/services/entity-service';
 
@@ -24,14 +24,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     this: IServiceClient,
     kind?: string,
     uid: UID.ContentType,
-    id: StrapiId,
+    id?: StrapiId,
     user?: StrapiUser,
   ): Promise<Array<AnyEntity>> {
     const [reactionKind] = await this.prefetchConditions(kind || null);
 
     let fields = ['createdAt', 'updatedAt'];
     let filters = {
-      relatedUid: `${uid}:${id}`,
+      relatedUid: buildRelatedId(uid, id),
     };
     let populate = {};
 
@@ -83,7 +83,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    id: StrapiId,
+    id?: StrapiId,
     user: StrapiUser,
   ): Promise<AnyEntity> {
 
@@ -94,14 +94,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return this.directCreate(uid, reactionKind, relatedEntity, user);
     }
 
-    throw new PluginError(405, `Can't perform CREATE on reaction type of "${kind}" for Entity with ID: ${id} of type: ${uid} as it already exist`);
+    throw new PluginError(405, `Can't perform CREATE on reaction type of "${kind}" for Entity with ID: ${id || 'single'} of type: ${uid} as it already exist`);
   },
 
   async delete(
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    id: StrapiId,
+    id?: StrapiId,
     user: StrapiUser,
   ): Promise<boolean> {
 
@@ -112,7 +112,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return this.directDelete(existingReaction);
     }
 
-    throw new PluginError(405, `Can't perform DELETE on reaction type of "${kind}" for Entity with ID: ${id} of type: ${uid}`);
+    throw new PluginError(405, `Can't perform DELETE on reaction type of "${kind}" for Entity with ID: ${id || 'single'} of type: ${uid}`);
 
   },
 
@@ -120,7 +120,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    id: StrapiId,
+    id?: StrapiId,
     user: StrapiUser,
   ): Promise<AnyEntity | boolean> {
 
@@ -140,7 +140,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const removed = await this.directDelete(reactionsToRemove);
 
     if (!removed) {
-      throw new PluginError(405, `Can't perform toogle action reaction type of "${kind}" for Entity with ID: ${id} of type: ${uid}`);
+      throw new PluginError(405, `Can't perform toogle action reaction type of "${kind}" for Entity with ID: ${id || 'single'} of type: ${uid}`);
     }
 
     if (isNil(matchingReaction)) {
@@ -176,12 +176,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       result = [...result, null];
     }
 
-    if (uid && id) {
-      const relatedEntity = await strapi.entityService
-        .findOne(uid, id);
+    if (uid) {
+      let relatedEntity;
+      try {
+        relatedEntity = await strapi.entityService
+          .findOne(uid, id || '1');
+      }
+      catch (e) {
+        throw new PluginError(404, `Entity with ID: ${id || 'single'} of type: ${uid} does not exits`);
+      }
 
       if (!relatedEntity) {
-        throw new PluginError(404, `Entity with ID: ${id} of type: ${uid} does not exits`);
+        throw new PluginError(404, `Entity with ID: ${id || 'single'} of type: ${uid} does not exits`);
       }
 
       return [...result, relatedEntity];
@@ -204,7 +210,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             ...related,
             __type: uid,
           },
-          relatedUid: `${uid}:${related.id}`,
+          relatedUid: buildRelatedId(uid, related.id),
           user,
         },
       });

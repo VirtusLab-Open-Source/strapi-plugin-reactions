@@ -12,7 +12,7 @@ import { getPluginService } from "../../utils/functions";
 type ListAllResolverProps = {
   kind: string;
   uid: UID.ContentType;
-  id: StrapiId;
+  id?: StrapiId;
 };
 
 export = ({ nexus }: StrapiGraphQLContext) => {
@@ -23,7 +23,7 @@ export = ({ nexus }: StrapiGraphQLContext) => {
     args: {
       kind: stringArg(),
       uid: nonNull(stringArg()),
-      id: nonNull(intArg()),
+      id: intArg(),
     },
     async resolve(
       _: Object, 

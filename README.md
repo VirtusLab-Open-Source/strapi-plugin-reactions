@@ -225,13 +225,15 @@ Return a list of available reaction kinds to use on the end user interface and e
 
 _GraphQL equivalent: [Public GraphQL API -> List all reactions associated with Content Type](#list-all-reactions-associated-with-content-type-1)_
 
-`GET <host>/api/reactions/list/<collection type UID>/<id>`
+`GET <host>/api/reactions/list/single/<single type UID>`
+`GET <host>/api/reactions/list/collection/<collection type UID>/<id>`
 
 Return all reactions assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
 - all related with user - if call is done with user context via `Authorization` header
 
-**Example URL**: `https://localhost:1337/api/reactions/list/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/list/single/api::homepage.homepage`
+**Example URL**: `https://localhost:1337/api/reactions/list/collection/api::blog-post.blog-post/1`
 
 **Example response body**
 
@@ -260,13 +262,15 @@ Return all reactions assiciated with provided Collection / Single Type UID and C
 
 _GraphQL equivalent: [Public GraphQL API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type-1)_
 
-`GET <host>/api/reactions/list/<type slug>/<collection type UID>/<id>`
+`GET <host>/api/reactions/list/<type slug>/single/<single type UID>`
+`GET <host>/api/reactions/list/<type slug>/collection/<collection type UID>/<id>`
 
 Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
 - all related with user - if call is done with user context via `Authorization` header
 
-**Example URL**: `https://localhost:1337/api/reactions/list/like/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/list/like/single/api::homepage.homepage`
+**Example URL**: `https://localhost:1337/api/reactions/list/like/collection/api::blog-post.blog-post/1`
 
 **Example response body**
 
@@ -290,13 +294,15 @@ Return all reactions of specific kind / type assiciated with provided Collection
 
 _GraphQL equivalent: [Public GraphQL API -> Set reaction for Content Type](#set-reaction-for-content-type-1)_
 
-`GET <host>/api/reactions/set/<type slug>/<collection type UID>/<id>`
+`POST <host>/api/reactions/set/<type slug>/single/<single type UID>`
+`POST <host>/api/reactions/set/<type slug>/collection/<collection type UID>/<id>`
 
 Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
 
 `Authorization` header is required
 
-**Example URL**: `https://localhost:1337/api/reactions/set/like/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/set/like/single/api::homepage.homepage`
+**Example URL**: `https://localhost:1337/api/reactions/set/like/collection/api::blog-post.blog-post/1`
 
 **Example response body**
 
@@ -313,13 +319,15 @@ Create reaction of specific kind / type assiciated with provided Collection / Si
 
 _GraphQL equivalent: [Public GraphQL API -> Unset reaction for Content Type](#unset-reaction-for-content-type-1)_
 
-`GET <host>/api/reactions/unset/<type slug>/<collection type UID>/<id>`
+`DELETE <host>/api/reactions/unset/<type slug>/single/<single type UID>`
+`DELETE <host>/api/reactions/unset/<type slug>/collection/<collection type UID>/<id>`
 
 Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
 
 `Authorization` header is required
 
-**Example URL**: `https://localhost:1337/api/reactions/unset/like/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/unset/like/single/api::homepage.homepage`
+**Example URL**: `https://localhost:1337/api/reactions/unset/like/collection/api::blog-post.blog-post/1`
 
 **Example response body**
 
@@ -331,13 +339,15 @@ true
 
 _GraphQL equivalent: [Public GraphQL API -> Toggle reaction for Content Type](#toggle-reaction-for-content-type-1)_
 
-`GET <host>/api/reactions/toggle/<type slug>/<collection type UID>/<id>`
+`POST <host>/api/reactions/toggle/<type slug>/single/<single type UID>`
+`POST <host>/api/reactions/toggle/<type slug>/collection/<collection type UID>/<id>`
 
 Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
 
 `Authorization` header is required
 
-**Example URL**: `https://localhost:1337/api/reactions/set/like/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/set/like/single/api::homepage.homepage`
+**Example URL**: `https://localhost:1337/api/reactions/set/like/collection/api::blog-post.blog-post/1`
 
 **Example response body**
 
