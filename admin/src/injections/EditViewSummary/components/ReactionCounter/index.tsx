@@ -4,7 +4,7 @@ import { Tooltip } from '@strapi/design-system/Tooltip';
 
 import { ReactionCounterContainer, ReactionCounterDot, ReactionEmoji, ReactionImage, ReactionName } from "./styled";
 
-type ReactionCounterProps = {
+export type ReactionCounterProps = {
     name: string;
     icon?: any;
     emoji?: string;

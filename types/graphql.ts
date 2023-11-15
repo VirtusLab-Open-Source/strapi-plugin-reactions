@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Primitive, StrapiContext } from "strapi-typed";
 import { ToBeFixed } from "./common";
 

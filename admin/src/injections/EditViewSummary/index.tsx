@@ -12,7 +12,7 @@ import { Divider } from '@strapi/design-system/Divider';
 import { Grid, GridItem } from '@strapi/design-system/Grid';
 import { Typography } from '@strapi/design-system/Typography';
 
-import { ReactionCounter } from "./components/ReactionCounter";
+import { ReactionCounter, ReactionCounterProps } from "./components/ReactionCounter";
 
 import useContentManager, { ContentManagerType } from "../../hooks/useContentManager";
 import useConfig from "../../hooks/useConfig";
@@ -63,7 +63,7 @@ export const EditViewSummary = () => {
         <Divider unsetMargin={false} />
         <Box paddingTop={2}>
             <Grid gap={4}>
-                {types.map(({ name, slug, icon, emoji }) => (
+                {types.map(({ name, slug, icon, emoji }: ReactionCounterProps & { slug: string }) => (
                     <GridItem key={`reaction-type-${slug}`} col={4} s={6} xs={12}>
                         <ReactionCounter name={name} icon={icon} emoji={emoji} count={reactionsCount[slug]} />
                     </GridItem>

@@ -4,6 +4,7 @@ import { isNil } from "lodash";
 import { Formik } from "formik";
 
 import { Form, useNotification } from "@strapi/helper-plugin";
+//@ts-ignore
 import { MediaLibraryInput } from "@strapi/plugin-upload/admin/src/components/MediaLibraryInput";
 import { Button } from '@strapi/design-system/Button';
 import { Divider } from '@strapi/design-system/Divider';
@@ -19,6 +20,7 @@ import { pluginId } from "../../../../pluginId";
 import useUtils from "../../../../hooks/useUtils";
 import { ReactionTypeSwitch } from "./styles";
 import { ReactionEmojiSelect } from "../ReactionEmojiSelect";
+import { ToBeFixed } from "../../../../../../types";
 
 type CUModalProps = {
   data: any;
@@ -95,7 +97,7 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
                     name="icon"
                     value={values.icon || undefined}
                     required={true}
-                    onChange={({ target: { value } }) =>
+                    onChange={({ target: { value } }: ToBeFixed) =>
                       setFieldValue("icon", value, false)
                     }
                   />)}
@@ -112,7 +114,7 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
                             "page.settings.form.name.label"
                           )}
                           value={values.name}
-                          onChange={({ target: { value } }) => {
+                          onChange={({ target: { value } }: ToBeFixed) => {
                             setSlugSource(value);
                             return setFieldValue("name", value, false);
                           }

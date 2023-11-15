@@ -34,6 +34,7 @@ import { ReactionIcon } from "./components/ReactionIcon";
 import useUtils from "../../hooks/useUtils";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { AdminAction } from "./components/AdminAction";
+import { ToBeFixed } from "../../../../types";
 
 const DEFAULT_BOX_PROPS = {
   background: "neutral0",
@@ -208,7 +209,7 @@ const Settings = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {types.map(entry => <Tr key={entry.id}>
+                {types.map((entry: ToBeFixed) => <Tr key={entry.id}>
                   <Td>
                     {(entry.icon && !entry.emoji) && (<ReactionIcon src={entry.icon?.url} />)}
                     {(!entry.icon && entry.emoji) && (<>{entry.emoji}</>)}

@@ -2,7 +2,7 @@ import { Strapi } from '@strapi/strapi';
 import { first, isArray, isEmpty, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 
-import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon } from "../../types";
+import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon, ToBeFixed } from "../../types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
@@ -126,15 +126,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
 
     const entitiesToUpdate = (entities || [] as any)
-      .map(_ => ({ ..._, related: first(_.related) }))
-      .filter(({ relatedUid, related }) => relatedUid !== buildRelatedId(related.__type, related.id));
+      .map((_: ToBeFixed) => ({ ..._, related: first(_.related) }))
+      .filter(({ relatedUid, related }: ToBeFixed) => relatedUid !== buildRelatedId(related.__type, related.id));
 
     if (!entitiesToUpdate || isEmpty(entitiesToUpdate)) {
       return 0;
     }
 
     const entitiesUpdated = await Promise.all(entitiesToUpdate
-      .map(async ({ id, related }) =>
+      .map(async ({ id, related }: ToBeFixed) =>
         strapi.entityService?.
           update(getModelUid("reaction"), id, {
             data: {
