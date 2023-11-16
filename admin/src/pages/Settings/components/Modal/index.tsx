@@ -3,9 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { isNil } from "lodash";
 import { Formik } from "formik";
 
-import { Form, useNotification } from "@strapi/helper-plugin";
-//@ts-ignore
-import { MediaLibraryInput } from "@strapi/plugin-upload/admin/src/components/MediaLibraryInput";
+import { Form, GenericInput, useNotification, useLibrary } from "@strapi/helper-plugin";
 import { Button } from '@strapi/design-system/Button';
 import { Divider } from '@strapi/design-system/Divider';
 import { Grid, GridItem } from '@strapi/design-system/Grid';
@@ -36,6 +34,7 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
   const [slug, setSlug] = useState(data.slug || '');
   const [imageVariant, setImageVariant] = useState(isNil(data.emoji));
   const { slugMutation } = useUtils(toggleNotification);
+  const { fields } = useLibrary();
 
   useEffect(() => {
     slugMutation.reset();
@@ -91,9 +90,11 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
               <Divider useMargin />
               <Grid gap={4}>
                 <GridItem col={4} xs={12}>
-                  { imageVariant && (<MediaLibraryInput
+                  { imageVariant && (<GenericInput
+                    customInputs={fields}
                     intlLabel={{ id: `${pluginId}.page.settings.form.icon.label` }}
                     multiple={false}
+                    type="media"
                     name="icon"
                     value={values.icon || undefined}
                     required={true}

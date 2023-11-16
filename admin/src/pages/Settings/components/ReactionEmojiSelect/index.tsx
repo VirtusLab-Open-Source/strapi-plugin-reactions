@@ -80,9 +80,6 @@ export const ReactionEmojiSelect = ({ value, onChange }: ReactionEmojiSelectProp
                 </ReactionEmojiSelectInner>
             </Flex>
         </CarouselInput>
-
-
-
         <input type="hidden" value={value} />
     </ReactionEmojiSelectContainer>)
 }

@@ -1,6 +1,4 @@
 {
-  "extends": "@strapi/typescript-utils/tsconfigs/admin",
-
   "compilerOptions": {
     "rootDir": "./",
     "outDir": "dist",
@@ -26,12 +24,12 @@
 
   "include": [
     "custom.d.ts",
-    "./server/**/*",
-    "./admin/**/*",
-    "./strapi-server.*",
-    "./strapi-admin.*",
-    "./setup-package.ts",
-    "./permissions.*"
+    "server/**/*",
+    "admin/**/*",
+    "strapi-server.*",
+    "strapi-admin.*",
+    "setup-package.ts",
+    "permissions.*"
   ],
   "exclude": [
     "**/node_modules/**/*",
