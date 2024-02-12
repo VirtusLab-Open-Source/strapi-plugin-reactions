@@ -346,8 +346,8 @@ Toggle reaction of specific kind / type assiciated with provided Collection / Si
 
 `Authorization` header is required
 
-**Example URL**: `https://localhost:1337/api/reactions/set/like/single/api::homepage.homepage`
-**Example URL**: `https://localhost:1337/api/reactions/set/like/collection/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/toggle/like/single/api::homepage.homepage`
+**Example URL**: `https://localhost:1337/api/reactions/toggle/like/collection/api::blog-post.blog-post/1`
 
 **Example response body**
 
@@ -713,7 +713,7 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
 
     return strapi
       .service('plugin::reactions.enrich')
-      .enrichMany('api::blog-post.blog-post', response);
+      .enrichOne('api::blog-post.blog-post', response);
   },
 }));
 ```
