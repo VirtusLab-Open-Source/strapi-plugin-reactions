@@ -12,7 +12,7 @@
     "page.settings.action.sync-associations.description": "Perform synchronization of reactions associations to make the search keys be up-to-date",
     "page.settings.action.sync-associations.tip": "We recommend to do this after you import / export a set of a data what might affect relations mapping",
     "page.settings.action.sync-associations.button": "Synchronize now",
-    "page.settings.table.action.add": "Add another relation",
+    "page.settings.table.action.add": "Add another reaction",
     "page.settings.table.action.edit": "Edit",
     "page.settings.table.action.delete": "Delete",
     "page.settings.table.headers.icon": "Icon",
