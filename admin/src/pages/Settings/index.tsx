@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Id } from "strapi-typed";
 import { isNil } from "lodash";
 
@@ -49,19 +49,12 @@ const Settings = () => {
   const toggleNotification = useNotification();
   const { lockApp, unlockApp } = useOverlayBlocker();
 
-  const viewPermissions = useMemo(
-    () => ({
-      access: pluginPermissions.settings,
-      change: pluginPermissions.settingsChange,
-      admin: pluginPermissions.settingsAdmin,
-    }),
-    []
-  );
-
   const {
     isLoading: isLoadingForPermissions,
-    allowedActions: { canChange, canAdmin },
-  } = useRBAC(viewPermissions);
+    allowedActions,
+  } = useRBAC(pluginPermissions);
+
+  const { canSettingsChange: canChange, canSettingsAdmin: canAdmin } = allowedActions;
 
   const [isModalOpened, setModalOpened] = useState(false);
   const [syncAssiciationConfirmationVisible, setSyncAssiciationConfirmationVisible] = useState(false);
