@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { Id } from "strapi-typed";
 import { isNil } from "lodash";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
 
 import {
   Page,
@@ -44,8 +40,6 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import { AdminAction } from "./components/AdminAction";
 import { ToBeFixed } from "../../../../types";
 
-const queryClient = new QueryClient();
-
 const DEFAULT_BOX_PROPS = {
   background: "neutral0",
   hasRadius: true,
@@ -54,7 +48,6 @@ const DEFAULT_BOX_PROPS = {
 };
 
 const Settings = () => {
-  console.log(queryClient);
   const toggleNotification = useNotification();
 
   const {
@@ -69,8 +62,8 @@ const Settings = () => {
   const [modalEntity, setModalEntity] = useState(undefined);
   const [entityToDelete, setEntityToDelete] = useState<any>(undefined);
 
-  const { fetch, submitMutation, deleteMutation } = useConfig(toggleNotification, queryClient);
-  const { syncAssociationsMutation } = useUtils(toggleNotification, queryClient);
+  const { fetch, submitMutation, deleteMutation } = useConfig(toggleNotification);
+  const { syncAssociationsMutation } = useUtils(toggleNotification);
 
   const {
     data,
@@ -162,7 +155,6 @@ const Settings = () => {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
       <Page.Main>
         <Page.Title>{getMessage("page.settings.header.title")}</Page.Title>
         <Layouts.Header
@@ -311,8 +303,7 @@ const Settings = () => {
             })}
           </ConfirmationModal>)}
         </Layouts.Content>
-      </Page.Main>
-    </QueryClientProvider>);
+      </Page.Main>);
 };
 
 export default Settings;
