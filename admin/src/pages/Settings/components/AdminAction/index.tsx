@@ -1,7 +1,6 @@
 import React from "react";
 
-import { Divider } from "@strapi/design-system/Divider";
-import { Typography } from "@strapi/design-system/Typography";
+import { Divider, Typography } from "@strapi/design-system";
 
 import { AdminActionContainer, AdminActionDescription, AdminActionTrigger } from './styles';
 

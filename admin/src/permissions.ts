@@ -1,4 +1,13 @@
-import permissions from "./../../permissions";
+import { Id } from "strapi-typed";
+
+const permissions = {
+  render: (uid: Id) => `plugin::reactions.${uid}`,
+  settings: {
+    read: "settings.read",
+    change: "settings.change",
+    admin: "settings.admin",
+  },
+};
 
 export default {
   access: [

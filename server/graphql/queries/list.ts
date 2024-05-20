@@ -15,7 +15,7 @@ type ListAllResolverProps = {
   id?: StrapiId;
 };
 
-export = ({ nexus }: StrapiGraphQLContext) => {
+export default ({ nexus }: StrapiGraphQLContext) => {
   const { nonNull, stringArg, intArg, list } = nexus;
 
   return {

@@ -23,18 +23,18 @@
   },
 
   "include": [
-    "custom.d.ts",
     "server/**/*",
-    "admin/**/*",
     "strapi-server.*",
-    "strapi-admin.*",
-    "setup-package.ts",
-    "permissions.*"
   ],
   "exclude": [
     "**/node_modules/**/*",
     "**/__tests__/**/*",
     "**/__mocks__/**/*",
-    "**/dist/**/*"
+    "**/dist/**/*",
+    "custom.d.ts",
+    "admin/**/*",
+    "strapi-admin.*",
+    "permissions.*",
+    "setup-package.ts",
   ]
 }

@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
-import { Typography } from "@strapi/design-system/Typography";
-import { Popover } from '@strapi/design-system/Popover';
+import { Popover, Typography } from "@strapi/design-system";
 
 const sizing = {
     width: '100%',

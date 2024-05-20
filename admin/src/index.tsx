@@ -1,5 +1,3 @@
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
-
 import { get } from "lodash";
 
 import pluginPkg from '../../package.json';
@@ -8,16 +6,20 @@ import Initializer from './components/Initializer';
 
 import pluginPermissions from "./permissions";
 import trads, { TranslationKey, Translations } from './translations';
-import { EditViewSummary } from './injections/EditViewSummary';
+// import { EditViewSummary } from './injections/EditViewSummary';
+import { prefixTranslations } from './utils';
 
 const { name, displayName } = pluginPkg.strapi;
 
 export default {
   bootstrap(app: any) {
-    app.injectContentManagerComponent('editView', 'informations', {
-      name: 'reactions-summary',
-      Component: EditViewSummary,
-    });
+    console.log('bootstrap');
+    console.log(app);
+    // console.log(app.getPlugin('content-manager'));
+    // app.getPlugin('content-manager').injectComponent()('editView', 'informations', {
+    //   name: 'reactions-summary',
+    //   Component: EditViewSummary,
+    // });
   },
 
   register(app: any) {
@@ -39,7 +41,7 @@ export default {
           to: `/settings/${pluginId}`,
           Component: async () => {
             const component = await import(
-              /* webpackChunkName: "documentation-settings" */ "./pages/Settings"
+              "./pages/Settings"
             );
 
             return component;
@@ -64,7 +66,7 @@ export default {
     .filter((locale: string) => Object.keys(trads).includes(locale))
     .map((locale: string) => {
       return {
-        data: prefixPluginTranslations(get<Translations, TranslationKey>(trads, locale as TranslationKey, trads.en), pluginId, {}),
+        data: prefixTranslations(get<Translations, TranslationKey>(trads, locale as TranslationKey, trads.en), pluginId),
         locale,
       };
     });

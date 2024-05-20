@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 
-import { Button } from '@strapi/design-system/Button';
-import { CarouselInput } from '@strapi/design-system';
-import { Flex } from '@strapi/design-system/Flex';
-import { Icon } from '@strapi/design-system/Icon';
+import { Button, CarouselInput, Flex } from '@strapi/design-system';
 
 import { EmotionHappy } from '@strapi/icons';
 
@@ -46,8 +43,7 @@ export const ReactionEmojiSelect = ({ value, onChange }: ReactionEmojiSelectProp
                 width="100%"
             >
                 <ReactionEmojiSelectInner>
-                    { !value && (<><Icon
-                        as={EmotionHappy}
+                    { !value && (<><EmotionHappy
                         aria-hidden
                         width="30px"
                         height="24px"

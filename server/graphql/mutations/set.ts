@@ -11,7 +11,7 @@ type SetReactionProps = {
   input: ToBeFixed;
 };
 
-export = ({ nexus }: StrapiGraphQLContext) => {
+export default ({ nexus }: StrapiGraphQLContext) => {
   const { nonNull } = nexus;
 
   return {

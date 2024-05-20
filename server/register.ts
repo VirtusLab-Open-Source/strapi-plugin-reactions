@@ -1,6 +1,6 @@
-import { Strapi } from '@strapi/strapi';
+import { Core } from '@strapi/types';
 
 //@ts-ignore
-export default ({ strapi }: { strapi: Strapi }) => {
+export default ({ strapi }: { strapi: Core.Strapi }) => {
   // register phase
 };

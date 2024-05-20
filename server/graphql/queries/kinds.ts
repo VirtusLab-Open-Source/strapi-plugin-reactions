@@ -4,7 +4,7 @@ import {
 } from "../../../types";
 import { getPluginService } from "../../utils/functions";
 
-export = ({ nexus }: StrapiGraphQLContext) => {
+export default ({ nexus }: StrapiGraphQLContext) => {
   const { list } = nexus;
 
   return {
