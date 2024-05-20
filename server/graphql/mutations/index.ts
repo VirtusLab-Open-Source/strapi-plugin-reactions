@@ -4,7 +4,7 @@ import reactionSet from "./set";
 import reactionUnset from "./unset";
 import reactionToggle from "./toggle";
 
-export = (context: StrapiGraphQLContext) => {
+export default (context: StrapiGraphQLContext) => {
   const mutations = {
     reactionSet,
     reactionUnset,

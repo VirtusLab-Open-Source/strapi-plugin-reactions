@@ -3,16 +3,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { isNil } from "lodash";
 import { Formik } from "formik";
 
-import { Form, GenericInput, useNotification, useLibrary } from "@strapi/helper-plugin";
-import { Button } from '@strapi/design-system/Button';
-import { Divider } from '@strapi/design-system/Divider';
-import { Grid, GridItem } from '@strapi/design-system/Grid';
-import { ModalLayout, ModalBody, ModalHeader, ModalFooter } from '@strapi/design-system/ModalLayout';
-import { Loader } from '@strapi/design-system/Loader';
-import { Stack } from '@strapi/design-system/Stack';
-import { TextInput } from '@strapi/design-system/TextInput';
-import { ToggleInput } from '@strapi/design-system/ToggleInput';
-import { Typography } from '@strapi/design-system/Typography';
+import { Form, InputRenderer, useNotification, useStrapiApp } from "@strapi/admin/strapi-admin";
+
+import {
+  Button, 
+  Divider,
+  Grid,
+  GridItem,
+  ModalLayout, 
+  ModalBody, 
+  ModalHeader, 
+  ModalFooter,
+  Loader,
+  TextInput,
+  Toggle,
+  Typography } from '@strapi/design-system';
 import { getMessage } from "../../../../utils";
 import { pluginId } from "../../../../pluginId";
 import useUtils from "../../../../hooks/useUtils";
@@ -34,7 +39,7 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
   const [slug, setSlug] = useState(data.slug || '');
   const [imageVariant, setImageVariant] = useState(isNil(data.emoji));
   const { slugMutation } = useUtils(toggleNotification);
-  const { fields } = useLibrary();
+  const fields = useStrapiApp('reactionsPlugin', (state) => state.customFields);
 
   useEffect(() => {
     slugMutation.reset();
@@ -61,14 +66,14 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
     slug: slug || values.slug,
   });
 
-  const formLocked = slugMutation.isLoading;
+  const formLocked = slugMutation.isPending;
 
   return (<Formik
     initialValues={data}
     enableReinitialize={true}
     onSubmit={submitForm}>
     {({ handleSubmit, setFieldValue, values }) => (
-      <Form noValidate onSubmit={handleSubmit}>
+      <Form method="POST" onSubmit={(e: any) => handleSubmit(e)}>
         <ModalLayout onClose={onClose} labelledBy="title">
           <ModalHeader>
             <Typography fontWeight="bold" textColor="neutral800" as="h2" id="title">
@@ -76,9 +81,9 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
             </Typography>
           </ModalHeader>
           <ModalBody>
-            <Stack gap={4}>
+            <div>
               <ReactionTypeSwitch>
-                <ToggleInput size="S"
+                <Toggle size="S"
                   hint={getMessage("page.settings.form.type.hint")}
                   label={getMessage("page.settings.form.type.label")}
                   name="enable-provider"
@@ -90,10 +95,11 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
               <Divider useMargin />
               <Grid gap={4}>
                 <GridItem col={4} xs={12}>
-                  { imageVariant && (<GenericInput
+                  { imageVariant && (<InputRenderer
                     customInputs={fields}
                     intlLabel={{ id: `${pluginId}.page.settings.form.icon.label` }}
                     multiple={false}
+                    //@ts-ignore
                     type="media"
                     name="icon"
                     value={values.icon || undefined}
@@ -105,7 +111,7 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
                   { !imageVariant && (<ReactionEmojiSelect value={values.emoji} onChange={setFieldValue} />)}
                 </GridItem>
                 <GridItem col={8} xs={12}>
-                  <Stack gap={4}>
+                  <div>
                     <Grid>
                       <GridItem col={12}>
                         <TextInput
@@ -136,14 +142,14 @@ const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalPro
                           )}
                           value={slug}
                           disabled={true}
-                          endAction={slugMutation.isLoading && (<Loader small />)}
+                          endAction={slugMutation.isPending && (<Loader small />)}
                         />
                       </GridItem>
                     </Grid>
-                  </Stack>
+                  </div>
                 </GridItem>
               </Grid>
-            </Stack>
+            </div>
           </ModalBody>
           <ModalFooter startActions={<Button onClick={onClose} variant="tertiary">
             {getMessage("page.settings.modal.action.cancel")}

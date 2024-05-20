@@ -1,16 +1,18 @@
 import React from "react";
 import { useLocation } from 'react-router-dom';
-import { isEmpty } from "lodash";
+import { isEmpty, get } from "lodash";
 
 import { UID } from "@strapi/strapi";
 import {
     useNotification
-} from "@strapi/helper-plugin";
+} from "@strapi/admin/strapi-admin";
 
-import { Box } from '@strapi/design-system/Box';
-import { Divider } from '@strapi/design-system/Divider';
-import { Grid, GridItem } from '@strapi/design-system/Grid';
-import { Typography } from '@strapi/design-system/Typography';
+import { 
+    Box,
+    Divider, 
+    Grid, 
+    GridItem, 
+    Typography } from '@strapi/design-system';
 
 import { ReactionCounter, ReactionCounterProps } from "./components/ReactionCounter";
 
@@ -45,9 +47,9 @@ export const EditViewSummary = () => {
     const { fetch: fetchConfig } = useConfig(toggleNotification);
     const { fetch: fetchReactions } = useContentManager(uid, id);
 
-    const { types = [] } = fetchConfig?.data || {};
+    const { types = [] } = fetchConfig?.data || {} as any;
 
-    const isLoading = fetchConfig.isLoading || fetchReactions.isLoading
+    const isLoading = fetchConfig.isPending || fetchReactions.isPending
     const isNotInjectable = isLoading
         || isEmpty(fetchReactions.data)
         || (!types || isEmpty(types));
@@ -65,7 +67,7 @@ export const EditViewSummary = () => {
             <Grid gap={4}>
                 {types.map(({ name, slug, icon, emoji }: ReactionCounterProps & { slug: string }) => (
                     <GridItem key={`reaction-type-${slug}`} col={4} s={6} xs={12}>
-                        <ReactionCounter name={name} icon={icon} emoji={emoji} count={reactionsCount[slug]} />
+                        <ReactionCounter name={name} icon={icon} emoji={emoji} count={get(reactionsCount, slug)} />
                     </GridItem>
                 ))}
             </Grid>

@@ -14,5 +14,5 @@ const typesFactories = [
   ResponseKind,
 ];
 
-export = (context: StrapiGraphQLContext) =>
+export default (context: StrapiGraphQLContext) =>
   typesFactories.map((factory) => factory(context));

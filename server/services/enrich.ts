@@ -1,5 +1,4 @@
-import { Strapi } from '@strapi/strapi';
-import { UID } from "@strapi/types";
+import { Core, UID } from '@strapi/types';
 
 import { PopulateClause } from 'strapi-typed';
 
@@ -29,7 +28,7 @@ const DEFAULT_POPULATE = {
   }
 };
 
-export default ({ strapi }: { strapi: Strapi }) => ({
+export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async enrichOne<T extends ReactionEntity, M extends any>(
     this: IServiceEnrich,
