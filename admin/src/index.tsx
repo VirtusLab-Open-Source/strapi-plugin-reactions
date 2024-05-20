@@ -41,7 +41,7 @@ export default {
           to: `/settings/${pluginId}`,
           Component: async () => {
             const component = await import(
-              "./pages/Settings"
+              "./pages/SettingsInit"
             );
 
             return component;
