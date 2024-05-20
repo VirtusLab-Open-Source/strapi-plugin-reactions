@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Badge } from '@strapi/design-system/Badge';
+import { Badge } from '@strapi/design-system';
 
 export const ReactionCounterContainer = styled(Badge)`
     width: 100%;

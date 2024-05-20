@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Tooltip } from '@strapi/design-system/Tooltip';
+import { Tooltip } from '@strapi/design-system';
 
 import { ReactionCounterContainer, ReactionCounterDot, ReactionEmoji, ReactionImage, ReactionName } from "./styled";
 

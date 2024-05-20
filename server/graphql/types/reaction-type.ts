@@ -1,6 +1,6 @@
 import { INexusType, StrapiGraphQLContext } from "../../../types";
 
-export = ({ nexus }: StrapiGraphQLContext) =>
+export default ({ nexus }: StrapiGraphQLContext) =>
   nexus.objectType({
     name: "ReactionType",
     definition(t: INexusType) {

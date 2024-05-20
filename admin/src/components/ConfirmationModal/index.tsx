@@ -1,11 +1,13 @@
 import React from "react";
 
-import { Button } from '@strapi/design-system/Button';
-import { Dialog, DialogBody, DialogFooter } from '@strapi/design-system/Dialog';
-import { Flex } from '@strapi/design-system/Flex';
-import { Typography } from '@strapi/design-system/Typography';
-import { Stack } from '@strapi/design-system/Stack';
-import { ExclamationMarkCircle } from "@strapi/icons";
+import { 
+  Button, 
+  Dialog, 
+  DialogBody, 
+  DialogFooter, 
+  Flex, 
+  Typography } from '@strapi/design-system';
+import { WarningCircle } from "@strapi/icons";
 
 type ConfirmationModalProps = {
   isVisible: boolean;
@@ -30,14 +32,14 @@ const ConfirmationModal = ({
   onConfirm,
   onClose }: ConfirmationModalProps) => {
   return (<Dialog onClose={onClose} title={title} isOpen={isVisible}>
-    <DialogBody icon={<ExclamationMarkCircle />}>
-      <Stack size={2}>
+    <DialogBody icon={<WarningCircle />}>
+      <div>
         <Flex justifyContent="center">
           <Typography id="confirm-description">
             {children}
           </Typography>
         </Flex>
-      </Stack>
+      </div>
     </DialogBody>
     <DialogFooter startAction={<Button
       onClick={onClose}

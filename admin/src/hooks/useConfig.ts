@@ -1,6 +1,4 @@
-// TODO
-//@ts-nocheck
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
 import {
   fetchConfig,
   updateConfig,
@@ -8,12 +6,21 @@ import {
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
 
-const useConfig = (toggleNotification) => {
-  const queryClient = useQueryClient();
+export type useConfigResult = {
+  fetch: UseQueryResult<any, Error>;
+  submitMutation: UseMutationResult<any, Error>;
+  deleteMutation: UseMutationResult<any, Error>;
+};
 
-  const fetch = useQuery("get-config", () => fetchConfig(toggleNotification));
+const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
+  const queryClient = useQueryClient(client);
 
-  const handleError = (type, callback = () => {}) => {
+  const fetch = useQuery({
+    queryKey: ["get-config"], 
+    queryFn: () => fetchConfig(toggleNotification)
+  });
+
+  const handleError = (type: any, callback = () => {}) => {
     toggleNotification({
       type: "warning",
       message: `${pluginId}.page.settings.notification.${type}.error`,
@@ -22,12 +29,12 @@ const useConfig = (toggleNotification) => {
   };
 
   const handleSuccess = (
-    type,
+    type: any,
     callback = () => {},
     invalidateQueries = true,
   ) => {
     if (invalidateQueries) {
-      queryClient.invalidateQueries("get-config");
+      queryClient.invalidateQueries({ queryKey: ["get-config"] });
     }
     toggleNotification({
       type: "success",
@@ -36,12 +43,14 @@ const useConfig = (toggleNotification) => {
     callback();
   };
 
-  const submitMutation = useMutation(updateConfig, {
+  const submitMutation = useMutation({
+    mutationFn: ({ body, toggleNotification }: any) => updateConfig(body, toggleNotification),
     onSuccess: () => handleSuccess("submit"),
     onError: () => handleError("submit"),
   });
 
-  const deleteMutation = useMutation(deleteReactionType, {
+  const deleteMutation = useMutation({
+    mutationFn: ({ id, toggleNotification }: any) => deleteReactionType(id, toggleNotification),
     onSuccess: () => handleSuccess("reaction.delete"),
     onError: () => handleError("reaction.delete"),
   });

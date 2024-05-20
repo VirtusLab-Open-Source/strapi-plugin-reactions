@@ -1,14 +1,17 @@
-//@ts-nocheck
-
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import {
   generateSlug,
   syncAssociations,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
 
-const useUtils = (toggleNotification) => {
-  const queryClient = useQueryClient();
+export type useUtilsResult = {
+  slugMutation: UseMutationResult<any, Error>;
+  syncAssociationsMutation: any;//UseMutationResult<any, Error>;
+};
+
+const useUtils = (toggleNotification: any, client?: any): useUtilsResult => {
+  const queryClient = useQueryClient(client);
 
   const handleError = (type: string, callback = () => {}) => {
     toggleNotification({
@@ -30,17 +33,19 @@ const useUtils = (toggleNotification) => {
       });
     }
     if (invalidateQueries) {
-      queryClient.invalidateQueries("generate-slug");
+      queryClient.invalidateQueries({ queryKey: ["generate-slug"] });
     }
     callback();
   };
 
-  const slugMutation = useMutation(generateSlug, {
+  const slugMutation = useMutation({
+    mutationFn: ({ payload }: any) => generateSlug(payload),
     onSuccess: () => handleSuccess(),
     onError: () => handleError('generate-slug'),
   });
 
-  const syncAssociationsMutation = useMutation(syncAssociations, {
+  const syncAssociationsMutation = useMutation({
+    mutationFn: () => syncAssociations(),
     onSuccess: () => handleSuccess('sync-associations'),
     onError: () => handleError('sync-associations'),
   });

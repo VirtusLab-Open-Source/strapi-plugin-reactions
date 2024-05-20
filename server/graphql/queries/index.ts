@@ -3,7 +3,7 @@ import { INexusType, StrapiGraphQLContext } from "../../../types";
 import reactionsListAll from "./list";
 import reactionKinds from "./kinds";
 
-export = (context: StrapiGraphQLContext) => {
+export default (context: StrapiGraphQLContext) => {
   const queries = {
     reactionsListAll,
     reactionsListPerUser: reactionsListAll,

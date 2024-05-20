@@ -1,6 +1,6 @@
 import server from "./server";
 
-export = () => ({
+export default ({
     ...server,
     config: {
         ...server.config,
