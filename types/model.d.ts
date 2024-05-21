@@ -1,7 +1,7 @@
-import type { Schema, Attribute } from '@strapi/strapi';
+import type { Struct, Schema } from '@strapi/strapi';
 import { StrapiId } from './common';
 
-export interface Reaction extends Schema.CollectionType {
+export interface Reaction extends Struct.CollectionTypeSchema {
     collectionName: 'vl_reactions';
     info: {
       name: 'Reaction';
@@ -26,39 +26,31 @@ export interface Reaction extends Schema.CollectionType {
   }
 
   export type ReactionAttributes = {
-    user: Attribute.Relation<
-      'plugin::reactions.reaction',
+    user: Schema.Attribute.Relation<
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    kind: Attribute.Relation<
-      'plugin::reactions.reaction',
+    kind: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::reactions.reaction-type'
     > &
-      Attribute.Required;
-    related: Attribute.Relation<'plugin::reactions.reaction', 'morphToMany'> &
-      Attribute.Required;
-    relatedUid: Attribute.Text & Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'plugin::reactions.reaction',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'plugin::reactions.reaction',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
+      Schema.Attribute.Required;
+    related: Schema.Attribute.Relation<'morphToMany'> &
+      Schema.Attribute.Required;
+    relatedUid: Schema.Attribute.Text & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
   }
 
   export type ReactionEntity = { id: StrapiId } & ReactionAttributes;
   
-  export interface ReactionType extends Schema.CollectionType {
+  export interface ReactionType extends Struct.CollectionTypeSchema {
     collectionName: 'vl_reactions_types';
     info: {
       name: 'Reaction Type';
@@ -83,30 +75,25 @@ export interface Reaction extends Schema.CollectionType {
   }
 
   export type ReactionTypeAttributes = {
-    name: Attribute.Text & Attribute.Required;
-    slug: Attribute.UID & Attribute.Unique & Attribute.DefaultTo<false>;
-    icon: Attribute.Media;
-    emoji: Attribute.Text;
-    emojiFallbackUrl: Attribute.Text;
-    reactions: Attribute.Relation<
-      'plugin::reactions.reaction-type',
+    name: Schema.Attribute.Text & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID &
+      Schema.Attribute.Unique &
+      Schema.Attribute.DefaultTo<false>;
+    icon: Schema.Attribute.Media;
+    emoji: Schema.Attribute.Text;
+    emojiFallbackUrl: Schema.Attribute.Text;
+    reactions: Schema.Attribute.Relation<
       'oneToMany',
       'plugin::reactions.reaction'
     >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'plugin::reactions.reaction-type',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'plugin::reactions.reaction-type',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
+    createdAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
   }
 
-  export type ReactionTypeEntity = { id: StrapiId } & ReactionAttributes
+  export type ReactionTypeEntity = { id: StrapiId } & ReactionTypeAttributes
