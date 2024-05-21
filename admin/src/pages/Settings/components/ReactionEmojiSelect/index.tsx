@@ -19,7 +19,7 @@ export const ReactionEmojiSelect = ({ value, onChange }: ReactionEmojiSelectProp
 
     const [selectorVisible, setSelectorVisible] = useState(false);
     const [theme, setTheme] = useState(undefined);
-    const buttonRef = useRef();
+    const buttonRef = useRef<HTMLElement>();
 
     const handleEmojiSelect = ({ emoji, imageUrl }: ReactionEmojiProps) => {
         onChange("emoji", emoji, false);
@@ -42,36 +42,43 @@ export const ReactionEmojiSelect = ({ value, onChange }: ReactionEmojiSelectProp
                 height="100%"
                 width="100%"
             >
-                <ReactionEmojiSelectInner>
-                    { !value && (<><EmotionHappy
-                        aria-hidden
-                        width="30px"
-                        height="24px"
-                        color="primary600"
-                        marginBottom={3}
-                    />
-                    <ReactionEmojiSelectTypography
-                        variant="pi"
-                        fontWeight="bold"
-                        textColor="neutral600"
-                        style={{ textAlign: 'center' }}
-                        as="span"
-                    >
-                        {getMessage("page.settings.form.emoji.empty")}
-                    </ReactionEmojiSelectTypography>
-                    </>)}
+                <ReactionEmojiSelectInner
+                    direction="column"
+                    gap={3}
+                    justifyContent="center"
+                    alignItems="center">
+                    {!value && (<Flex direction="column" gap={3}>
+                        <EmotionHappy
+                            aria-hidden
+                            width="30px"
+                            height="24px"
+                            color="primary600"
+                        />
+                        <ReactionEmojiSelectTypography
+                            variant="pi"
+                            fontWeight="bold"
+                            textColor="neutral600"
+                            style={{ textAlign: 'center' }}
+                            tag="span"
+                        >
+                            {getMessage("page.settings.form.emoji.empty")}
+                        </ReactionEmojiSelectTypography>
+                    </Flex>)}
 
-                    {value && (<ReactionEmojiSelectDisplay>
+                    {value && (<ReactionEmojiSelectDisplay
+                        direction="row"
+                        justifyContent="center"
+                        alignItems="center">
                         {value}
                     </ReactionEmojiSelectDisplay>)}
 
                     <Button ref={buttonRef} onClick={() => setSelectorVisible(s => !s)} variant='secondary'>{getMessage("page.settings.form.emoji.button.label")}</Button>
                     {selectorVisible && <ReactionEmojiSelectPopover centered source={buttonRef} spacing={16}>
-                        <EmojiPicker 
-                        theme={theme} 
-                        emojiStyle={EmojiStyle.NATIVE}
-                        searchPlaceholder={getMessage("page.settings.form.emoji.plugin.search.label")}
-                        onEmojiClick={handleEmojiSelect} />
+                        <EmojiPicker
+                            theme={theme}
+                            emojiStyle={EmojiStyle.NATIVE}
+                            searchPlaceholder={getMessage("page.settings.form.emoji.plugin.search.label")}
+                            onEmojiClick={handleEmojiSelect} />
                     </ReactionEmojiSelectPopover>}
                 </ReactionEmojiSelectInner>
             </Flex>

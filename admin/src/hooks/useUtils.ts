@@ -1,17 +1,24 @@
 import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
+
 import {
   generateSlug,
   syncAssociations,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
+import { StrapiId } from '../../../types';
 
-export type useUtilsResult = {
-  slugMutation: UseMutationResult<any, Error>;
-  syncAssociationsMutation: any;//UseMutationResult<any, Error>;
+type SlugMutationPayload = {
+  value: string;
+  id: StrapiId;
 };
 
-const useUtils = (toggleNotification: any, client?: any): useUtilsResult => {
-  const queryClient = useQueryClient(client);
+export type useUtilsResult = {
+  slugMutation: UseMutationResult<string, Error, SlugMutationPayload>;
+  syncAssociationsMutation: UseMutationResult<any, Error, void>;
+};
+
+const useUtils = (toggleNotification: any): useUtilsResult => {
+  const queryClient = useQueryClient();
 
   const handleError = (type: string, callback = () => {}) => {
     toggleNotification({
@@ -39,13 +46,13 @@ const useUtils = (toggleNotification: any, client?: any): useUtilsResult => {
   };
 
   const slugMutation = useMutation({
-    mutationFn: ({ payload }: any) => generateSlug(payload),
+    mutationFn: ({ value, id }: SlugMutationPayload) => generateSlug({ value, id}),
     onSuccess: () => handleSuccess(),
     onError: () => handleError('generate-slug'),
   });
 
   const syncAssociationsMutation = useMutation({
-    mutationFn: () => syncAssociations(),
+    mutationFn: syncAssociations,
     onSuccess: () => handleSuccess('sync-associations'),
     onError: () => handleError('sync-associations'),
   });

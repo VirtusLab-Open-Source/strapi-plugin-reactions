@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent, MouseEventHandler } from "react";
 
 import { 
   Button, 
@@ -17,8 +17,8 @@ type ConfirmationModalProps = {
   labelCancel: string;
   labelConfirm: string;
   iconConfirm: React.ReactNode;
-  onClose: Function;
-  onConfirm: Function;
+  onClose: () => void;
+  onConfirm: MouseEventHandler<HTMLButtonElement> & ((event: MouseEvent<HTMLButtonElement, MouseEvent>) => void);
 };
 
 const ConfirmationModal = ({
