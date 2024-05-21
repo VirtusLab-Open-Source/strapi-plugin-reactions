@@ -5,10 +5,16 @@ import {
   deleteReactionType,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
+import { ReactionTypeEntity } from '../../../types';
+
+type SubmitPayload = {
+  body: ReactionTypeEntity;
+  toggleNotification: any;
+};
 
 export type useConfigResult = {
   fetch: UseQueryResult<any, Error>;
-  submitMutation: UseMutationResult<any, Error>;
+  submitMutation: UseMutationResult<any, Error, SubmitPayload>;
   deleteMutation: UseMutationResult<any, Error>;
 };
 
@@ -44,7 +50,7 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   };
 
   const submitMutation = useMutation({
-    mutationFn: ({ body, toggleNotification }: any) => updateConfig(body, toggleNotification),
+    mutationFn: ({ body, toggleNotification }: SubmitPayload) => updateConfig(body, toggleNotification),
     onSuccess: () => handleSuccess("submit"),
     onError: () => handleError("submit"),
   });

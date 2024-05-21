@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Popover, Typography } from "@strapi/design-system";
+import { Flex, Popover, Typography } from "@strapi/design-system";
 
 const sizing = {
     width: '100%',
@@ -12,31 +12,17 @@ export const ReactionEmojiSelectContainer = styled.div`
     display: block;
 `;
 
-export const ReactionEmojiSelectInner = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
+export const ReactionEmojiSelectInner = styled(Flex)`
     width: ${sizing.width};
     height: ${sizing.innerHeight};
 `;
 
-export const ReactionEmojiSelectDisplay = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-
-    margin-bottom: 16px;
-
-    font-size: 200%;
+export const ReactionEmojiSelectDisplay = styled(Flex)`
+    font-size: 300%;
 `;
 
 export const ReactionEmojiSelectTypography = styled(Typography)`
     align-items: center;
-
-    margin-bottom: 16px;
 `;
 
 export const ReactionEmojiSelectPopover = styled(Popover)`
