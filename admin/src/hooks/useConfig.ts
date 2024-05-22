@@ -1,4 +1,7 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
+
+import { useFetchClient } from '@strapi/strapi/admin';
+
 import {
   fetchConfig,
   updateConfig,
@@ -20,10 +23,12 @@ export type useConfigResult = {
 
 const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   const queryClient = useQueryClient(client);
+  const fetchClient = useFetchClient();
+  const config = { toggleNotification, fetchClient };
 
   const fetch = useQuery({
     queryKey: ["get-config"], 
-    queryFn: () => fetchConfig(toggleNotification)
+    queryFn: () => fetchConfig(config),
   });
 
   const handleError = (type: any, callback = () => {}) => {
@@ -50,13 +55,13 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   };
 
   const submitMutation = useMutation({
-    mutationFn: ({ body, toggleNotification }: SubmitPayload) => updateConfig(body, toggleNotification),
+    mutationFn: ({ body }: SubmitPayload) => updateConfig(body, config),
     onSuccess: () => handleSuccess("submit"),
     onError: () => handleError("submit"),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: ({ id, toggleNotification }: any) => deleteReactionType(id, toggleNotification),
+    mutationFn: ({ id }: any) => deleteReactionType(id, config),
     onSuccess: () => handleSuccess("reaction.delete"),
     onError: () => handleError("reaction.delete"),
   });

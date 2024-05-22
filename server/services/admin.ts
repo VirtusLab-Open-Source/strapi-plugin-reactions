@@ -48,7 +48,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async deleteReactionType(
     this: IServiceAdmin,
     id: StrapiId,
-  ): Promise<boolean> {
+  ): Promise<{ 
+    result: boolean 
+  }> {
 
     const reactionKind = await strapi.entityService
       ?.findOne(getModelUid("reaction-type"), id);
@@ -76,17 +78,24 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const removed = await strapi.entityService
       ?.delete(getModelUid("reaction-type"), id);
 
-    return !isNil(removed) && (removed.id === id);
+    return {
+      result: !isNil(removed) && (removed.id === id),
+    };
   },
 
   async generateSlug(
     this: IServiceAdmin,
     subject: string,
     id?: StrapiId,
-  ): Promise<string> {
+  ): Promise<{
+    slug: string;
+  }> {
 
     const slug = slugify(subject).toLowerCase();
-    return await this.uniqueSlug(slug, id);
+    const response =  await this.uniqueSlug(slug, id);
+    return {
+      slug: response,
+    };
   },
 
   async uniqueSlug(
