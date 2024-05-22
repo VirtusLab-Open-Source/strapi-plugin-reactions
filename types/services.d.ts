@@ -15,8 +15,8 @@ export interface IServiceAdmin {
   updateConfig(
     body: ReactionsPluginConfig | undefined,
   ): Promise<ReactionsPluginConfig>;
-  deleteReactionType(id: StrapiId): Promise<boolean>;
-  generateSlug(subject: string, id?: StrapiId): Promise<string>;
+  deleteReactionType(id: StrapiId): Promise<{ result: boolean }>;
+  generateSlug(subject: string, id?: StrapiId): Promise<{ slug: string }>;
   uniqueSlug(slug: string, id?: StrapiId): Promise<string>;
   syncAssociations(): Promise<boolean>;
 }

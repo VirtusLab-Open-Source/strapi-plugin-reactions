@@ -1,12 +1,22 @@
 import { isNil } from "lodash";
-import { getApiURL, axiosInstance, handleAPIError } from "../../../utils";
+import { getApiURL, handleAPIError } from "../../../utils";
 import qs from "qs";
 import { StrapiId, ToBeFixed } from "../../../../../types";
 
-// eslint-disable-next-line import/prefer-default-export
-export const fetchConfig = async (toggleNotification: ToBeFixed) => {
+export type FetchConfig = {
+  toggleNotification: ToBeFixed;
+  fetchClient: {
+    get: Function;
+    post: Function;
+    put: Function;
+    del: Function;
+  };
+};
+
+export const fetchConfig = async ({ toggleNotification, fetchClient }: FetchConfig) => {
+
   try {
-    const { data } = await axiosInstance.get(getApiURL(`settings/config`));
+    const { data } = await fetchClient.get(getApiURL(`settings/config`));
 
     return data;
   } catch (err) {
@@ -18,9 +28,9 @@ export const fetchConfig = async (toggleNotification: ToBeFixed) => {
   }
 };
 
-export const updateConfig = async (body: ToBeFixed, toggleNotification: ToBeFixed) => {
+export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchClient }: FetchConfig) => {
   try {
-    const method = isNil(body.id) ? axiosInstance.post : axiosInstance.put;
+    const method = isNil(body.id) ? fetchClient.post : fetchClient.put;
     const { data } = await method(
       getApiURL(`settings/config`),
       body,
@@ -32,32 +42,32 @@ export const updateConfig = async (body: ToBeFixed, toggleNotification: ToBeFixe
   }
 };
 
-export const deleteReactionType = async (id: StrapiId, toggleNotification: ToBeFixed) => {
+export const deleteReactionType = async (id: StrapiId, { toggleNotification, fetchClient }: FetchConfig) => {
   try {
-    const { data } = await axiosInstance.delete(
+    const { data } = await fetchClient.del(
       getApiURL(`settings/config/reaction-type/${id}`)
     );
 
-    return data;
+    return data.result;
   } catch (err) {
     handleAPIError(err, toggleNotification);
   }
 };
 
-export const generateSlug = async (payload: ToBeFixed) => {
+export const generateSlug = async (payload: ToBeFixed, { fetchClient }: FetchConfig) => {
   try {
     const queryParams = qs.stringify(payload);
-    const { data } = await axiosInstance.get(getApiURL(`utils/slug?${queryParams}`));
+    const { data } = await fetchClient.get(getApiURL(`utils/slug?${queryParams}`));
 
-    return data;
+    return data.slug;
   } catch (err) {
     throw err;
   }
 };
 
-export const syncAssociations = async () => {
+export const syncAssociations = async ({ fetchClient }: FetchConfig) => {
   try {
-    const { data } = await axiosInstance.post(getApiURL(`utils/sync-associations`));
+    const { data } = await fetchClient.post(getApiURL(`utils/sync-associations`));
 
     return data;
   } catch (err) {

@@ -1,4 +1,3 @@
-export {default as axiosInstance} from './axiosInstance';
 export {default as getApiURL} from './getApiUrl';
 export {default as getMessage} from './getMessage';
 export {default as prefixTranslations } from './prefixTranslations';

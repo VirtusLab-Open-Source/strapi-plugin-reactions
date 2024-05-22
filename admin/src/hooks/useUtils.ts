@@ -1,5 +1,7 @@
 import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
 
+import { useFetchClient } from '@strapi/strapi/admin';
+
 import {
   generateSlug,
   syncAssociations,
@@ -19,6 +21,8 @@ export type useUtilsResult = {
 
 const useUtils = (toggleNotification: any): useUtilsResult => {
   const queryClient = useQueryClient();
+  const fetchClient = useFetchClient();
+  const config = { toggleNotification, fetchClient };
 
   const handleError = (type: string, callback = () => {}) => {
     toggleNotification({
@@ -46,13 +50,13 @@ const useUtils = (toggleNotification: any): useUtilsResult => {
   };
 
   const slugMutation = useMutation({
-    mutationFn: ({ value, id }: SlugMutationPayload) => generateSlug({ value, id}),
+    mutationFn: ({ value, id }: SlugMutationPayload) => generateSlug({ value, id}, config),
     onSuccess: () => handleSuccess(),
     onError: () => handleError('generate-slug'),
   });
 
   const syncAssociationsMutation = useMutation({
-    mutationFn: syncAssociations,
+    mutationFn: () => syncAssociations(config),
     onSuccess: () => handleSuccess('sync-associations'),
     onError: () => handleError('sync-associations'),
   });
