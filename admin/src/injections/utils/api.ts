@@ -1,13 +1,20 @@
 import { UID } from "@strapi/strapi";
 
-import { getApiURL, axiosInstance } from "../../utils";
+import { getApiURL } from "../../utils";
 import { StrapiId } from "../../../../types";
 
-// eslint-disable-next-line import/prefer-default-export
-export const fetchReactions = async (uid: UID.ContentType, id?: StrapiId) => {
-  try {
-    const { data } = await axiosInstance.get(getApiURL(`zone/count/${uid}${id ? `/${id}` : ''}`));
+type FetchConfig = {
+  get: Function;
+};
 
-    return data;
-  } catch (err) { }
+export const fetchReactions = async (uid: UID.ContentType, id?: StrapiId, config?: FetchConfig) => {
+  if (config) {
+    const { get } = config;
+
+    try {
+      const { data } = await get(getApiURL(`zone/count/${uid}${id ? `/${id}` : ''}`));
+
+      return data;
+    } catch (err) { }
+  }
 }

@@ -63,11 +63,13 @@ const CUModal = ({ data = {}, fields, isLoading = false, onSubmit, onClose }: CU
 
     if (slugSource) {
       setLockWindow(true);
+      
       slugGenerationTimeout.current = setTimeout(async () => {
         const slug = await slugMutation.mutateAsync({
           value: slugSource,
           id: data.id,
         });
+
         setSlug(slug);
         setLockWindow(false);
       }, 1000);
