@@ -1,10 +1,11 @@
-import { ID } from "@strapi/strapi/lib/services/entity-service/types/params/attributes";
-import { Id, StrapiUser, PopulateClause } from "strapi-typed";
+import { StrapiUser, PopulateClause } from "strapi-typed";
 import { StrapiId } from "./common";
 import { AnyEntity } from "@strapi/strapi/lib/services/entity-service";
 import { ContentType } from "@strapi/strapi/lib/types/core/uid";
 import { StrapiReactions } from "../server/services/enrich";
 import { ReactionsCount } from "../server/services/zone";
+import { ReactionsPluginConfig } from "./config";
+import { ReactionTypeEntity } from "./model";
 
 export interface IServiceCommon {
   getPluginStore(): StrapiStore;
@@ -13,7 +14,7 @@ export interface IServiceCommon {
 export interface IServiceAdmin {
   fetchConfig<T extends ReactionsPluginConfig>(): Promise<T>;
   updateConfig(
-    body: ReactionsPluginConfig | undefined,
+    body: ReactionTypeEntity,
   ): Promise<ReactionsPluginConfig>;
   deleteReactionType(id: StrapiId): Promise<{ result: boolean }>;
   generateSlug(subject: string, id?: StrapiId): Promise<{ slug: string }>;
@@ -23,7 +24,7 @@ export interface IServiceAdmin {
 
 export interface IServiceClient {
   kinds(): Promise<Array<AnyEntity>>;
-  list(kind?: string, uid: ContentType, id?: StrapiId, user?: StrapiUser | undefined): Promise<Array<AnyEntity>>;
+  list(kind?: string, uid?: ContentType, id?: StrapiId, user?: StrapiUser | undefined): Promise<Array<AnyEntity>>;
   create(kind: string, uid: ContentType, id?: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity>;
   delete(kind: string, uid: ContentType, id?: StrapiId, user: StrapiUser | undefined): Promise<boolean>;
   toggle(kind: string, uid: ContentType, id?: StrapiId, user: StrapiUser | undefined): Promise<AnyEntity | boolean>;
