@@ -1,4 +1,6 @@
+import { ReactionTypeEntity } from "./model";
+
 export type ReactionsPluginConfig = {
-    types: any;
+    types: Array<ReactionTypeEntity>;
     config: any;
 };

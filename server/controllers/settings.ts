@@ -2,7 +2,8 @@ import {  StrapiRequestContext } from "strapi-typed";
 
 import { getPluginService, parseParams } from '../utils/functions';
 import { throwError } from './utils/functions';
-import { IServiceAdmin, StrapiId } from '../../types';
+import { IServiceAdmin, ReactionsPluginConfig, ReactionTypeEntity, StrapiId } from '../../types';
+import PluginError from "../utils/error";
 
 type GenerateSlugRequestQueryProps = {
   id?: StrapiId;
@@ -14,11 +15,11 @@ type ReactionsTypeDeleteProps = {
 };
 
 export default () => ({
-  getService<T>(name = "admin") {
+  getService<T>(name = "admin"): T {
     return getPluginService<T>(name);
   },
 
-  async fetch(ctx: StrapiRequestContext) {
+  async fetch(ctx: StrapiRequestContext): Promise<ReactionsPluginConfig> {
     try {
       return await this.getService<IServiceAdmin>().fetchConfig<any>();
     } catch (e) {
@@ -26,19 +27,25 @@ export default () => ({
     }
   },
 
-  async create(ctx: StrapiRequestContext) {
+  async create(ctx: StrapiRequestContext<ReactionTypeEntity>) {
     try {
       const { request: { body }} = ctx;
-      return await this.getService<IServiceAdmin>().updateConfig(body);
+      if (body) {
+        return await this.getService<IServiceAdmin>().updateConfig(body);
+      }
+      throw throwError(ctx, new PluginError(400, 'Bad Request'));
     } catch (e) {
       throw throwError(ctx, e);
     }
   },
 
-  async update(ctx: StrapiRequestContext) {
+  async update(ctx: StrapiRequestContext<ReactionTypeEntity>) {
     try {
       const { request: { body }} = ctx;
-      return await this.getService<IServiceAdmin>().updateConfig(body);
+      if (body) {
+        return await this.getService<IServiceAdmin>().updateConfig(body);
+      }
+      throw throwError(ctx, new PluginError(400, 'Bad Request'));
     } catch (e) {
       throw throwError(ctx, e);
     }

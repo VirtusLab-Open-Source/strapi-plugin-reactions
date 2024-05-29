@@ -1,7 +1,7 @@
 import { isNil } from "lodash";
 import { getApiURL, handleAPIError } from "../../../utils";
 import qs from "qs";
-import { StrapiId, ToBeFixed } from "../../../../../types";
+import { ReactionsPluginConfig, StrapiId, ToBeFixed } from "../../../../../types";
 
 export type FetchConfig = {
   toggleNotification: ToBeFixed;
@@ -13,7 +13,7 @@ export type FetchConfig = {
   };
 };
 
-export const fetchConfig = async ({ toggleNotification, fetchClient }: FetchConfig) => {
+export const fetchConfig = async ({ toggleNotification, fetchClient }: FetchConfig): Promise<ReactionsPluginConfig | undefined> => {
 
   try {
     const { data } = await fetchClient.get(getApiURL(`settings/config`));
@@ -28,7 +28,7 @@ export const fetchConfig = async ({ toggleNotification, fetchClient }: FetchConf
   }
 };
 
-export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchClient }: FetchConfig) => {
+export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchClient }: FetchConfig): Promise<ReactionsPluginConfig | undefined> => {
   try {
     const method = isNil(body.id) ? fetchClient.post : fetchClient.put;
     const { data } = await method(
@@ -42,7 +42,7 @@ export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchC
   }
 };
 
-export const deleteReactionType = async (id: StrapiId, { toggleNotification, fetchClient }: FetchConfig) => {
+export const deleteReactionType = async (id: StrapiId, { toggleNotification, fetchClient }: FetchConfig): Promise<number | undefined> => {
   try {
     const { data } = await fetchClient.del(
       getApiURL(`settings/config/reaction-type/${id}`)
@@ -54,7 +54,7 @@ export const deleteReactionType = async (id: StrapiId, { toggleNotification, fet
   }
 };
 
-export const generateSlug = async (payload: ToBeFixed, { fetchClient }: FetchConfig) => {
+export const generateSlug = async (payload: ToBeFixed, { fetchClient }: FetchConfig): Promise<string | undefined> => {
   try {
     const queryParams = qs.stringify(payload);
     const { data } = await fetchClient.get(getApiURL(`utils/slug?${queryParams}`));
@@ -65,7 +65,7 @@ export const generateSlug = async (payload: ToBeFixed, { fetchClient }: FetchCon
   }
 };
 
-export const syncAssociations = async ({ fetchClient }: FetchConfig) => {
+export const syncAssociations = async ({ fetchClient }: FetchConfig): Promise<void> => {
   try {
     const { data } = await fetchClient.post(getApiURL(`utils/sync-associations`));
 
