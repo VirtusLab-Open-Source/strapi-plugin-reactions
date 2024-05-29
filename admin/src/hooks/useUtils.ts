@@ -15,7 +15,7 @@ type SlugMutationPayload = {
 };
 
 export type useUtilsResult = {
-  slugMutation: UseMutationResult<string, Error, SlugMutationPayload>;
+  slugMutation: UseMutationResult<string | undefined, Error, SlugMutationPayload>;
   syncAssociationsMutation: UseMutationResult<any, Error, void>;
 };
 
