@@ -85,7 +85,7 @@
   "scripts": {
     "prepare": "husky install",
     "publish:latest": "cd dist && npm publish --tag latest",
-    "prepublish:latest": "npm run clean && npm run build && node ./dist/setup-package.js",
+    "prepublish:latest": "npm run clean && npm run build && ts-node ./setup-package.ts",
     "build": "yarn clean && yarn build:part:admin && yarn build:part:server && yarn copy-translations",
     "build:part:admin": "tsc -p tsconfig.admin.json ",
     "build:part:server": "tsc -p tsconfig.server.json ",
