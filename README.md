@@ -2,7 +2,7 @@
   <img style="width: 150px; height: auto;" src="public/assets/logo.png" alt="Logo - Strapi Reaction plugin" />
 </div>
 <div align="center">
-  <h1>Strapi - Reactions plugin</h1>
+  <h1>Strapi - Reactions plugin - Beta v5</h1>
   <p>All-in-One reactions plugin for any Content Type. Simple & flexible</p>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
     <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions?label=npm&logo=npm">
@@ -17,6 +17,8 @@
     <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg?branch=master" alt="codecov.io" />
   </a>
 </div>
+
+## ⚠️ This is the beta version for Strapi v5
 
 ---
 
@@ -118,8 +120,10 @@ In our minimum support we're following [official Node.js releases timelines](htt
 
 **Supported Strapi versions**:
 
-- Strapi v4.24.x (recently tested)
-- Strapi v4.x
+- Strapi v5.0.0-beta.10 (recently tested)
+- Strapi v5.x
+
+If you're looking for Strapi v4 compatible version, please go [here](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/main).
 
 **Plugin dependencies**
 - `@strapi/plugin-graphql` - required to run because built-in support for GraphQL handled by this plugin 
