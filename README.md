@@ -5,16 +5,16 @@
   <h1>Strapi - Reactions plugin</h1>
   <p>All-in-One reactions plugin for any Content Type. Simple & flexible</p>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
-    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions?label=npm&logo=npm">
+    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions/v5?label=npm&logo=npm">
   </a>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
     <img src="https://img.shields.io/npm/dm/strapi-plugin-reactions.svg" alt="Monthly download on NPM" />
   </a>
   <a href="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
-    <img src="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions.svg?style=shield" alt="CircleCI" />
+    <img src="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions/tree/v5.svg?style=shield" alt="CircleCI" />
   </a>
   <a href="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
-    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg?branch=master" alt="codecov.io" />
+    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg?branch=v5" alt="codecov.io" />
   </a>
 </div>
 
