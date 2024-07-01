@@ -17,10 +17,10 @@ import { ReactionCounter, ReactionCounterProps } from "./components/ReactionCoun
 import useContentManager, { ContentManagerType } from "../../hooks/useContentManager";
 import useConfig from "../../hooks/useConfig";
 
-const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<id>\d*)/;
+const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z-]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<id>\d*)/;
 const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
-    SINGLE_TYPE: 'singleType',
-    COLLECTION_TYPE: 'collectionType',
+    SINGLE_TYPE: 'single-types',
+    COLLECTION_TYPE: 'collection-types',
 };
 
 type ContentManagerPathProps = {
@@ -35,7 +35,7 @@ export const EditViewSummary = () => {
 
     const groups: ContentManagerPathProps = new RegExp(CONTENT_MANAGER_PATH_PATTERN, "gm")
         .exec(location.pathname)?.groups as ContentManagerPathProps;
-        console.log(groups);
+
     const { uid, id, type } = groups;
 
     if (!id && (type === CONTENT_MANAGER_TYPES.COLLECTION_TYPE)) {
