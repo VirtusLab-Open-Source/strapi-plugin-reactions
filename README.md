@@ -30,16 +30,21 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 
 ### Table of Contents
 
-1. [✨ Features](#-features)
-2. [⏳ Installation](#-installation)
-3. [🖐 Requirements](#-requirements)
-4. [🔧 Configuration](#-configuration)
-5. [🕸️ Public API - REST](#%EF%B8%8F-public-rest-api-specification)
-5. [🕸️ Public API - GraphQL](#%EF%B8%8F-public-graphql-api-specification)
-7. [🔌 Enrich service for Strapi extensions](#-enrich-service-for-strapi-extensions)
-8. [💬 FAQ](#-faq)
-9. [🤝 Contributing](#-contributing)
-10. [👨‍💻 Community support](#-community-support)
+1. [💎 Versions](#-versions)
+2. [✨ Features](#-features)
+3. [⏳ Installation](#-installation)
+4. [🖐 Requirements](#-requirements)
+5. [🔧 Configuration](#-configuration)
+6. [🕸️ Public API - REST](#%EF%B8%8F-public-rest-api-specification)
+7. [🕸️ Public API - GraphQL](#%EF%B8%8F-public-graphql-api-specification)
+8. [🔌 Enrich service for Strapi extensions](#-enrich-service-for-strapi-extensions)
+9. [💬 FAQ](#-faq)
+10. [🤝 Contributing](#-contributing)
+11. [👨‍💻 Community support](#-community-support)
+
+## 💎 Versions
+- **Strapi v5** - (current) [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/v5)
+- **Strapi v4** - [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
 
 ## ✨ Features
 
@@ -120,7 +125,7 @@ In our minimum support we're following [official Node.js releases timelines](htt
 
 **Supported Strapi versions**:
 
-- Strapi v5.0.0-beta.10 (recently tested)
+- Strapi v5.0.0-rc.22 (recently tested)
 - Strapi v5.x
 
 If you're looking for Strapi v4 compatible version, please go [here](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/main).
