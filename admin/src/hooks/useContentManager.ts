@@ -4,7 +4,7 @@ import { UID } from "@strapi/strapi";
 import { useFetchClient } from '@strapi/strapi/admin';
 
 import { fetchReactions } from "../injections/utils/api";
-import { StrapiId } from "../../../types";
+import { StrapiId } from "../../../@types";
 
 export type ContentManagerType = 'single-types' | 'collection-types';
 

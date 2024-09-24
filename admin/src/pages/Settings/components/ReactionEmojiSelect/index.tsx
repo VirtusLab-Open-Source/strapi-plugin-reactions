@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 
-import { Button, CarouselInput, Flex } from '@strapi/design-system';
+import { Button, CarouselInput, Flex, Popover } from '@strapi/design-system';
 
 import { EmotionHappy } from '@strapi/icons';
 
-import { ReactionEmojiSelectContainer, ReactionEmojiSelectDisplay, ReactionEmojiSelectInner, ReactionEmojiSelectPopover, ReactionEmojiSelectTypography } from './styles';
+import { ReactionEmojiSelectContainer, ReactionEmojiSelectDisplay, ReactionEmojiSelectInner, ReactionEmojiSelectPopoverContent, ReactionEmojiSelectTypography } from './styles';
 import { getMessage } from '../../../../utils';
 
 type ReactionEmojiSelectProps = {
@@ -30,6 +30,12 @@ export const ReactionEmojiSelect = ({ value, onChange }: ReactionEmojiSelectProp
     useEffect(() => {
         setTheme(window.localStorage?.STRAPI_THEME);
     }, []);
+
+    const handleSelectorVisibleToggle = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setSelectorVisible(!selectorVisible);
+    };
 
     return (<ReactionEmojiSelectContainer>
         <CarouselInput
@@ -72,14 +78,21 @@ export const ReactionEmojiSelect = ({ value, onChange }: ReactionEmojiSelectProp
                         {value}
                     </ReactionEmojiSelectDisplay>)}
 
-                    <Button ref={buttonRef} onClick={() => setSelectorVisible(s => !s)} variant='secondary'>{getMessage("page.settings.form.emoji.button.label")}</Button>
-                    {selectorVisible && <ReactionEmojiSelectPopover centered source={buttonRef} spacing={16}>
-                        <EmojiPicker
-                            theme={theme}
-                            emojiStyle={EmojiStyle.NATIVE}
-                            searchPlaceholder={getMessage("page.settings.form.emoji.plugin.search.label")}
-                            onEmojiClick={handleEmojiSelect} />
-                    </ReactionEmojiSelectPopover>}
+                    
+                    <Popover.Root open={selectorVisible}>
+                        <Popover.Trigger>
+                            <Button onClick={handleSelectorVisibleToggle} variant='secondary'>{getMessage("page.settings.form.emoji.button.label")}</Button>
+                        </Popover.Trigger>
+                        <Popover.Content centered>
+                        <ReactionEmojiSelectPopoverContent spacing={16}>
+                            <EmojiPicker
+                                theme={theme}
+                                emojiStyle={EmojiStyle.NATIVE}
+                                searchPlaceholder={getMessage("page.settings.form.emoji.plugin.search.label")}
+                                onEmojiClick={handleEmojiSelect} />
+                        </ReactionEmojiSelectPopoverContent>
+                        </Popover.Content>
+                    </Popover.Root>
                 </ReactionEmojiSelectInner>
             </Flex>
         </CarouselInput>

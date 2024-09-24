@@ -8,7 +8,7 @@ import {
   deleteReactionType,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
-import { ReactionTypeEntity } from '../../../types';
+import { ReactionTypeEntity } from '../../../@types';
 
 type SubmitPayload = {
   body: ReactionTypeEntity;

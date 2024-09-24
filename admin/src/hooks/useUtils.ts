@@ -7,7 +7,7 @@ import {
   syncAssociations,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
-import { StrapiId } from '../../../types';
+import { StrapiId } from '../../../@types';
 
 type SlugMutationPayload = {
   value: string;
@@ -44,7 +44,7 @@ const useUtils = (toggleNotification: any): useUtilsResult => {
       });
     }
     if (invalidateQueries) {
-      queryClient.invalidateQueries({ queryKey: ["generate-slug"] });
+      queryClient.invalidateQueries({ queryKey: ["generateSlug"] });
     }
     callback();
   };
@@ -52,13 +52,13 @@ const useUtils = (toggleNotification: any): useUtilsResult => {
   const slugMutation = useMutation({
     mutationFn: ({ value, id }: SlugMutationPayload) => generateSlug({ value, id}, config),
     onSuccess: () => handleSuccess(),
-    onError: () => handleError('generate-slug'),
+    onError: () => handleError('generateSlug'),
   });
 
   const syncAssociationsMutation = useMutation({
     mutationFn: () => syncAssociations(config),
-    onSuccess: () => handleSuccess('sync-associations'),
-    onError: () => handleError('sync-associations'),
+    onSuccess: () => handleSuccess('syncAssociations'),
+    onError: () => handleError('syncAssociations'),
   });
 
   return { slugMutation, syncAssociationsMutation };

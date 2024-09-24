@@ -5,13 +5,12 @@ import { isEmpty, get } from "lodash";
 import { UID } from "@strapi/strapi";
 import {
     useNotification
-} from "@strapi/admin/strapi-admin";
+} from "@strapi/strapi/admin";
 
 import { 
     Box,
     Divider, 
     Grid, 
-    GridItem, 
     Typography } from '@strapi/design-system';
 
 import { ReactionCounter, ReactionCounterProps } from "./components/ReactionCounter";
@@ -64,13 +63,13 @@ export const EditViewSummary = () => {
         <Typography variant="sigma" textColor="neutral600">Reactions</Typography>
         <Divider unsetMargin={false} />
         <Box paddingTop={2}>
-            <Grid gap={4}>
+            <Grid.Root gap={4}>
                 {types.map(({ name, slug, icon, emoji }: ReactionCounterProps & { slug: string }) => (
-                    <GridItem key={`reaction-type-${slug}`} col={4} s={6} xs={12}>
+                    <Grid.Item key={`reaction-type-${slug}`} col={4} s={6} xs={12}>
                         <ReactionCounter name={name} icon={icon} emoji={emoji} count={get(reactionsCount, slug)} />
-                    </GridItem>
+                    </Grid.Item>
                 ))}
-            </Grid>
+            </Grid.Root>
         </Box>
     </Box>);
 

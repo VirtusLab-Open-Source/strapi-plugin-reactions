@@ -1,7 +1,7 @@
 import { UID } from "@strapi/strapi";
 
 import { getApiURL } from "../../utils";
-import { StrapiId } from "../../../../types";
+import { StrapiId } from "../../../../@types";
 
 type FetchConfig = {
   get: Function;

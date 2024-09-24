@@ -1,7 +1,7 @@
 import { isNil } from "lodash";
 import { getApiURL, handleAPIError } from "../../../utils";
 import qs from "qs";
-import { ReactionsPluginConfig, StrapiId, ToBeFixed } from "../../../../../types";
+import { ReactionsPluginConfig, StrapiId, ToBeFixed } from "../../../../../@types";
 
 export type FetchConfig = {
   toggleNotification: ToBeFixed;
@@ -67,7 +67,7 @@ export const generateSlug = async (payload: ToBeFixed, { fetchClient }: FetchCon
 
 export const syncAssociations = async ({ fetchClient }: FetchConfig): Promise<void> => {
   try {
-    const { data } = await fetchClient.post(getApiURL(`utils/sync-associations`));
+    const { data } = await fetchClient.post(getApiURL(`utils/syncAssociations`));
 
     return data;
   } catch (err) {
