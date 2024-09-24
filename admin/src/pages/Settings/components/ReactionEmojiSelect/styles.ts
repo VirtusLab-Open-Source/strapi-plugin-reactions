@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Flex, Popover, Typography } from "@strapi/design-system";
+import {  Box, Flex, Typography } from "@strapi/design-system";
 
 const sizing = {
     width: '100%',
@@ -10,6 +10,7 @@ const sizing = {
 
 export const ReactionEmojiSelectContainer = styled.div`
     display: block;
+    width: 100%;
 `;
 
 export const ReactionEmojiSelectInner = styled(Flex)`
@@ -25,7 +26,7 @@ export const ReactionEmojiSelectTypography = styled(Typography)`
     align-items: center;
 `;
 
-export const ReactionEmojiSelectPopover = styled(Popover)`
+export const ReactionEmojiSelectPopoverContent = styled(Box)`
     max-height: 100%;
     padding: 0;
 

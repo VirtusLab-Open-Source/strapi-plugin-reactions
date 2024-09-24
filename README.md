@@ -884,20 +884,28 @@ Feel free to fork and make a Pull Request to this plugin project. All the input 
    git clone git@github.com:VirtusLab-Open-Source/strapi-plugin-reactions.git
    ```
 
-2. Create a soft link in your strapi project to plugin `dist` folder
-
-   ```sh
-   ln -s <your path>/strapi-plugin-reactions/dist <your path>/strapi-project/src/plugins/reactions
-   ```
-
-3. Run develop or build command
+2. Run `install` & `watch:link` command
 
    ```ts
-   // Watch for file changes
-   yarn develop
-   // or run build without nodemon
-   yarn build:dev
+   // Install all dependencies
+   yarn install
+
+   // Watch for file changes using `plugin-sdk` and follow the instructions provided by this official Strapi developer tool
+   yarn watch:link
    ```
+
+3. Within the Strapi project, modify `config/plugins.{js,ts}` for `imgix`
+
+```ts
+//...
+'reactions': {
+  enabled: true,
+  //...
+}
+//...
+```
+
+4. Run your Strapi instance
 
 ## 👨‍💻 Community support
 
