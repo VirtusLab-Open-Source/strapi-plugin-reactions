@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
-
+import { useIntl } from "react-intl";
 import { useFetchClient } from '@strapi/strapi/admin';
 
 import {
@@ -24,6 +24,7 @@ export type useConfigResult = {
 const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   const queryClient = useQueryClient(client);
   const fetchClient = useFetchClient();
+  const { formatMessage } = useIntl();
   const config = { toggleNotification, fetchClient };
 
   const fetch = useQuery({
@@ -34,7 +35,9 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   const handleError = (type: any, callback = () => {}) => {
     toggleNotification({
       type: "warning",
-      message: `${pluginId}.page.settings.notification.${type}.error`,
+      message: formatMessage({
+        id: `${pluginId}.page.settings.notification.${type}.error`,
+      }),
     });
     callback();
   };
@@ -49,7 +52,9 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
     }
     toggleNotification({
       type: "success",
-      message: `${pluginId}.page.settings.notification.${type}.success`,
+      message: formatMessage({
+        id: `${pluginId}.page.settings.notification.${type}.success`,
+      }),
     });
     callback();
   };

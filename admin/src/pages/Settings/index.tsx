@@ -220,8 +220,7 @@ const Settings = () => {
                         <IconButton onClick={() => handleOpenModal(entry)} label={getMessage("page.settings.table.action.edit")} noBorder>
                           <Pencil />
                         </IconButton>
-                        {(entityToDelete && canChange) && (<Box paddingLeft={1}>
-                          <ConfirmationDialog
+                        {( canChange) && (<ConfirmationDialog
                             isVisible={entityToDelete?.id === entry.id}
                             isLoading={deleteMutation.isPending}
                             title={getMessage("page.settings.modal.title.delete")}
@@ -237,11 +236,10 @@ const Settings = () => {
                             {getMessage({
                               id: "page.settings.modal.description.delete",
                               props: {
-                                name: entityToDelete.name,
+                                name: entityToDelete?.name,
                               },
                             })}
-                          </ConfirmationDialog>
-                        </Box>)}
+                          </ConfirmationDialog>)}
                       </IconButtonGroup>
                     </Flex>)}
                   </Td>

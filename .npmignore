@@ -7,6 +7,5 @@ coverage/
 codecov.yml
 *.map
 *.spec.*
-setup-package.*
-**/__tests__/**
-**/__mocks__/** 
+**/tests/**
+node_modules/
