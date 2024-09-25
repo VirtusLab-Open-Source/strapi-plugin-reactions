@@ -6,13 +6,18 @@ import {
 } from '@tanstack/react-query';
 
 import Settings from "../Settings";
+import { DesignSystemProvider } from "@strapi/design-system";
+import { usePluginTheme } from "@virtuslab/strapi-utils";
 
 const queryClient = new QueryClient();
 
 const SettingsInit = () => {
+  const { theme } = usePluginTheme();
   return (
     <QueryClientProvider client={queryClient}>
-      <Settings />
+      <DesignSystemProvider theme={theme}>
+        <Settings />
+      </DesignSystemProvider>
     </QueryClientProvider>);
 };
 
