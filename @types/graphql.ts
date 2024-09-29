@@ -1,8 +1,8 @@
-//@ts-nocheck
-import { Primitive, StrapiContext } from "strapi-typed";
 import { ToBeFixed } from "./common";
 
-export type StrapiGraphQLContext = StrapiContext & ToBeFixed;
+type Primitive = string | number | boolean | object | null | undefined;
+
+export type StrapiGraphQLContext = ToBeFixed;
 
 export interface IGraphQLSetupStrategy {
   (context: StrapiGraphQLContext): Promise<void>;
