@@ -1,7 +1,7 @@
-import { Id } from "strapi-typed";
+import { ToBeFixed } from "../../@types";
 
 const permissions = {
-  render: (uid: Id) => `plugin::reactions.${uid}`,
+  render: (uid: ToBeFixed) => `plugin::reactions.${uid}`,
   settings: {
     read: "settings.read",
     change: "settings.change",
