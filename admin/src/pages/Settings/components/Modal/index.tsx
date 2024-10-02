@@ -17,6 +17,8 @@ import {
   Typography
 } from '@strapi/design-system';
 
+import { StrapiImage } from "@virtuslab/strapi-utils";
+
 import { getMessage } from "../../../../utils";
 import useUtils from "../../../../hooks/useUtils";
 import { ReactionTypeSwitch } from "./styles";
@@ -37,13 +39,13 @@ type CUModalProps = {
 export type ReactionFormPayload = CTReactionType & {
   name: string;
   emoji?: string;
-  image?: any; // TODO
+  image?: StrapiImage;
 };
 
 type MediaFieldType = Omit<InputProps, 'options' | 'type'> & {
   value: any;
   multiple: boolean;
-  onChange: (e: React.ChangeEvent) => void;
+  onChange: (value: any) => void;
 };
 
 const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, trigger, onSubmit, onClose }: CUModalProps) => {
@@ -78,6 +80,7 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
 
   const submitForm = async (values: ReactionFormPayload) => {
     if (!formLocked) {
+      console.log(values);
       return onSubmit({
         ...values,
         image: imageVariant ? values.image : null,
@@ -111,12 +114,12 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                 <Flex direction="column" gap={4}>
                   <ReactionTypeSwitch>
                     <Field
+                      name="enable-provider"
                       hint={getMessage("page.settings.form.type.hint")}
                       label={getMessage("page.settings.form.type.label")}>
                       <Toggle
                         width="100%"
                         size="S"
-                        name="enable-provider"
                         onLabel={getMessage("page.settings.form.type.image.label")}
                         offLabel={getMessage("page.settings.form.type.emoji.label")}
                         checked={imageVariant}
@@ -126,14 +129,19 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                   <Divider width="100%" />
                   <Grid.Root width="100%" gap={4}>
                     <Grid.Item col={4} xs={12}>
-                      {imageVariant && (<Field label={getMessage("page.settings.form.icon.label")} required>
+                      {imageVariant && (<Field
+                        name="icon"
+                        label={getMessage("page.settings.form.icon.label")} required>
                         <MediaField
                           multiple={false}
                           name="icon"
                           value={values.icon || undefined}
                           required={true}
-                          onChange={({ target: { value } }: ToBeFixed) =>
-                            setFieldValue("icon", value, false)
+                          onChange={(value) => {
+                            alert();
+                            console.log(value);
+                            return setFieldValue("icon", value, false);
+                          }
                           }
                         />
                       </Field>)}
@@ -143,10 +151,9 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                       <Flex width="100%" direction="column" gap={4}>
                         <Grid.Root width="100%">
                           <Grid.Item col={12}>
-                            <Field label={getMessage("page.settings.form.name.label")}>
+                            <Field name="name" label={getMessage("page.settings.form.name.label")}>
                               <NativeField.Input
                                 type="text"
-                                name="name"
                                 value={values.name}
                                 onChange={({ target: { value } }: ToBeFixed) => {
                                   setSlugSource(value);
@@ -160,11 +167,11 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                         <Grid.Root width="100%">
                           <Grid.Item col={12}>
                             <Field
+                              name="slug"
                               label={getMessage("page.settings.form.slug.label")}
                               hint={getMessage("page.settings.form.slug.hint")}>
                               <NativeField.Input
                                 type="text"
-                                name="slug"
                                 value={slug}
                                 disabled={true}
                                 endAction={slugMutation.isPending && (<Loader small />)}

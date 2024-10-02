@@ -8,6 +8,7 @@ import { FieldContent } from "./styles";
 
 type FieldProps = {
   children: React.ReactNode | Array<React.ReactNode>;
+  name: string;
   label?: string;
   hint?: string;
   required?: boolean;
@@ -15,10 +16,11 @@ type FieldProps = {
 
 const Field = ({
   children,
+  name,
   hint,
   label,
   required }: FieldProps) => {
-  return (<NativeField.Root width="100%" hint={hint} required={required}>
+  return (<NativeField.Root name={name} width="100%" hint={hint} required={required}>
     <Flex width="100%" direction="column" alignItems="flex-start" gap={1}>
       <NativeField.Label>{label}</NativeField.Label>
       <FieldContent width="100%" direction="column" alignItems="flex-start">
