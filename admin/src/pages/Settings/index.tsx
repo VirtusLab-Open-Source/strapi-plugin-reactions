@@ -37,7 +37,7 @@ import { ReactionIcon } from "./components/ReactionIcon";
 import useUtils from "../../hooks/useUtils";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import { AdminAction } from "./components/AdminAction";
-import { ReactionTypeEntity, StrapiId, ToBeFixed } from "../../../../@types";
+import { CTReactionType, StrapiId, ToBeFixed } from "../../../../@types";
 
 const DEFAULT_BOX_PROPS = {
   width: "100%",
@@ -61,8 +61,8 @@ const Settings = () => {
 
   const [isModalOpened, setModalOpened] = useState(false);
   const [syncAssiciationConfirmationVisible, setSyncAssiciationConfirmationVisible] = useState(false);
-  const [modalEntity, setModalEntity] = useState<ReactionTypeEntity | undefined>(undefined);
-  const [entityToDelete, setEntityToDelete] = useState<ReactionTypeEntity>();
+  const [modalEntity, setModalEntity] = useState<CTReactionType | undefined>(undefined);
+  const [entityToDelete, setEntityToDelete] = useState<CTReactionType>();
 
   const { fetch, submitMutation, deleteMutation } = useConfig(toggleNotification);
   const { syncAssociationsMutation } = useUtils(toggleNotification);
@@ -80,11 +80,11 @@ const Settings = () => {
     isConfigLoading;
   const isError = configErr;
 
-  const preparePayload = (form: ReactionTypeEntity): ReactionTypeEntity => {
+  const preparePayload = (form: CTReactionType): CTReactionType => {
     return form;
   }
 
-  const handleCUD = async (form: ReactionTypeEntity) => {
+  const handleCUD = async (form: CTReactionType) => {
     if (canChange) {
       try {
         const payload = preparePayload(form);
@@ -96,17 +96,17 @@ const Settings = () => {
     }
   };
 
-  const handleDelete = async (id: StrapiId) => {
+  const handleDelete = async (documentId: StrapiId) => {
     if (canChange) {
       try {
-        await deleteMutation.mutateAsync({ id, toggleNotification });
+        await deleteMutation.mutateAsync({ documentId, toggleNotification });
       } finally {
         setEntityToDelete(undefined);
       }
     }
   };
 
-  const handleOpenModal = (entity?: ReactionTypeEntity | undefined) => {
+  const handleOpenModal = (entity?: CTReactionType | undefined) => {
     setModalOpened(true);
     setModalEntity(entity);
   };
@@ -116,7 +116,7 @@ const Settings = () => {
     setModalEntity(undefined);
   };
 
-  const handleDeleteConfirmation = (entity: ReactionTypeEntity) => {
+  const handleDeleteConfirmation = (entity: CTReactionType) => {
     setEntityToDelete(entity);
   };
 
@@ -194,7 +194,7 @@ const Settings = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {types.map((entry: ToBeFixed) => <Tr key={entry.id}>
+                {types.map((entry: ToBeFixed) => <Tr key={entry.documentId}>
                   <Td>
                     {(entry.icon && !entry.emoji) && (<ReactionIcon src={entry.icon?.url} />)}
                     {(!entry.icon && entry.emoji) && (<Typography variant="omega">{entry.emoji}</Typography>)}
@@ -221,13 +221,13 @@ const Settings = () => {
                           <Pencil />
                         </IconButton>
                         {( canChange) && (<ConfirmationDialog
-                            isVisible={entityToDelete?.id === entry.id}
+                            isVisible={entityToDelete?.documentId === entry.documentId}
                             isLoading={deleteMutation.isPending}
                             title={getMessage("page.settings.modal.title.delete")}
                             labelCancel={getMessage("page.settings.modal.action.delete.cancel")}
                             labelConfirm={getMessage("page.settings.modal.action.delete.submit")}
                             iconConfirm={<Trash />}
-                            onConfirm={() => handleDelete(entityToDelete?.id)}
+                            onConfirm={() => handleDelete(entityToDelete?.documentId)}
                             onClose={handleDeleteDiscard}
                             trigger={<IconButton variant="danger-light" onClick={() => handleDeleteConfirmation(entry)} label={getMessage("page.settings.table.action.delete")} noBorder>
                               <Trash />

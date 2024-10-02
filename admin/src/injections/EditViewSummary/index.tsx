@@ -17,6 +17,7 @@ import { ReactionCounter, ReactionCounterProps } from "./components/ReactionCoun
 
 import useContentManager, { ContentManagerType } from "../../hooks/useContentManager";
 import useConfig from "../../hooks/useConfig";
+import { StrapiId } from "../../../../@types";
 
 const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z-]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<id>\d*)/;
 const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
@@ -27,7 +28,7 @@ const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
 type ContentManagerPathProps = {
     type: ContentManagerType;
     uid: UID.ContentType;
-    id?: string | number;
+    documentId: StrapiId;
 };
 
 export const EditViewSummary = () => {
@@ -37,14 +38,14 @@ export const EditViewSummary = () => {
     const groups: ContentManagerPathProps = new RegExp(CONTENT_MANAGER_PATH_PATTERN, "gm")
         .exec(location.pathname)?.groups as ContentManagerPathProps;
 
-    const { uid, id, type } = groups;
+    const { uid, documentId, type } = groups;
 
-    if (!id && (type === CONTENT_MANAGER_TYPES.COLLECTION_TYPE)) {
+    if (!documentId && (type === CONTENT_MANAGER_TYPES.COLLECTION_TYPE)) {
         return null;
     }
 
     const { fetch: fetchConfig } = useConfig(toggleNotification);
-    const { fetch: fetchReactions } = useContentManager(uid, id);
+    const { fetch: fetchReactions } = useContentManager(uid, documentId);
 
     const { types = [] } = fetchConfig?.data || {} as any;
 
