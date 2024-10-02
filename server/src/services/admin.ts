@@ -1,8 +1,8 @@
-import { Core } from '@strapi/types';
+import { Core, Data } from '@strapi/strapi';
 import { first, isArray, isEmpty, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 
-import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon, ToBeFixed, ReactionTypeEntity } from "../../../@types";
+import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon, CTReactionType, CTReaction } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
@@ -15,8 +15,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       key: "config",
     });
 
-    const types = await strapi.entityService
-      ?.findMany(getModelUid("reaction-type"), {
+    const types = await strapi
+      .documents(getModelUid("reaction-type"))
+      .findMany({
         populate: ['icon']
       });
 
@@ -28,40 +29,45 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async updateConfig(
     this: IServiceAdmin,
-    body: ReactionTypeEntity,
-  ): Promise<any> {
+    body: CTReactionType,
+  ): Promise<CTReactionType> {
 
-    if (isNil(body.id)) {
-      return await strapi.entityService
-        ?.create(getModelUid("reaction-type"), {
+    if (isNil(body.documentId)) {
+      return await strapi
+        .documents(getModelUid("reaction-type"))
+        .create({
           data: body,
         });
     }
 
-    const { id, ...rest } = body;
-    return await strapi.entityService
-      ?.update(getModelUid("reaction-type"), id, {
+    const { documentId, ...rest } = body;
+    return await strapi
+      .documents(getModelUid("reaction-type"))
+      .update({
+        documentId,
         data: rest,
       });
   },
 
   async deleteReactionType(
     this: IServiceAdmin,
-    id: StrapiId,
-  ): Promise<{ 
-    result: boolean 
+    documentId: Data.DocumentID,
+  ): Promise<{
+    result: boolean
   }> {
 
-    const reactionKind = await strapi.entityService
-      ?.findOne(getModelUid("reaction-type"), id);
+    const reactionKind = await strapi
+      .documents(getModelUid("reaction-type"))
+      .findOne({ documentId });
 
     if (!reactionKind) {
       throw new PluginError(404, `Reaction type does not exist. You can't use it.`);
     }
 
-    const entitiesToDelete = await strapi.entityService
-      ?.findMany(getModelUid("reaction"), {
-        fields: ['id'],
+    const entitiesToDelete = await strapi
+      .documents(getModelUid("reaction"))
+      .findMany({
+        fields: ['documentId'],
         filters: {
           kind: reactionKind,
         },
@@ -70,29 +76,30 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     if (isArray(entitiesToDelete)) {
       await strapi.db?.query(getModelUid("reaction")).deleteMany({
         where: {
-          id: entitiesToDelete.map(_ => _.id),
+          documentId: entitiesToDelete.map(_ => _.documentId),
         },
       });
     }
 
-    const removed = await strapi.entityService
-      ?.delete(getModelUid("reaction-type"), id);
+    const removed = await strapi
+      .documents(getModelUid("reaction-type"))
+      .delete({ documentId });
 
     return {
-      result: !isNil(removed) && (removed.id === id),
+      result: !isNil(removed) && (removed.documentId === documentId),
     };
   },
 
   async generateSlug(
     this: IServiceAdmin,
     subject: string,
-    id?: StrapiId,
+    documentId?: StrapiId,
   ): Promise<{
     slug: string;
   }> {
 
     const slug = slugify(subject).toLowerCase();
-    const response =  await this.uniqueSlug(slug, id);
+    const response = await this.uniqueSlug(slug, documentId);
     return {
       slug: response,
     };
@@ -101,24 +108,23 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async uniqueSlug(
     this: IServiceAdmin,
     slug: string,
-    id?: StrapiId,
+    documentId?: StrapiId,
   ): Promise<string> {
     if (isString(slug)) {
       let filters: any = {
         slug,
       };
-      if (!isNil(id)) {
+      if (!isNil(documentId)) {
         filters = {
           ...filters,
-          id: {
-            $not: id
+          documentId: {
+            $not: documentId
           },
         };
       }
-      const entities = await strapi.entityService
-        ?.findMany(getModelUid("reaction-type"), {
-          filters,
-        });
+      const entities = await strapi
+        .documents(getModelUid("reaction-type"))
+        .findMany({ filters });
       if (entities && (entities.length > 0)) {
         return `${slug}-${entities.length + 1}`;
       }
@@ -128,26 +134,29 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   },
 
   async syncAssociations(this: IServiceAdmin): Promise<number> {
-    const entities = await strapi.entityService
-      ?.findMany(getModelUid("reaction"), {
-        fields: ['id', 'relatedUid'],
+    const entities = await strapi
+      .documents(getModelUid("reaction"))
+      .findMany({
+        fields: ['documentId', 'relatedUid'],
         populate: ['related'],
       });
 
-    const entitiesToUpdate = (entities || [] as any)
-      .map((_: ToBeFixed) => ({ ..._, related: first(_.related) }))
-      .filter(({ relatedUid, related }: ToBeFixed) => relatedUid !== buildRelatedId(related.__type, related.id));
+    const entitiesToUpdate = (entities || [])
+      .map((_: CTReaction) => ({ ..._, related: first(_.related) }))
+      .filter(({ relatedUid, related }: CTReaction) => relatedUid !== buildRelatedId(related.__type, related.documentId));
 
     if (!entitiesToUpdate || isEmpty(entitiesToUpdate)) {
       return 0;
     }
 
     const entitiesUpdated = await Promise.all(entitiesToUpdate
-      .map(async ({ id, related }: ToBeFixed) =>
-        strapi.entityService?.
-          update(getModelUid("reaction"), id, {
+      .map(async ({ documentId, related }: CTReaction) =>
+        strapi
+          .documents(getModelUid("reaction"))
+          .update({
+            documentId,
             data: {
-              relatedUid: buildRelatedId(related.__type, related.id),
+              relatedUid: buildRelatedId(related.__type, related.documentId),
             },
           })
       ));

@@ -1,4 +1,4 @@
-import { Core } from '@strapi/types';
+import { Core } from '@strapi/strapi';
 
 import { isNil } from 'lodash';
 

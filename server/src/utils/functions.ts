@@ -1,17 +1,10 @@
-import {
-  StrapiQueryParams,
-  StrapiQueryParamsParsed,
-  IStrapi,
-} from "strapi-typed";
 import PluginError from "./error";
-
-declare var strapi: IStrapi;
 
 export const getPluginService = <T>(name: string): T =>
   strapi.plugin("reactions").service(name);
 
-export const parseParams = <T = StrapiQueryParamsParsed>(
-  params: StrapiQueryParams
+export const parseParams = <T = Record<string, unknown>>(
+  params: Record<string, unknown>
 ): T =>
   Object.keys(params).reduce((prev: T, curr: string) => {
     const value = params[curr];

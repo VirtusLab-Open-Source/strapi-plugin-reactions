@@ -1,10 +1,11 @@
-import { StrapiContext } from "strapi-typed";
+import { Core } from "@strapi/strapi";
+
 import permissions from "./permissions";
 import { IServiceAdmin, ReactionsPluginConfig } from "../../@types";
 import { getPluginService } from "./utils/functions";
 import { graphQLSetupStrategy } from './graphql';
 
-export default async ({ strapi }: StrapiContext) => {
+export default async ({ strapi }: { strapi: Core.Strapi }) => {
   // Provide GQL support
   const config: ReactionsPluginConfig = await getPluginService<IServiceAdmin>("admin")
     .fetchConfig();

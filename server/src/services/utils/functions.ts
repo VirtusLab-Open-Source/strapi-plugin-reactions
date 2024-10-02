@@ -1,4 +1,4 @@
-import { UID } from "@strapi/types";
+import { UID } from "@strapi/strapi";
 import { StrapiId } from "../../../../@types";
 
 export const getModelUid = (name: string): UID.ContentType => {

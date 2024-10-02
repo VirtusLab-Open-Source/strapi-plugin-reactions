@@ -1,7 +1,7 @@
 
-import { UID } from "@strapi/types";
+import { UID } from "@strapi/strapi";
+import { Context } from "koa";
 import { getPluginService, parseParams } from '../utils/functions';
-import { StrapiRequestContext } from "strapi-typed";
 
 import { throwError } from './utils/functions';
 import { IServiceClient, StrapiId } from '../../../@types';
@@ -19,7 +19,7 @@ export default () => ({
     return getPluginService<T>(name);
   },
 
-  async kinds(ctx: StrapiRequestContext) {
+  async kinds(ctx: Context) {
     try {
       return await this.getService<IServiceClient>().kinds();
     } catch (e) {
@@ -27,7 +27,7 @@ export default () => ({
     }
   },
 
-  async list(ctx: StrapiRequestContext<any, any, ReactionListUrlProps>) {
+  async list(ctx: Context) {
     try {
       const { params = {}, state: { user } } = ctx;
       const { kind, uid, id } = parseParams<ReactionListUrlProps>(params);
@@ -37,31 +37,31 @@ export default () => ({
     }
   },
 
-  async create(ctx: StrapiRequestContext<any, any, ReactionsTypeUrlProps>) {
+  async create(ctx: Context) {
     try {
       const { params = {}, state: { user } } = ctx;
       const { kind, uid, id } = parseParams<ReactionsTypeUrlProps>(params);
-      return await this.getService<IServiceClient>().create(kind, uid, id, user);
+      return await this.getService<IServiceClient>().create(kind, uid, user, id);
     } catch (e) {
       throw throwError(ctx, e);
     }
   },
 
-  async delete(ctx: StrapiRequestContext<any, any, ReactionsTypeUrlProps>) {
+  async delete(ctx: Context) {
     try {
       const { params = {}, state: { user } } = ctx;
       const { kind, uid, id } = parseParams<ReactionsTypeUrlProps>(params);
-      return await this.getService<IServiceClient>().delete(kind, uid, id, user);
+      return await this.getService<IServiceClient>().delete(kind, uid, user, id);
     } catch (e) {
       throw throwError(ctx, e);
     }
   },
 
-  async toggle(ctx: StrapiRequestContext<any, any, ReactionsTypeUrlProps>) {
+  async toggle(ctx: Context) {
     try {
       const { params = {}, state: { user } } = ctx;
       const { kind, uid, id } = parseParams<ReactionsTypeUrlProps>(params);
-      return await this.getService<IServiceClient>().toggle(kind, uid, id, user);
+      return await this.getService<IServiceClient>().toggle(kind, uid, user, id);
     } catch (e) {
       throw throwError(ctx, e);
     }

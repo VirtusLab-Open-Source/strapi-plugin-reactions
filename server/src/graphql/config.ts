@@ -1,4 +1,4 @@
-import { StrapiContext } from "strapi-typed";
+import { Core } from "@strapi/strapi";
 
 import { getModelUid } from "../services/utils/functions";
 import { getPluginService } from "../utils/functions";
@@ -9,7 +9,7 @@ import getQueries from "./queries";
 import getMutations from "./mutations";
 import getResolversConfig from "./resolvers-config";
 
-export default async ({ strapi }: StrapiContext) => {
+export default async ({ strapi }: { strapi: Core.Strapi }) => {
   const extensionService = strapi.plugin("graphql").service("extension");
 
   extensionService.shadowCRUD(getModelUid('reaction')).disable();

@@ -1,11 +1,10 @@
 import { UID } from "@strapi/strapi";
-import { StrapiRequestContext } from "strapi-typed";
+import { Context } from "koa";
 
 import {
   IServiceClient,
   StrapiGraphQLContext,
   StrapiId,
-  ToBeFixed,
 } from "../../../../@types";
 import { getPluginService } from "../../utils/functions";
 
@@ -28,11 +27,11 @@ export default ({ nexus }: StrapiGraphQLContext) => {
     async resolve(
       _: Object, 
       args: ListAllResolverProps,
-      ctx: StrapiRequestContext<never> & ToBeFixed) {
+      ctx: Context) {
       const { kind, uid, id } = args;
       const { state: { user = undefined } = {} } = ctx;
 
-      return await getPluginService<IServiceClient>("client").list(kind, uid, id, user);
+      return await getPluginService<IServiceClient>("client").list(kind, uid, user, id);
     },
   };
 };

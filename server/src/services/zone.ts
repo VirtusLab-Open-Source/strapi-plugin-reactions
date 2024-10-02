@@ -1,16 +1,14 @@
-//@ts-nocheck
-import { Strapi } from '@strapi/strapi';
-import { UID } from "@strapi/types";
-import { isArray, isNil, first } from "lodash";
+import { Core, UID } from '@strapi/strapi';
+import { isArray, isNil } from "lodash";
 
-import { IServiceZone, ReactionEntity, StrapiId } from "../../@types";
+import { IServiceZone, StrapiId } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 
 export type ReactionsCount = {
   [slug: string]: number;
 };
 
-export default ({ strapi }: { strapi: Strapi }) => ({
+export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async count(
     this: IServiceZone,
@@ -30,7 +28,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       });
 
     if (isNil(entities)) {
-      return [];
+      return {};
     }
 
     return (!isArray(entities) ? [entities] : entities)
