@@ -1,7 +1,6 @@
-
-import { UID } from "@strapi/types";
+import { UID } from "@strapi/strapi";
+import { Context } from "koa";
 import { getPluginService, parseParams } from '../utils/functions';
-import { StrapiRequestContext } from "strapi-typed";
 
 import { throwError } from './utils/functions';
 import { IServiceZone, StrapiId } from '../../../@types';
@@ -16,7 +15,7 @@ export default () => ({
     return getPluginService<T>(name);
   },
 
-  async count(ctx: StrapiRequestContext<any, any, ReactionListUrlProps>) {
+  async count(ctx: Context) {
     try {
       const { params = {} } = ctx;
       const { uid, id } = parseParams<ReactionListUrlProps>(params);

@@ -1,8 +1,16 @@
+import { Core } from "@strapi/strapi";
 import { ToBeFixed } from "./common";
+import { ReactionsPluginConfig } from "./config";
 
-type Primitive = string | number | boolean | object | null | undefined;
+export type Primitive = string | number | boolean | object | null | undefined;
 
-export type StrapiGraphQLContext = ToBeFixed;
+type Nexus = any;
+
+export type StrapiGraphQLContext = {
+  strapi: Core.Strapi;
+  config?: ReactionsPluginConfig;
+  nexus?: Nexus;
+};
 
 export interface IGraphQLSetupStrategy {
   (context: StrapiGraphQLContext): Promise<void>;
@@ -10,10 +18,10 @@ export interface IGraphQLSetupStrategy {
 
 export interface INexusType {
   field(name: string, config?: ToBeFixed): void;
-  id(name: string);
-  boolean(name: string);
-  string(name: string);
-  int(name: string);
+  id(name: string): number | string;
+  boolean(name: string): boolean;
+  string(name: string): string;
+  int(name: string): number;
 
   nonNull: INexusType;
   list: INexusType;

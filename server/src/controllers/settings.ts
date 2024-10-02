@@ -1,8 +1,8 @@
-import {  StrapiRequestContext } from "strapi-typed";
+import { Context } from 'koa';
 
 import { getPluginService, parseParams } from '../utils/functions';
 import { throwError } from './utils/functions';
-import { IServiceAdmin, ReactionsPluginConfig, ReactionTypeEntity, StrapiId } from '../../../@types';
+import { IServiceAdmin, ReactionsPluginConfig, StrapiId } from '../../../@types';
 import PluginError from "../utils/error";
 
 type GenerateSlugRequestQueryProps = {
@@ -19,7 +19,7 @@ export default () => ({
     return getPluginService<T>(name);
   },
 
-  async fetch(ctx: StrapiRequestContext): Promise<ReactionsPluginConfig> {
+  async fetch(ctx: Context): Promise<ReactionsPluginConfig> {
     try {
       return await this.getService<IServiceAdmin>().fetchConfig<any>();
     } catch (e) {
@@ -27,7 +27,7 @@ export default () => ({
     }
   },
 
-  async create(ctx: StrapiRequestContext<ReactionTypeEntity>) {
+  async create(ctx: Context) {
     try {
       const { request: { body }} = ctx;
       if (body) {
@@ -39,7 +39,7 @@ export default () => ({
     }
   },
 
-  async update(ctx: StrapiRequestContext<ReactionTypeEntity>) {
+  async update(ctx: Context) {
     try {
       const { request: { body }} = ctx;
       if (body) {
@@ -51,7 +51,7 @@ export default () => ({
     }
   },
 
-  async deleteReactionType(ctx: StrapiRequestContext<any, any, ReactionsTypeDeleteProps>) {
+  async deleteReactionType(ctx: Context) {
     try {
       const { params = {} } = ctx;
       const { id } = parseParams<ReactionsTypeDeleteProps>(params);
@@ -61,7 +61,7 @@ export default () => ({
     }
   },
 
-  async generateSlug(ctx: StrapiRequestContext<any, GenerateSlugRequestQueryProps>) {
+  async generateSlug(ctx: Context) {
     try {
       const { query = {} } = ctx;
       const { value, id } = parseParams<GenerateSlugRequestQueryProps>(query);
@@ -72,7 +72,7 @@ export default () => ({
     }
   },
 
-  async syncAssociations(ctx: StrapiRequestContext) {
+  async syncAssociations(ctx: Context) {
     try {
       return await this.getService<IServiceAdmin>().syncAssociations();
     } catch (e) {

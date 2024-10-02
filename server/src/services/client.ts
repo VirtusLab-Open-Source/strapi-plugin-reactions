@@ -1,21 +1,20 @@
-//@ts-nocheck
-import { Strapi } from '@strapi/strapi';
-import { UID } from "@strapi/types";
-import { StrapiUser } from 'strapi-typed';
+import { Core, Data, UID } from '@strapi/strapi';
 import { isArray, isNil, first } from "lodash";
+import { AnyEntity, StrapiUser } from "@virtuslab/strapi-utils";
 
-import { IServiceClient } from "../../@types";
+import { CTReaction, CTReactionType, IServiceClient, StrapiId } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
-import { AnyEntity } from '@strapi/strapi/lib/services/entity-service';
 
-export default ({ strapi }: { strapi: Strapi }) => ({
+
+export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async kinds(
     this: IServiceClient,
-  ): Promise<Array<AnyEntity>> {
-    return strapi.entityService
-      .findMany(getModelUid("reaction-type"), {
+  ): Promise<Array<CTReactionType>> {
+    return strapi
+      .documents(getModelUid("reaction-type"))
+      .findMany<CTReactionType>({
         populate: ['icon'],
       });
   },
@@ -23,15 +22,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async list(
     this: IServiceClient,
     kind?: string,
-    uid: UID.ContentType,
-    id?: StrapiId,
-    user?: StrapiUser,
-  ): Promise<Array<AnyEntity>> {
+    uid?: UID.ContentType,
+    user?: unknown,
+    documentId?: StrapiId,
+  ): Promise<Array<CTReaction>> {
     const [reactionKind] = await this.prefetchConditions(kind || null);
 
     let fields = ['createdAt', 'updatedAt'];
-    let filters = {
-      relatedUid: buildRelatedId(uid, id),
+    let filters: Record<string, any> = {
+      relatedUid: buildRelatedId(uid, documentId),
     };
     let populate = {};
 
@@ -65,8 +64,9 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       };
     }
 
-    const entities = await strapi.entityService
-      .findMany(getModelUid("reaction"), {
+    const entities = await strapi
+      .documents(getModelUid("reaction"))
+      .findMany<CTReaction>({
         fields,
         filters,
         populate,
@@ -83,36 +83,35 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    id?: StrapiId,
     user: StrapiUser,
-  ): Promise<AnyEntity> {
+    documentId?: StrapiId,
+  ): Promise<CTReaction> {
 
-    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind, uid, id);
-    const existingReaction = await this.list(kind, uid, id, user);
+    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind, uid, documentId);
+    const existingReaction = await this.list(kind, uid, user, documentId);
 
     if (!existingReaction || (isArray(existingReaction) && (existingReaction.length === 0))) {
       return this.directCreate(uid, reactionKind, relatedEntity, user);
     }
 
-    throw new PluginError(405, `Can't perform CREATE on reaction type of "${kind}" for Entity with ID: ${id || 'single'} of type: ${uid} as it already exist`);
+    throw new PluginError(405, `Can't perform CREATE on reaction type of "${kind}" for Entity with ID: ${documentId || 'single'} of type: ${uid} as it already exist`);
   },
 
   async delete(
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    id?: StrapiId,
     user: StrapiUser,
+    documentId?: StrapiId,
   ): Promise<boolean> {
 
-    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind, uid, id);
-    const existingReaction = await this.list(kind, uid, id, user);
+    const existingReaction = await this.list(kind, uid, user, documentId);
 
     if (isArray(existingReaction) && (existingReaction.length === 1)) {
       return this.directDelete(existingReaction);
     }
 
-    throw new PluginError(405, `Can't perform DELETE on reaction type of "${kind}" for Entity with ID: ${id || 'single'} of type: ${uid}`);
+    throw new PluginError(405, `Can't perform DELETE on reaction type of "${kind}" for Entity with ID: ${documentId || 'single'} of type: ${uid}`);
 
   },
 
@@ -120,17 +119,17 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    id?: StrapiId,
     user: StrapiUser,
-  ): Promise<AnyEntity | boolean> {
+    documentId?: StrapiId,
+  ): Promise<CTReaction | boolean> {
 
-    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind, uid, id);
-    const existingReactions = await this.list(null, uid, id, user);
+    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind, uid, documentId);
+    const existingReactions = await this.list(null, uid, user, documentId);
     const matchingReaction = existingReactions
       .find(({ kind: { slug } }) => kind === slug);
     const reactionsToRemove = matchingReaction ?
       existingReactions
-        .filter(({ id: reactionId }) => reactionId !== matchingReaction.id) :
+        .filter(({ documentId: reactionId }) => reactionId !== matchingReaction.documentId) :
       [...existingReactions];
 
     if (isArray(existingReactions) && (existingReactions.length === 1)) {
@@ -140,7 +139,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const removed = await this.directDelete(reactionsToRemove);
 
     if (!removed) {
-      throw new PluginError(405, `Can't perform toogle action reaction type of "${kind}" for Entity with ID: ${id || 'single'} of type: ${uid}`);
+      throw new PluginError(405, `Can't perform toogle action reaction type of "${kind}" for Entity with Document ID: ${documentId || 'single'} of type: ${uid}`);
     }
 
     if (isNil(matchingReaction)) {
@@ -156,14 +155,15 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     this: IServiceClient,
     kind: string | null,
     uid?: UID.ContentType,
-    id?: StrapiId,
-  ): Promise<[AnyEntity, AnyEntity | undefined]> {
+    documentId?: Data.DocumentID,
+  ): Promise<[CTReactionType, AnyEntity | null]> {
 
-    let result = [];
+    let result: [CTReactionType, AnyEntity | null] = [null, null];
 
     if (kind !== null) {
-      const reactionKind = await strapi.entityService
-        .findMany(getModelUid("reaction-type"), {
+      const reactionKind = await strapi
+        .documents(getModelUid("reaction-type"))
+        .findOne<CTReactionType>({
           filters: { slug: kind }
         });
 
@@ -171,46 +171,49 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         throw new PluginError(404, `Reaction '${kind}' does not exist. You can't use it.`);
       }
 
-      result = [...result, first(reactionKind)];
+      result = [reactionKind, null];
     } else {
-      result = [...result, null];
+      result = [null, null];
     }
 
     if (uid) {
-      let relatedEntity;
+      let relatedEntity: AnyEntity;
       try {
-        relatedEntity = await strapi.entityService
-          .findOne(uid, id || '1');
+        relatedEntity = await strapi
+          .documents(uid)
+          .findOne({
+            documentId,
+          }) as AnyEntity;
       }
       catch (e) {
-        throw new PluginError(404, `Entity with ID: ${id || 'single'} of type: ${uid} does not exits`);
+        throw new PluginError(404, `Entity with Document ID: ${documentId || 'single'} of type: ${uid} does not exits`);
       }
 
       if (!relatedEntity) {
-        throw new PluginError(404, `Entity with ID: ${id || 'single'} of type: ${uid} does not exits`);
+        throw new PluginError(404, `Entity with Document ID: ${documentId || 'single'} of type: ${uid} does not exits`);
       }
 
-      return [...result, relatedEntity];
+      return [first(result), relatedEntity];
     }
     return result;
   },
 
   async directCreate(
     this: IServiceClient,
-    uid: StrapiId,
-    kind: AnyEntity,
+    uid: UID.ContentType,
+    kind: CTReactionType,
     related: AnyEntity,
     user: StrapiUser,
-  ): Promise<AnyEntity> {
-    return await strapi.entityService
-      .create(getModelUid("reaction"), {
+  ): Promise<CTReaction> {
+    return await strapi.documents(getModelUid("reaction"))
+      .create({
         data: {
           kind: kind,
           related: {
             ...related,
             __type: uid,
           },
-          relatedUid: buildRelatedId(uid, related.id),
+          relatedUid: buildRelatedId(uid, related.documentId),
           user,
         },
       });
@@ -218,11 +221,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
   async directDelete(
     this: IServiceClient,
-    reactions: Array<AnyEntity>,
+    reactions: Array<CTReaction>,
   ): Promise<boolean> {
     const removedEntities = await strapi.db.query(getModelUid("reaction")).deleteMany({
       where: {
-        id: reactions.map(_ => _.id),
+        documentId: reactions.map(_ => _.documentId),
       },
     });
     return removedEntities && (removedEntities.count === reactions.length);

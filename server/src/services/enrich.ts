@@ -1,8 +1,7 @@
-import { Core, UID } from '@strapi/types';
+import { Core, UID } from '@strapi/strapi';
+import { PopulateClause } from '@virtuslab/strapi-utils';
 
-import { PopulateClause } from 'strapi-typed';
-
-import { IServiceEnrich, ReactionEntity, ToBeFixed } from "../../../@types";
+import { IServiceEnrich, ReactionEntity, RelatedId } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 
 export type StrapiReactions = Array<ReactionEntity>;
@@ -81,7 +80,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
           .reduce((accItem, currItem) => ({
             ...accItem,
             [currItem.id]: (reactions || [])
-              .filter(({ relatedUid }: ToBeFixed) => relatedUid === buildRelatedId(uid, currItem.id))
+              .filter(({ relatedUid }: { relatedUid: RelatedId}) => relatedUid === buildRelatedId(uid, currItem.id))
               .reduce(this.composeReactionsMeta, {}),
           }), {}),
       },

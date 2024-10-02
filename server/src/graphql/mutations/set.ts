@@ -1,4 +1,5 @@
-import { StrapiRequestContext } from "strapi-typed";
+import { Context } from "koa";
+
 import {
   IServiceClient,
   StrapiGraphQLContext,
@@ -22,14 +23,14 @@ export default ({ nexus }: StrapiGraphQLContext) => {
     async resolve(
       _: Object,
       args: SetReactionProps,
-      ctx: StrapiRequestContext<never> & ToBeFixed
+      ctx: Context
     ) {
       const { input } = args;
       const { state: { user = undefined } = {} } = ctx;
       const { kind, uid, id } = input;
       try {
         return await getPluginService<IServiceClient>("client")
-          .create(kind, uid, id, user);
+          .create(kind, uid, user, id);
       } catch (e: ToBeFixed) {
         throw new Error(e);
       }

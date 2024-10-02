@@ -1,7 +1,7 @@
-import { StrapiRoute } from "strapi-typed";
-
 import clientRoutes from "./client";
 import adminRoutes from "./admin";
+
+type Routes = typeof clientRoutes | typeof adminRoutes;
 
 type PluginRoutes = {
   [key: string]: PluginScopeRoutes;
@@ -9,7 +9,7 @@ type PluginRoutes = {
 
 type PluginScopeRoutes = {
   type: string;
-  routes: Array<StrapiRoute>;
+  routes: Routes;
 };
 
 const routes: PluginRoutes = {
