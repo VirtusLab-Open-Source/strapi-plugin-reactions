@@ -21,7 +21,7 @@ import { getMessage } from "../../../../utils";
 import useUtils from "../../../../hooks/useUtils";
 import { ReactionTypeSwitch } from "./styles";
 import { ReactionEmojiSelect } from "../ReactionEmojiSelect";
-import { ReactionTypeEntity, ToBeFixed } from "../../../../../../@types";
+import { CTReactionType, ToBeFixed } from "../../../../../../@types";
 import Field from "../../../../components/Field";
 
 type CUModalProps = {
@@ -34,7 +34,7 @@ type CUModalProps = {
   onSubmit: (values: any) => void | Promise<any>;
 };
 
-export type ReactionFormPayload = ReactionTypeEntity & {
+export type ReactionFormPayload = CTReactionType & {
   name: string;
   emoji?: string;
   image?: any; // TODO
@@ -65,7 +65,7 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
       slugGenerationTimeout.current = setTimeout(async () => {
         const slug = await slugMutation.mutateAsync({
           value: slugSource,
-          id: data.id,
+          documentId: data.documentId,
         });
 
         setSlug(slug);

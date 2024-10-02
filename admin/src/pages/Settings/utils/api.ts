@@ -30,7 +30,7 @@ export const fetchConfig = async ({ toggleNotification, fetchClient }: FetchConf
 
 export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchClient }: FetchConfig): Promise<ReactionsPluginConfig | undefined> => {
   try {
-    const method = isNil(body.id) ? fetchClient.post : fetchClient.put;
+    const method = isNil(body.documentId) ? fetchClient.post : fetchClient.put;
     const { data } = await method(
       getApiURL(`settings/config`),
       body,
@@ -42,10 +42,10 @@ export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchC
   }
 };
 
-export const deleteReactionType = async (id: StrapiId, { toggleNotification, fetchClient }: FetchConfig): Promise<number | undefined> => {
+export const deleteReactionType = async (documentId: StrapiId, { toggleNotification, fetchClient }: FetchConfig): Promise<number | undefined> => {
   try {
     const { data } = await fetchClient.del(
-      getApiURL(`settings/config/reaction-type/${id}`)
+      getApiURL(`settings/config/reaction-type/${documentId}`)
     );
 
     return data.result;

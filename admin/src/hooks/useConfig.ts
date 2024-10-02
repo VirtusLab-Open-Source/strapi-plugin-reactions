@@ -8,10 +8,10 @@ import {
   deleteReactionType,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
-import { ReactionTypeEntity } from '../../../@types';
+import { CTReactionType } from '../../../@types';
 
 type SubmitPayload = {
-  body: ReactionTypeEntity;
+  body: CTReactionType;
   toggleNotification: any;
 };
 
@@ -66,7 +66,7 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: ({ id }: any) => deleteReactionType(id, config),
+    mutationFn: ({ documentId }: any) => deleteReactionType(documentId, config),
     onSuccess: () => handleSuccess("reaction.delete"),
     onError: () => handleError("reaction.delete"),
   });

@@ -12,12 +12,12 @@ type useContentManagerResult = {
   fetch: UseQueryResult<any, Error>;
 };
 
-const useContentManager = (uid: UID.ContentType, id: StrapiId): useContentManagerResult => {
+const useContentManager = (uid: UID.ContentType, documentId: StrapiId): useContentManagerResult => {
   const { get } = useFetchClient();
 
   const fetch = useQuery({
     queryKey: ["get-reactions"],
-    queryFn: () => fetchReactions(uid, id, { get }),
+    queryFn: () => fetchReactions(uid, documentId, { get }),
   });
 
   return { fetch };

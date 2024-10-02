@@ -11,7 +11,7 @@ import { StrapiId } from '../../../@types';
 
 type SlugMutationPayload = {
   value: string;
-  id: StrapiId;
+  documentId: StrapiId;
 };
 
 export type useUtilsResult = {
@@ -50,7 +50,7 @@ const useUtils = (toggleNotification: any): useUtilsResult => {
   };
 
   const slugMutation = useMutation({
-    mutationFn: ({ value, id }: SlugMutationPayload) => generateSlug({ value, id}, config),
+    mutationFn: ({ value, documentId }: SlugMutationPayload) => generateSlug({ value, documentId}, config),
     onSuccess: () => handleSuccess(),
     onError: () => handleError('generateSlug'),
   });
