@@ -1,30 +1,18 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import { Button, Divider, Field as NativeField, Flex, Grid, Loader, Modal, Toggle, Typography } from '@strapi/design-system';
 
-import { isNil } from "lodash";
-import { Formik } from "formik";
+import { Form, InputProps, useNotification } from '@strapi/strapi/admin';
 
-import { Form, InputProps, useNotification } from "@strapi/strapi/admin";
+import { StrapiImage } from '@virtuslab/strapi-utils';
 
-import {
-  Button,
-  Divider,
-  Field as NativeField,
-  Flex,
-  Grid,
-  Modal,
-  Loader,
-  Toggle,
-  Typography
-} from '@strapi/design-system';
+import { isNil } from 'lodash';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { CTReactionType } from '../../../../../../@types';
+import Field from '../../../../components/Field';
+import useUtils from '../../../../hooks/useUtils';
 
-import { StrapiImage } from "@virtuslab/strapi-utils";
-
-import { getMessage } from "../../../../utils";
-import useUtils from "../../../../hooks/useUtils";
-import { ReactionTypeSwitch } from "./styles";
-import { ReactionEmojiSelect } from "../ReactionEmojiSelect";
-import { CTReactionType, ToBeFixed } from "../../../../../../@types";
-import Field from "../../../../components/Field";
+import { getMessage } from '../../../../utils';
+import { ReactionEmojiSelect } from '../ReactionEmojiSelect';
+import { ReactionTypeSwitch } from './styles';
 
 type CUModalProps = {
   data: any;
@@ -45,7 +33,6 @@ export type ReactionFormPayload = CTReactionType & {
 type MediaFieldType = Omit<InputProps, 'options' | 'type'> & {
   value: any;
   multiple: boolean;
-  onChange: (value: any) => void;
 };
 
 const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, trigger, onSubmit, onClose }: CUModalProps) => {
@@ -99,12 +86,13 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
     <Modal.Root open={isModalOpened} onClose={onClose} labelledBy="title">
       {trigger && (<Modal.Trigger>{trigger}</Modal.Trigger>)}
       <Modal.Content>
-        <Formik
+        <Form
+          method="POST"
           initialValues={data}
-          enableReinitialize={true}
-          onSubmit={submitForm}>
-          {({ handleSubmit, setFieldValue, values }) => (
-            <Form method="POST" onSubmit={(e: any) => handleSubmit(e)}>
+          onSubmit={submitForm}
+        >
+          {({ values, onChange }) => (
+            <>
               <Modal.Header>
                 <Typography fontWeight="bold" textColor="neutral800" tag="h2" id="title">
                   {getMessage(`page.settings.modal.title.${isNil(data) ? 'create' : 'update'}`)}
@@ -115,51 +103,49 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                   <ReactionTypeSwitch>
                     <Field
                       name="enable-provider"
-                      hint={getMessage("page.settings.form.type.hint")}
-                      label={getMessage("page.settings.form.type.label")}>
+                      hint={getMessage('page.settings.form.type.hint')}
+                      label={getMessage('page.settings.form.type.label')}>
                       <Toggle
                         width="100%"
                         size="S"
-                        onLabel={getMessage("page.settings.form.type.image.label")}
-                        offLabel={getMessage("page.settings.form.type.emoji.label")}
+                        onLabel={getMessage('page.settings.form.type.image.label')}
+                        offLabel={getMessage('page.settings.form.type.emoji.label')}
                         checked={imageVariant}
-                        onChange={handleImageVariantChange} />
+                        onChange={handleImageVariantChange}
+                      />
                     </Field>
                   </ReactionTypeSwitch>
                   <Divider width="100%" />
                   <Grid.Root width="100%" gap={4}>
                     <Grid.Item col={4} xs={12}>
-                      {imageVariant && (<Field
-                        name="icon"
-                        label={getMessage("page.settings.form.icon.label")} required>
-                        <MediaField
-                          multiple={false}
+                      {imageVariant && (
+                        <Field
                           name="icon"
-                          value={values.icon || undefined}
-                          required={true}
-                          onChange={(value) => {
-                            alert();
-                            console.log(value);
-                            return setFieldValue("icon", value, false);
-                          }
-                          }
-                        />
-                      </Field>)}
-                      {!imageVariant && (<ReactionEmojiSelect value={values.emoji} onChange={setFieldValue} />)}
+                          label={getMessage('page.settings.form.icon.label')}
+                          required>
+                          <MediaField
+                            multiple={false}
+                            name="icon"
+                            value={values.icon || undefined}
+                            required={true}
+                          />
+                        </Field>
+                      )}
+                      {!imageVariant && (<ReactionEmojiSelect value={values.emoji} onChange={onChange} />)}
                     </Grid.Item>
                     <Grid.Item col={8} xs={12}>
                       <Flex width="100%" direction="column" gap={4}>
                         <Grid.Root width="100%">
                           <Grid.Item col={12}>
-                            <Field name="name" label={getMessage("page.settings.form.name.label")}>
+                            <Field name="name" label={getMessage('page.settings.form.name.label')}>
                               <NativeField.Input
                                 type="text"
+                                name="name"
                                 value={values.name}
-                                onChange={({ target: { value } }: ToBeFixed) => {
-                                  setSlugSource(value);
-                                  return setFieldValue("name", value, false);
-                                }
-                                }
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                  setSlugSource(e.target.value);
+                                  onChange(e);
+                                }}
                               />
                             </Field>
                           </Grid.Item>
@@ -168,12 +154,14 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                           <Grid.Item col={12}>
                             <Field
                               name="slug"
-                              label={getMessage("page.settings.form.slug.label")}
-                              hint={getMessage("page.settings.form.slug.hint")}>
+                              label={getMessage('page.settings.form.slug.label')}
+                              hint={getMessage('page.settings.form.slug.hint')}
+                            >
                               <NativeField.Input
                                 type="text"
                                 value={slug}
                                 disabled={true}
+                                name="slug"
                                 endAction={slugMutation.isPending && (<Loader small />)}
                               />
                             </Field>
@@ -189,20 +177,23 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                   <Button
                     onClick={onClose}
                     variant="tertiary">
-                    {getMessage("page.settings.modal.action.cancel")}
+                    {getMessage('page.settings.modal.action.cancel')}
                   </Button>
                 </Modal.Close>
                 <Button
-                  onClick={(e: unknown) => handleSubmit(e as FormEvent<HTMLFormElement>)}
                   disabled={formLocked}
-                  loading={isLoading}>
-                  {getMessage("page.settings.modal.action.submit")}
+                  loading={isLoading}
+                  type="submit"
+                >
+                  {getMessage('page.settings.modal.action.submit')}
                 </Button>
               </Modal.Footer>
-            </Form>)}
-        </Formik>
+            </>
+          )}
+        </Form>
       </Modal.Content>
-    </Modal.Root>)
+    </Modal.Root>
+  );
 };
 
 export default CUModal;
