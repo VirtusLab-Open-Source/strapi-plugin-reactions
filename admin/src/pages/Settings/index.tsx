@@ -89,9 +89,10 @@ const Settings = () => {
       try {
         const payload = preparePayload(form);
         await submitMutation.mutateAsync({ body: payload, toggleNotification });
-      } finally {
         setModalOpened(false);
         setModalEntity(undefined);
+      } catch(e: any) {
+        console.error(e);
       }
     }
   };

@@ -68,13 +68,16 @@ const fr = {
       form: {
         name: {
           label: "Nom",
+          required: "Le nom est requis",
         },
         slug: {
           label: "Identifiant unique",
           hint: "Les réactions peuvent être interrogées par cet identifiant convivial",
+          required: "L'identifiant est requis",
         },
         icon: {
           label: "Icône",
+          required: "L'icône est requise",
         },
         type: {
           label: "Visualiser comme",
@@ -97,6 +100,7 @@ const fr = {
               label: "Rechercher un émoji...",
             },
           },
+          required: "L'émoji est requis",
         },
       },
       loading: "Chargement de la configuration...",
