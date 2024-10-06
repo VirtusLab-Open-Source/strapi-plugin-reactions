@@ -10,6 +10,8 @@ Icon
 .Trashes
 ._*
 .vscode
+.npmrc
+.yarnrc.yml
 
 
 ############################

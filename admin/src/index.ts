@@ -3,7 +3,7 @@ import Initializer from './components/Initializer';
 
 import pluginPermissions from "./permissions";
 // import { EditViewSummary } from './injections/EditViewSummary';
-import { flattenObject, prefixPluginTranslations } from '@virtuslab/strapi-utils';
+import { flattenObject, prefixPluginTranslations } from '@sensinum/strapi-utils';
 import trads from "./translations";
 
 const name = "reactions";

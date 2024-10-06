@@ -1,5 +1,5 @@
 import { Data, UID } from "@strapi/strapi";
-import { AnyEntity, StrapiUser } from "@virtuslab/strapi-vl-utils";
+import { AnyEntity, StrapiUser } from "@sensinum/strapi-vl-utils";
 
 import { StrapiId, ToBeFixed } from "./common";
 import { StrapiReactions } from "../src/services/enrich";

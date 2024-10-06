@@ -1,4 +1,4 @@
-import { Path } from '@virtuslab/strapi-utils';
+import { Path } from '@sensinum/strapi-utils';
 import type { EN } from './en';
 
 export type TranslationPath = Path<EN>;
