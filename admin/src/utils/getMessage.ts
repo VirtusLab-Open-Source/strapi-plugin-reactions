@@ -28,7 +28,7 @@ const getMessage = (
       defaultMessage,
     },
     typeof input === 'string' ? undefined : input?.props,
-  );
+  ) as string;
 };
 
 export default getMessage;
