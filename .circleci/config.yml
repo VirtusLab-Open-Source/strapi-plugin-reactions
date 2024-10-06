@@ -9,6 +9,9 @@ jobs:
       - image: cimg/node:18.18.2
     working_directory: ~/repo
     resource_class: large
+    dependencies:
+      pre:
+        - echo "@sensinum:registry=//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
     steps:
       - checkout
       - run:
@@ -47,6 +50,9 @@ jobs:
           paths:
             - ./node_modules
           key: strapi-plugin-reactions-v2-{{ checksum "yarn.lock" }}
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
 workflows:
   build-and-test:
     jobs:
