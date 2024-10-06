@@ -4,7 +4,7 @@ import { Form, InputProps, useNotification } from '@strapi/strapi/admin';
 
 import { StrapiImage } from '@virtuslab/strapi-utils';
 
-import { isNil } from 'lodash';
+import { isArray, isEmpty, isNil, set } from 'lodash';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { CTReactionType } from '../../../../../../@types';
 import Field from '../../../../components/Field';
@@ -13,6 +13,8 @@ import useUtils from '../../../../hooks/useUtils';
 import { getMessage } from '../../../../utils';
 import { ReactionEmojiSelect } from '../ReactionEmojiSelect';
 import { ReactionTypeSwitch } from './styles';
+import { reactionForm } from '../../../../schemas';
+import { ZodIssue } from 'zod';
 
 type CUModalProps = {
   data: any;
@@ -26,9 +28,14 @@ type CUModalProps = {
 
 export type ReactionFormPayload = CTReactionType & {
   name: string;
+  slug: string
   emoji?: string;
   image?: StrapiImage;
 };
+
+type ReactionFormErrors = {
+  [key: keyof ReactionFormPayload]: string;
+}
 
 type MediaFieldType = Omit<InputProps, 'options' | 'type'> & {
   value: any;
@@ -40,6 +47,7 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
   const slugGenerationTimeout = useRef<NodeJS.Timeout>();
   const [slugSource, setSlugSource] = useState<string>();
   const [slug, setSlug] = useState(data.slug || '');
+  const [errors, setErrors] = useState<ReactionFormErrors>({});
   const [lockWindow, setLockWindow] = useState<boolean>();
   const [imageVariant, setImageVariant] = useState(isNil(data.emoji));
   const { slugMutation } = useUtils(toggleNotification);
@@ -65,16 +73,37 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
 
   const handleImageVariantChange = () => setImageVariant(!imageVariant);
 
-  const submitForm = async (values: ReactionFormPayload) => {
+  const setFormErrors = (errors: Array<ZodIssue>) => {
+    if (!isEmpty(errors)) {
+      setErrors(errors.reduce((acc, error: ZodIssue) => {
+        const path = isArray(error?.path) ? error?.path.join('.') : error?.path;
+        return {
+          ...acc,
+          [path]: error?.message,
+        };
+      }, {}));
+    } else {
+      setErrors({});
+    }
+  };
+
+  const submitForm = async (e: React.MouseEvent, values: ReactionFormPayload) => {
+    e.preventDefault();
+
     if (!formLocked) {
-      console.log(values);
-      return onSubmit({
+      const paload = {
         ...values,
         image: imageVariant ? values.image : null,
         emoji: imageVariant ? null : values.emoji,
         emojiFallbackUrl: imageVariant ? null : values.emojiFallbackUrl,
         slug: slug || values.slug,
-      });
+      };
+
+      const { success, error } = reactionForm.safeParse(paload)
+      if (success) {
+        return onSubmit(paload);
+      }
+      setFormErrors(error?.issues);
     }
   };
 
@@ -83,13 +112,15 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
   const MediaField = fields.media as React.ComponentType<MediaFieldType>;
 
   return (
-    <Modal.Root open={isModalOpened} onClose={onClose} labelledBy="title">
+    <Modal.Root
+      open={isModalOpened}
+      onOpenChange={onClose}
+      labelledBy="title">
       {trigger && (<Modal.Trigger>{trigger}</Modal.Trigger>)}
       <Modal.Content>
         <Form
           method="POST"
           initialValues={data}
-          onSubmit={submitForm}
         >
           {({ values, onChange }) => (
             <>
@@ -122,22 +153,31 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                         <Field
                           name="icon"
                           label={getMessage('page.settings.form.icon.label')}
+                          error={errors?.icon}
                           required>
                           <MediaField
                             multiple={false}
                             name="icon"
                             value={values.icon || undefined}
-                            required={true}
+                            required={imageVariant}
                           />
                         </Field>
                       )}
-                      {!imageVariant && (<ReactionEmojiSelect value={values.emoji} onChange={onChange} />)}
+                      {!imageVariant && (<ReactionEmojiSelect
+                        value={values.emoji}
+                        error={errors?.emoji}
+                        required={!imageVariant}
+                        onChange={onChange} />)}
                     </Grid.Item>
                     <Grid.Item col={8} xs={12}>
                       <Flex width="100%" direction="column" gap={4}>
                         <Grid.Root width="100%">
                           <Grid.Item col={12}>
-                            <Field name="name" label={getMessage('page.settings.form.name.label')}>
+                            <Field
+                              name="name"
+                              label={getMessage('page.settings.form.name.label')}
+                              error={errors?.name}
+                              required>
                               <NativeField.Input
                                 type="text"
                                 name="name"
@@ -146,6 +186,7 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                                   setSlugSource(e.target.value);
                                   onChange(e);
                                 }}
+                                required
                               />
                             </Field>
                           </Grid.Item>
@@ -156,6 +197,8 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                               name="slug"
                               label={getMessage('page.settings.form.slug.label')}
                               hint={getMessage('page.settings.form.slug.hint')}
+                              error={errors?.slug}
+                              required
                             >
                               <NativeField.Input
                                 type="text"
@@ -163,6 +206,7 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                                 disabled={true}
                                 name="slug"
                                 endAction={slugMutation.isPending && (<Loader small />)}
+                                required
                               />
                             </Field>
                           </Grid.Item>
@@ -184,6 +228,7 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
                   disabled={formLocked}
                   loading={isLoading}
                   type="submit"
+                  onClick={(e: React.MouseEvent) => submitForm(e, values)}
                 >
                   {getMessage('page.settings.modal.action.submit')}
                 </Button>

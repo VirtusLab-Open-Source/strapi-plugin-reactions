@@ -68,13 +68,16 @@ const en = {
       form: {
         name: {
           label: "Name",
+          required: "Name is required",
         },
         slug: {
           label: "Unique identifier",
           hint: "Reactions can be queried by this human friendly identifier",
+          required: "Slug is required",
         },
         icon: {
           label: "Icon",
+          required: "Icon is required",
         },
         type: {
           label: "Visualise as",
@@ -97,6 +100,7 @@ const en = {
               label: "Search for emoji...",
             },
           },
+          required: "Emoji is required",
         },
       },
       loading: "Loading configuration...",

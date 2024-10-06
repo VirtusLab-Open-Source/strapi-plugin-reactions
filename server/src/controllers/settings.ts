@@ -65,7 +65,6 @@ export default () => ({
     try {
       const { query = {} } = ctx;
       const { value, id } = parseParams<GenerateSlugRequestQueryProps>(query);
-      console.log(value);
       return await this.getService<IServiceAdmin>().generateSlug(value, id);
     } catch (e) {
       throw throwError(ctx, e);
