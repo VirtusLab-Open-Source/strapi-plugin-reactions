@@ -86,20 +86,20 @@ const mockStrapi = (config: any = {}, toStore: boolean = false, database: any = 
           const service = get(this.services, name);
           return service.default({ strapi: mock.getRef() });
         },
-        package: require("../package.json"),
+        package: require("../../package.json"),
         services: {
-          zone: require("../server/services/zone"),
-          enrich: require("../server/services/enrich"),
-          client: require("../server/services/client"),
-          admin: require("../server/services/admin"),
+          zone: require("../src/services/zone"),
+          enrich: require("../src/services/enrich"),
+          client: require("../src/services/client"),
+          admin: require("../src/services/admin"),
         },
         contentTypes: {
           reaction: {
-            ...require("../server/content-types/reaction"),
+            ...require("../src/content-types/reaction"),
             uid: "plugins::reactions.reaction",
           },
           "reaction-type": {
-            ...require("../server/content-types/reaction-type"),
+            ...require("../src/content-types/reaction-type"),
             uid: "plugins::reactions.reaction-type",
           },
         },
