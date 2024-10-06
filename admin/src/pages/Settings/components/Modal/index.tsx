@@ -2,7 +2,7 @@ import { Button, Divider, Field as NativeField, Flex, Grid, Loader, Modal, Toggl
 
 import { Form, InputProps, useNotification } from '@strapi/strapi/admin';
 
-import { StrapiImage } from '@virtuslab/strapi-utils';
+import { StrapiImage } from '@sensinum/strapi-utils';
 
 import { isArray, isEmpty, isNil, set } from 'lodash';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';

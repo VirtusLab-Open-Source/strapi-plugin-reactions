@@ -1,6 +1,6 @@
 import { Core, Data, UID } from '@strapi/strapi';
 import { isArray, isNil, first } from "lodash";
-import { AnyEntity, StrapiUser } from "@virtuslab/strapi-utils";
+import { AnyEntity, StrapiUser } from "@sensinum/strapi-utils";
 
 import { CTReaction, CTReactionType, IServiceClient, StrapiId } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';

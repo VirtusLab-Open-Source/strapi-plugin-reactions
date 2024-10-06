@@ -1,5 +1,5 @@
 import { Core, UID } from '@strapi/strapi';
-import { PopulateClause } from '@virtuslab/strapi-utils';
+import { PopulateClause } from '@sensinum/strapi-utils';
 
 import { IServiceEnrich, ReactionEntity, RelatedId } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
