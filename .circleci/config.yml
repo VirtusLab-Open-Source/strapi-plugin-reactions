@@ -31,7 +31,7 @@ jobs:
       - run:
           name: Configure NPM
           command: |
-            echo "@sensinum:registry=//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Install
           command: |
