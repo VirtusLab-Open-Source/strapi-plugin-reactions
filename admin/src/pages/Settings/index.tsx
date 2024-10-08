@@ -28,6 +28,7 @@ import {
 } from "@strapi/design-system";
 
 import { Pencil, Plus, Trash, ArrowClockwise } from "@strapi/icons";
+import { ConfirmationDialog } from "@sensinum/strapi-utils";
 
 import pluginPermissions from "../../permissions";
 import useConfig from "../../hooks/useConfig";
@@ -35,7 +36,6 @@ import { getMessage } from "../../utils";
 import CUModal from "./components/Modal";
 import { ReactionIcon } from "./components/ReactionIcon";
 import useUtils from "../../hooks/useUtils";
-import ConfirmationDialog from "../../components/ConfirmationDialog";
 import { AdminAction } from "./components/AdminAction";
 import { CTReactionType, StrapiId, ToBeFixed } from "../../../../@types";
 

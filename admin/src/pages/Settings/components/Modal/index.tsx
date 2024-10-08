@@ -2,12 +2,11 @@ import { Button, Divider, Field as NativeField, Flex, Grid, Loader, Modal, Toggl
 
 import { Form, InputProps, useNotification } from '@strapi/strapi/admin';
 
-import { StrapiImage } from '@sensinum/strapi-utils';
+import { StrapiImage, Field } from '@sensinum/strapi-utils';
 
-import { isArray, isEmpty, isNil, set } from 'lodash';
+import { isArray, isEmpty, isNil } from 'lodash';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { CTReactionType } from '../../../../../../@types';
-import Field from '../../../../components/Field';
 import useUtils from '../../../../hooks/useUtils';
 
 import { getMessage } from '../../../../utils';
