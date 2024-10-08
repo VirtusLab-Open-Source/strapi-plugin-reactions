@@ -78,7 +78,7 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
         const path = isArray(error?.path) ? error?.path.join('.') : error?.path;
         return {
           ...acc,
-          [path]: error?.message,
+          [path]: getMessage(error?.message),
         };
       }, {}));
     } else {
