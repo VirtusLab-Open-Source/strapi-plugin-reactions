@@ -125,7 +125,7 @@ In our minimum support we're following [official Node.js releases timelines](htt
 
 **Supported Strapi versions**:
 
-- Strapi v5.0.0-rc.22 (recently tested)
+- Strapi v5.0.4 (recently tested)
 - Strapi v5.x
 
 If you're looking for Strapi v4 compatible version, please go [here](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/main).
