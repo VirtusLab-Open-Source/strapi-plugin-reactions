@@ -6,6 +6,7 @@ export default ({ nexus }: StrapiGraphQLContext) =>
     definition(t: INexusType) {
       t.nonNull.string("kind");
       t.nonNull.string("uid");
-      t.id("id");
+      t.string("locale");
+      t.id("documentId");
     },
   });

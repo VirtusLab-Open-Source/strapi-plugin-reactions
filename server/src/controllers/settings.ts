@@ -1,17 +1,19 @@
+
+import { Data } from '@strapi/strapi';
 import { Context } from 'koa';
 
 import { getPluginService, parseParams } from '../utils/functions';
 import { throwError } from './utils/functions';
-import { IServiceAdmin, ReactionsPluginConfig, StrapiId } from '../../../@types';
+import { IServiceAdmin, ReactionsPluginConfig } from '../../../@types';
 import PluginError from "../utils/error";
 
 type GenerateSlugRequestQueryProps = {
-  id?: StrapiId;
+  documentId?: Data.DocumentID;
   value: string;
 };
 
 type ReactionsTypeDeleteProps = {
-  id: StrapiId;
+  documentId: Data.DocumentID;
 };
 
 export default () => ({
@@ -54,8 +56,8 @@ export default () => ({
   async deleteReactionType(ctx: Context) {
     try {
       const { params = {} } = ctx;
-      const { id } = parseParams<ReactionsTypeDeleteProps>(params);
-      return await this.getService<IServiceAdmin>().deleteReactionType(id);
+      const { documentId } = parseParams<ReactionsTypeDeleteProps>(params);
+      return await this.getService<IServiceAdmin>().deleteReactionType(documentId);
     } catch (e) {
       throw throwError(ctx, e);
     }
@@ -64,8 +66,8 @@ export default () => ({
   async generateSlug(ctx: Context) {
     try {
       const { query = {} } = ctx;
-      const { value, id } = parseParams<GenerateSlugRequestQueryProps>(query);
-      return await this.getService<IServiceAdmin>().generateSlug(value, id);
+      const { value, documentId } = parseParams<GenerateSlugRequestQueryProps>(query);
+      return await this.getService<IServiceAdmin>().generateSlug(value, documentId);
     } catch (e) {
       throw throwError(ctx, e);
     }

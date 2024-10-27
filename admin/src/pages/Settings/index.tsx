@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { Data } from "@strapi/strapi";
+
 import {
   Page,
   Layouts,
@@ -37,7 +39,7 @@ import CUModal from "./components/Modal";
 import { ReactionIcon } from "./components/ReactionIcon";
 import useUtils from "../../hooks/useUtils";
 import { AdminAction } from "./components/AdminAction";
-import { CTReactionType, StrapiId, ToBeFixed } from "../../../../@types";
+import { CTReactionType, ToBeFixed } from "../../../../@types";
 
 const DEFAULT_BOX_PROPS = {
   width: "100%",
@@ -97,7 +99,7 @@ const Settings = () => {
     }
   };
 
-  const handleDelete = async (documentId: StrapiId) => {
+  const handleDelete = async (documentId: Data.DocumentID) => {
     if (canChange) {
       try {
         await deleteMutation.mutateAsync({ documentId, toggleNotification });

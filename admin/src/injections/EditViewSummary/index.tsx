@@ -1,15 +1,15 @@
-import React from "react";
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isEmpty, get } from "lodash";
+import qs from "qs";
 
-import { UID } from "@strapi/strapi";
+import { Data, UID } from "@strapi/strapi";
 import {
     useNotification
 } from "@strapi/strapi/admin";
 
 import { 
     Box,
-    Divider, 
     Grid, 
     Typography } from '@strapi/design-system';
 
@@ -17,9 +17,8 @@ import { ReactionCounter, ReactionCounterProps } from "./components/ReactionCoun
 
 import useContentManager, { ContentManagerType } from "../../hooks/useContentManager";
 import useConfig from "../../hooks/useConfig";
-import { StrapiId } from "../../../../@types";
 
-const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z-]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<id>\d*)/;
+const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z-]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<documentId>.{24})?/;
 const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
     SINGLE_TYPE: 'single-types',
     COLLECTION_TYPE: 'collection-types',
@@ -28,7 +27,15 @@ const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
 type ContentManagerPathProps = {
     type: ContentManagerType;
     uid: UID.ContentType;
-    documentId: StrapiId;
+    documentId: Data.DocumentID;
+};
+
+type ContentManagerQueryParams = {
+    plugins: {
+        i18n: {
+            locale: string;
+        };
+    };
 };
 
 export const EditViewSummary = () => {
@@ -38,14 +45,17 @@ export const EditViewSummary = () => {
     const groups: ContentManagerPathProps = new RegExp(CONTENT_MANAGER_PATH_PATTERN, "gm")
         .exec(location.pathname)?.groups as ContentManagerPathProps;
 
-    const { uid, documentId, type } = groups;
+    const { uid, documentId, type } = groups ?? {};
+    const queryParams = qs.parse(location.search?.replace("?", "") ?? "") as ContentManagerQueryParams;
 
     if (!documentId && (type === CONTENT_MANAGER_TYPES.COLLECTION_TYPE)) {
         return null;
     }
 
+    const locale = queryParams?.plugins?.i18n?.locale;
+
     const { fetch: fetchConfig } = useConfig(toggleNotification);
-    const { fetch: fetchReactions } = useContentManager(uid, documentId);
+    const { fetch: fetchReactions } = useContentManager(uid, documentId, locale);
 
     const { types = [] } = fetchConfig?.data || {} as any;
 
@@ -54,15 +64,18 @@ export const EditViewSummary = () => {
         || isEmpty(fetchReactions.data)
         || (!types || isEmpty(types));
 
+    useEffect(() => {
+        fetchReactions.refetch();
+    }, [locale]);
+
     if (isNotInjectable) {
         return null;
     }
 
     const { data: reactionsCount } = fetchReactions;
 
-    return (<Box paddingTop={4}>
+    return (<Box width="100%" paddingTop={2}>
         <Typography variant="sigma" textColor="neutral600">Reactions</Typography>
-        <Divider unsetMargin={false} />
         <Box paddingTop={2}>
             <Grid.Root gap={4}>
                 {types.map(({ name, slug, icon, emoji }: ReactionCounterProps & { slug: string }) => (

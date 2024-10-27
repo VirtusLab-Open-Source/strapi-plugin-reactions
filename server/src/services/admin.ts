@@ -2,7 +2,7 @@ import { Core, Data } from '@strapi/strapi';
 import { first, isArray, isEmpty, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 
-import { ReactionsPluginConfig, IServiceAdmin, StrapiId, IServiceCommon, CTReactionType, CTReaction } from "../../../@types";
+import { ReactionsPluginConfig, IServiceAdmin, IServiceCommon, CTReactionType, CTReaction } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
@@ -68,6 +68,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       .documents(getModelUid("reaction"))
       .findMany({
         fields: ['documentId'],
+        locale: "*",
         filters: {
           kind: reactionKind,
         },
@@ -93,7 +94,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async generateSlug(
     this: IServiceAdmin,
     subject: string,
-    documentId?: StrapiId,
+    documentId?: Data.DocumentID,
   ): Promise<{
     slug: string;
   }> {
@@ -108,7 +109,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async uniqueSlug(
     this: IServiceAdmin,
     slug: string,
-    documentId?: StrapiId,
+    documentId?: Data.DocumentID,
   ): Promise<string> {
     if (isString(slug)) {
       let filters: any = {
@@ -138,6 +139,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       .documents(getModelUid("reaction"))
       .findMany({
         fields: ['documentId', 'relatedUid'],
+        locale: "*",
         populate: ['related'],
       });
 
@@ -150,11 +152,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     const entitiesUpdated = await Promise.all(entitiesToUpdate
-      .map(async ({ documentId, related }: CTReaction) =>
+      .map(async ({ documentId, related, locale }: CTReaction) =>
         strapi
           .documents(getModelUid("reaction"))
           .update({
             documentId,
+            locale,
             data: {
               relatedUid: buildRelatedId(related.__type, related.documentId),
             },

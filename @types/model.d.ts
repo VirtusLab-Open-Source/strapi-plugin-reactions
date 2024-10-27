@@ -1,5 +1,4 @@
-import type { Struct, Schema } from '@strapi/strapi';
-import { StrapiId } from './common';
+import type { Struct, Schema, Data } from '@strapi/strapi';
 
 export interface Reaction extends Struct.CollectionTypeSchema {
   collectionName: 'vl_reactions';
@@ -48,7 +47,11 @@ export type ReactionAttributes = {
   locale: Schema.Attribute.String;
 }
 
-export type ReactionEntity = { id: StrapiId } & ReactionAttributes;
+export type ReactionEntity = { 
+  id: Data.ID;
+  documentId: Data.DocumentID;
+  locale?: string;
+} & ReactionAttributes;
 
 export interface ReactionType extends Struct.CollectionTypeSchema {
   collectionName: 'vl_reactions_types';

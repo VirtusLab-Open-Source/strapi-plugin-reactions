@@ -3,6 +3,7 @@ import { PopulateClause } from '@sensinum/strapi-utils';
 
 import { IServiceEnrich, ReactionEntity, RelatedId } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
+import { first } from 'lodash';
 
 export type StrapiReactions = Array<ReactionEntity>;
 
@@ -43,8 +44,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const { data } = response;
 
     const reactions = await this.findReactions({
-      relatedUid: buildRelatedId(uid, data.id),
-    }, populate);
+      relatedUid: buildRelatedId(uid, data.documentId),
+    }, populate, data?.locale);
 
     return {
       ...response,
@@ -66,11 +67,14 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return response;
     }
 
+    const { data } = response;
+    const firstEntity = first(data);
+
     const reactions = await this.findReactions({
       relatedUid: {
         $contains: `${uid}:`,
       }
-    }, populate);
+    }, populate, firstEntity?.locale);
 
     return {
       ...response,
@@ -79,19 +83,20 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         reactions: response.data
           .reduce((accItem, currItem) => ({
             ...accItem,
-            [currItem.id]: (reactions || [])
-              .filter(({ relatedUid }: { relatedUid: RelatedId}) => relatedUid === buildRelatedId(uid, currItem.id))
+            [currItem.documentId]: (reactions || [])
+              .filter(({ relatedUid }: { relatedUid: RelatedId}) => relatedUid === buildRelatedId(uid, currItem.documentId))
               .reduce(this.composeReactionsMeta, {}),
           }), {}),
       },
     };
   },
 
-  async findReactions(filters: any, populate: PopulateClause): Promise<undefined | null | ReactionEntity | Array<ReactionEntity>> {
-    return strapi.entityService
-      ?.findMany(getModelUid('reaction'), {
+  async findReactions(filters: any, populate: PopulateClause, locale?: string): Promise<undefined | null | ReactionEntity | Array<ReactionEntity>> {
+    return strapi.documents(getModelUid('reaction'))
+      ?.findMany({
         filters,
         populate: populate as any,
+        locale,
       }) as any;
   },
 

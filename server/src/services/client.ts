@@ -2,10 +2,16 @@ import { Core, Data, UID } from '@strapi/strapi';
 import { isArray, isNil, first } from "lodash";
 import { AnyEntity, StrapiUser } from "@sensinum/strapi-utils";
 
-import { CTReaction, CTReactionType, IServiceClient, StrapiId } from "../../../@types";
+import { CTReaction, CTReactionType, IServiceClient } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 
+export type PrefetchConditionsProps = {
+  type?: string;
+  uid?: UID.ContentType;
+  documentId?: Data.DocumentID;
+  locale?: string;
+};
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
@@ -24,13 +30,20 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     kind?: string,
     uid?: UID.ContentType,
     user?: unknown,
-    documentId?: StrapiId,
+    documentId?: Data.DocumentID,
+    locale?: string,
   ): Promise<Array<CTReaction>> {
-    const [reactionKind] = await this.prefetchConditions(kind || null);
+    const [reactionKind] = await this.prefetchConditions({
+      type: kind,
+      locale,
+    });
 
+    const operator = documentId ? '$eq' : '$contains';
     let fields = ['createdAt', 'updatedAt'];
     let filters: Record<string, any> = {
-      relatedUid: buildRelatedId(uid, documentId),
+      relatedUid: {
+        [operator]: buildRelatedId(uid, documentId),
+      },
     };
     let populate = {};
 
@@ -59,7 +72,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       populate = {
         ...populate,
         user: {
-          fields: ['id', 'username', 'email']
+          fields: ['documentId', 'username', 'email']
         },
       };
     }
@@ -70,6 +83,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         fields,
         filters,
         populate,
+        locale,
       });
 
     if (isNil(entities)) {
@@ -84,14 +98,19 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     kind: string,
     uid: UID.ContentType,
     user: StrapiUser,
-    documentId?: StrapiId,
+    documentId?: Data.DocumentID,
+    locale?: string,
   ): Promise<CTReaction> {
 
-    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind, uid, documentId);
-    const existingReaction = await this.list(kind, uid, user, documentId);
-
+    const [reactionKind, relatedEntity] = await this.prefetchConditions({
+      type: kind,
+      uid,
+      documentId,
+      locale,
+    });
+    const existingReaction = await this.list(kind, uid, user, documentId, locale);
     if (!existingReaction || (isArray(existingReaction) && (existingReaction.length === 0))) {
-      return this.directCreate(uid, reactionKind, relatedEntity, user);
+      return this.directCreate(uid, reactionKind, relatedEntity, user, locale);
     }
 
     throw new PluginError(405, `Can't perform CREATE on reaction type of "${kind}" for Entity with ID: ${documentId || 'single'} of type: ${uid} as it already exist`);
@@ -102,13 +121,14 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     kind: string,
     uid: UID.ContentType,
     user: StrapiUser,
-    documentId?: StrapiId,
+    documentId?: Data.DocumentID,
+    locale?: string,
   ): Promise<boolean> {
 
-    const existingReaction = await this.list(kind, uid, user, documentId);
+    const existingReaction = await this.list(kind, uid, user, documentId, locale);
 
     if (isArray(existingReaction) && (existingReaction.length === 1)) {
-      return this.directDelete(existingReaction);
+      return this.directDelete(existingReaction, locale);
     }
 
     throw new PluginError(405, `Can't perform DELETE on reaction type of "${kind}" for Entity with ID: ${documentId || 'single'} of type: ${uid}`);
@@ -120,11 +140,17 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     kind: string,
     uid: UID.ContentType,
     user: StrapiUser,
-    documentId?: StrapiId,
+    documentId?: Data.DocumentID,
+    locale?: string,
   ): Promise<CTReaction | boolean> {
 
-    const [reactionKind, relatedEntity] = await this.prefetchConditions(kind, uid, documentId);
-    const existingReactions = await this.list(null, uid, user, documentId);
+    const [reactionKind, relatedEntity] = await this.prefetchConditions({
+      type: kind,
+      uid,
+      documentId,
+      locale,
+    });
+    const existingReactions = await this.list(undefined, uid, user, documentId, locale);
     const matchingReaction = existingReactions
       .find(({ kind: { slug } }) => kind === slug);
     const reactionsToRemove = matchingReaction ?
@@ -133,17 +159,17 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       [...existingReactions];
 
     if (isArray(existingReactions) && (existingReactions.length === 1)) {
-      return this.directDelete(existingReactions);
+      return this.directDelete(existingReactions, locale);
     }
 
-    const removed = await this.directDelete(reactionsToRemove);
+    const removed = await this.directDelete(reactionsToRemove, locale);
 
     if (!removed) {
       throw new PluginError(405, `Can't perform toogle action reaction type of "${kind}" for Entity with Document ID: ${documentId || 'single'} of type: ${uid}`);
     }
 
     if (isNil(matchingReaction)) {
-      return this.directCreate(uid, reactionKind, relatedEntity, user);
+      return this.directCreate(uid, reactionKind, relatedEntity, user, locale);
     } else {
       return matchingReaction;
     }
@@ -153,22 +179,21 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async prefetchConditions(
     this: IServiceClient,
-    kind: string | null,
-    uid?: UID.ContentType,
-    documentId?: Data.DocumentID,
+    props: PrefetchConditionsProps,
   ): Promise<[CTReactionType, AnyEntity | null]> {
+    const { type, uid, documentId, locale } = props;
 
     let result: [CTReactionType, AnyEntity | null] = [null, null];
 
-    if (kind !== null) {
+    if (type) {
       const reactionKind = await strapi
         .documents(getModelUid("reaction-type"))
-        .findOne<CTReactionType>({
-          filters: { slug: kind }
+        .findFirst<CTReactionType>({
+          filters: { slug: type }
         });
 
-      if (!reactionKind || (reactionKind.length === 0)) {
-        throw new PluginError(404, `Reaction '${kind}' does not exist. You can't use it.`);
+      if (!(reactionKind && reactionKind.documentId)) {
+        throw new PluginError(404, `Reaction '${type}' does not exist. You can't use it.`);
       }
 
       result = [reactionKind, null];
@@ -177,20 +202,25 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     if (uid) {
-      let relatedEntity: AnyEntity;
+      let relatedEntity: AnyEntity & { locale: string };
       try {
-        relatedEntity = await strapi
-          .documents(uid)
-          .findOne({
-            documentId,
-          }) as AnyEntity;
+        relatedEntity = (documentId ?
+          await strapi
+            .documents(uid)
+            .findOne({
+              documentId,
+              locale,
+            }) :
+          await strapi
+            .documents(uid)
+            .findFirst({ locale })) as (AnyEntity & { locale: string });
       }
       catch (e) {
-        throw new PluginError(404, `Entity with Document ID: ${documentId || 'single'} of type: ${uid} does not exits`);
+        throw new PluginError(404, `Entity with Document ID: ${documentId || 'single'} & locale ${locale || 'en'} of type: ${uid} does not exits`);
       }
 
       if (!relatedEntity) {
-        throw new PluginError(404, `Entity with Document ID: ${documentId || 'single'} of type: ${uid} does not exits`);
+        throw new PluginError(404, `Entity with Document ID: ${documentId || 'single'} & locale ${locale || 'en'} of type: ${uid} does not exits`);
       }
 
       return [first(result), relatedEntity];
@@ -204,6 +234,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     kind: CTReactionType,
     related: AnyEntity,
     user: StrapiUser,
+    locale?: string,
   ): Promise<CTReaction> {
     return await strapi.documents(getModelUid("reaction"))
       .create({
@@ -216,19 +247,21 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
           relatedUid: buildRelatedId(uid, related.documentId),
           user,
         },
+        locale,
       });
   },
 
   async directDelete(
     this: IServiceClient,
     reactions: Array<CTReaction>,
+    locale?: string,
   ): Promise<boolean> {
-    const removedEntities = await strapi.db.query(getModelUid("reaction")).deleteMany({
-      where: {
-        documentId: reactions.map(_ => _.documentId),
-      },
-    });
-    return removedEntities && (removedEntities.count === reactions.length);
+    const removedEntities = await Promise.all(reactions.map(async ({ documentId }) => 
+      strapi.documents(getModelUid("reaction")).delete({
+        documentId,
+        locale,
+    })));
+    return removedEntities && (removedEntities.length === reactions.length);
   },
 
 

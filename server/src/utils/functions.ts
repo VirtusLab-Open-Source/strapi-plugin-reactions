@@ -1,3 +1,4 @@
+import { Primitive } from "../../../@types";
 import PluginError from "./error";
 
 export const getPluginService = <T>(name: string): T =>
@@ -46,3 +47,12 @@ export const assertNotEmpty: <T>(
     customError ?? new PluginError(400, "Non-empty value expected, empty given")
   );
 };
+
+export const parseQuery = <T = Record<string, Primitive>>(query: T & {locale?: string}): T & {locale?: string} => {
+  const { locale, ...rest } = query;
+
+  return {
+    ...rest,
+    locale: locale as string,
+  } as (T & {locale: string});
+}

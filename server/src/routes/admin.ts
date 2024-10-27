@@ -25,7 +25,7 @@ const routes = [
   },
   {
     method: 'DELETE',
-    path: '/settings/config/reaction-type/:id',
+    path: '/settings/config/reaction-type/:documentId',
     handler: 'settingsController.deleteReactionType',
     config: {
       policies: [],
@@ -41,7 +41,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/zone/count/:uid/:id',
+    path: '/zone/count/:uid/:documentId',
     handler: 'zoneController.count',
     config: {
       policies: [],

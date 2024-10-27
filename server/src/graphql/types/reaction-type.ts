@@ -4,7 +4,7 @@ export default ({ nexus }: StrapiGraphQLContext) =>
   nexus.objectType({
     name: "ReactionType",
     definition(t: INexusType) {
-      t.id("id");
+      t.id("documentId");
       t.nonNull.string("slug");
       t.nonNull.string("name");
       t.string("emoji");

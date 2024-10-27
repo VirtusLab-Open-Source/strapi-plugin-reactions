@@ -1,13 +1,13 @@
-import { UID } from "@strapi/strapi";
+import { Data, UID } from "@strapi/strapi";
 import { Context } from "koa";
-import { getPluginService, parseParams } from '../utils/functions';
+import { getPluginService, parseParams, parseQuery } from '../utils/functions';
 
 import { throwError } from './utils/functions';
-import { IServiceZone, StrapiId } from '../../../@types';
+import { IServiceZone } from '../../../@types';
 
 type ReactionListUrlProps = {
   uid: UID.ContentType;
-  id: StrapiId;
+  documentId: Data.DocumentID;
 };
 
 export default () => ({
@@ -17,9 +17,10 @@ export default () => ({
 
   async count(ctx: Context) {
     try {
-      const { params = {} } = ctx;
-      const { uid, id } = parseParams<ReactionListUrlProps>(params);
-      return await this.getService<IServiceZone>().count(uid, id);
+      const { params = {}, query = {} } = ctx;
+      const { uid, documentId } = parseParams<ReactionListUrlProps>(params);
+      const { locale } = parseQuery(query);
+      return await this.getService<IServiceZone>().count(uid, documentId, locale);
     } catch (e) {
       throw throwError(ctx, e);
     }
