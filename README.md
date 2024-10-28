@@ -41,8 +41,8 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 11. [👨‍💻 Community support](#-community-support)
 
 ## 💎 Versions
-- **Strapi v5** - [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
-- **Strapi v4** - (current) [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/strapi-v4)
+- **Strapi v5** - (current) [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
+- **Strapi v4** - [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/strapi-v4)
 
 ## ✨ Features
 
