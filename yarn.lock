@@ -3751,9 +3751,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sensinum/strapi-utils@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@sensinum/strapi-utils@npm:1.0.1"
+"@sensinum/strapi-utils@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@sensinum/strapi-utils@npm:1.0.2"
   dependencies:
     "@strapi/design-system": "npm:2.0.0-rc.11"
     "@strapi/icons": "npm:2.0.0-rc.11"
@@ -3762,11 +3762,11 @@ __metadata:
     styled-components: "npm:^6.1.13"
     typescript: "npm:^5.5.4"
   peerDependencies:
-    "@strapi/sdk-plugin": ^5.2.6
+    "@strapi/sdk-plugin": ^5.2.7
     react: ^18.3.1
     react-dom: ^18.3.1
     styled-components: ^6.1.13
-  checksum: 10c0/4eaef3ad7a9b9024237ff3bb171d04e1fcde259a596564ad038e8754bc9e57bfba11a80d383ac86b0ab5ec1fa9548964293fd19ffa37f27f232070820f008c10
+  checksum: 10c0/a2ff28483f5efb2987bd5d04469cdb79a59c1a6ffa7e86da81ecf77875eef298ef3f2ab11844ce7a45d0e4a1ea72b28ac097b6ac8581e27ca61d08f1407ed1e1
   languageName: node
   linkType: hard
 
@@ -16062,7 +16062,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "strapi-plugin-reactions@workspace:."
   dependencies:
-    "@sensinum/strapi-utils": "npm:^1.0.1"
+    "@sensinum/strapi-utils": "npm:^1.0.2"
     "@strapi/design-system": "npm:^2.0.0-rc.11"
     "@strapi/icons": "npm:^2.0.0-rc.11"
     "@strapi/plugin-graphql": "npm:^5.1.1"
