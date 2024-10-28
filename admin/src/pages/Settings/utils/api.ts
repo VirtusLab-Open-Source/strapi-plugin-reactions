@@ -1,7 +1,8 @@
 import { isNil } from "lodash";
+import { Data } from "@strapi/strapi";
 import { getApiURL, handleAPIError } from "../../../utils";
 import qs from "qs";
-import { ReactionsPluginConfig, StrapiId, ToBeFixed } from "../../../../../@types";
+import { ReactionsPluginConfig, ToBeFixed } from "../../../../../@types";
 
 export type FetchConfig = {
   toggleNotification: ToBeFixed;
@@ -42,7 +43,7 @@ export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchC
   }
 };
 
-export const deleteReactionType = async (documentId: StrapiId, { toggleNotification, fetchClient }: FetchConfig): Promise<number | undefined> => {
+export const deleteReactionType = async (documentId: Data.DocumentID, { toggleNotification, fetchClient }: FetchConfig): Promise<number | undefined> => {
   try {
     const { data } = await fetchClient.del(
       getApiURL(`settings/config/reaction-type/${documentId}`)

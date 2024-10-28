@@ -1,5 +1,6 @@
 import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
 
+import { Data } from "@strapi/strapi";
 import { useFetchClient } from '@strapi/strapi/admin';
 
 import {
@@ -7,11 +8,10 @@ import {
   syncAssociations,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
-import { StrapiId } from '../../../@types';
 
 type SlugMutationPayload = {
   value: string;
-  documentId: StrapiId;
+  documentId: Data.DocumentID;
 };
 
 export type useUtilsResult = {

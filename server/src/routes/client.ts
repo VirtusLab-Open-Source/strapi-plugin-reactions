@@ -17,7 +17,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/list/collection/:uid/:id',
+    path: '/list/collection/:uid/:documentId',
     handler: 'clientController.list',
     config: {
       policies: [],
@@ -33,7 +33,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/list/:kind/collection/:uid/:id',
+    path: '/list/:kind/collection/:uid/:documentId',
     handler: 'clientController.list',
     config: {
       policies: [],
@@ -49,7 +49,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/set/:kind/collection/:uid/:id',
+    path: '/set/:kind/collection/:uid/:documentId',
     handler: 'clientController.create',
     config: {
       policies: [],
@@ -65,7 +65,7 @@ const routes = [
   },
   {
     method: 'DELETE',
-    path: '/unset/:kind/collection/:uid/:id',
+    path: '/unset/:kind/collection/:uid/:documentId',
     handler: 'clientController.delete',
     config: {
       policies: [],
@@ -81,7 +81,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/toggle/:kind/collection/:uid/:id',
+    path: '/toggle/:kind/collection/:uid/:documentId',
     handler: 'clientController.toggle',
     config: {
       policies: [],

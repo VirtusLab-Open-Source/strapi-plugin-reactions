@@ -1,37 +1,38 @@
-import { UID } from "@strapi/strapi";
+import { Data, UID } from "@strapi/strapi";
 import { Context } from "koa";
 
 import {
   IServiceClient,
   StrapiGraphQLContext,
-  StrapiId,
 } from "../../../../@types";
 import { getPluginService } from "../../utils/functions";
 
 type ListAllResolverProps = {
   kind: string;
   uid: UID.ContentType;
-  id?: StrapiId;
+  locale?: string;
+  documentId?: Data.DocumentID;
 };
 
 export default ({ nexus }: StrapiGraphQLContext) => {
-  const { nonNull, stringArg, intArg, list } = nexus;
+  const { nonNull, stringArg, list } = nexus;
 
   return {
     type: list("Reaction"),
     args: {
       kind: stringArg(),
       uid: nonNull(stringArg()),
-      id: intArg(),
+      documentId: stringArg(),
+      locale: stringArg(),
     },
     async resolve(
       _: Object, 
       args: ListAllResolverProps,
       ctx: Context) {
-      const { kind, uid, id } = args;
+      const { kind, uid, documentId, locale } = args;
       const { state: { user = undefined } = {} } = ctx;
 
-      return await getPluginService<IServiceClient>("client").list(kind, uid, user, id);
+      return await getPluginService<IServiceClient>("client").list(kind, uid, user, documentId, locale);
     },
   };
 };

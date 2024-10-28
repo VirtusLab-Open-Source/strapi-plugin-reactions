@@ -1,7 +1,7 @@
-import { Core, UID } from '@strapi/strapi';
+import { Core, Data, UID } from '@strapi/strapi';
 import { isArray, isNil } from "lodash";
 
-import { IServiceZone, StrapiId } from "../../../@types";
+import { CTReaction, IServiceZone } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 
 export type ReactionsCount = {
@@ -13,18 +13,24 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async count(
     this: IServiceZone,
     uid: UID.ContentType,
-    id?: StrapiId,
+    documentId?: Data.DocumentID,
+    locale?: string,
   ): Promise<ReactionsCount> {
-    const entities = await strapi.entityService
-      ?.findMany(getModelUid("reaction"), {
+    const operator = documentId ? '$eq' : '$contains';
+    const entities = await strapi
+      .documents(getModelUid("reaction"))
+      .findMany({
         filters: {
-          relatedUid: buildRelatedId(uid, id),
+          relatedUid: {
+            [operator]: buildRelatedId(uid, documentId),
+          },
         },
         populate: {
           kind: {
             fields: ['slug', 'name']
           },
         },
+        locale,
       });
 
     if (isNil(entities)) {
@@ -32,13 +38,13 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     return (!isArray(entities) ? [entities] : entities)
-      .reduce((acc, entity) => {
+      .reduce((acc: Record<string, number>, entity: CTReaction) => {
         const currentCount = acc[entity.kind.slug] || 0;
         return {
           ...acc,
           [entity.kind.slug]: currentCount ? currentCount + 1 : 1,
         };
-      }, {});
+      }, {} as Record<string, number>);
   },
 
 });

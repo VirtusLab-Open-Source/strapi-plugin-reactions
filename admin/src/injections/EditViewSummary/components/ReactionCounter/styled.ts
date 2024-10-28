@@ -10,7 +10,7 @@ export const ReactionCounterContainer = styled(Badge)`
     &>span {
         display: inline-flex;
         flex-direction: row;
-        align-items: stretch;
+        align-items: center;
         justify-content: stretch;
 
         width: 100%;
@@ -51,15 +51,15 @@ export const ReactionName = styled.span`
 `
 
 export const ReactionCounterDot = styled.span<{ theme: string }>`
-    display: inline-block;
+    display: inline-flex;
     margin-left: 8px;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
 
     min-width: 16px;
     height: 16px;
     border-radius: 8px;
-
-    text-align: center;
-    vertical-align: middle;
 
     background: #ffffff;
 `;

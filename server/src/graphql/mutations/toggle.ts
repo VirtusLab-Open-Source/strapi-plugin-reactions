@@ -27,10 +27,10 @@ export default ({ nexus }: StrapiGraphQLContext) => {
     ) {
       const { input } = args;
       const { state: { user = undefined } = {} } = ctx;
-      const { kind, uid, id } = input;
+      const { kind, uid, documentId, locale } = input;
       try {
         return await getPluginService<IServiceClient>("client")
-          .toggle(kind, uid, user, id);
+          .toggle(kind, uid, user, documentId, locale);
       } catch (e: ToBeFixed) {
         throw new Error(e);
       }

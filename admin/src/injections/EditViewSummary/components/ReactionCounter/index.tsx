@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-
 import { Tooltip } from '@strapi/design-system';
+
+import { usePluginTheme } from "@sensinum/strapi-utils";
 
 import { ReactionCounterContainer, ReactionCounterDot, ReactionEmoji, ReactionImage, ReactionName } from "./styled";
 
@@ -12,11 +12,7 @@ export type ReactionCounterProps = {
 };
 
 export const ReactionCounter = ({ name, icon, emoji, count = 0 }: ReactionCounterProps) => {
-    const [theme, setTheme] = useState();
-
-    useEffect(() => {
-        setTheme(window.localStorage?.STRAPI_THEME);
-    }, []);
+    const { theme } = usePluginTheme();
 
     return (<ReactionCounterContainer active>
         {icon && (<ReactionImage src={icon?.url} />)}

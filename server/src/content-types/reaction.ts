@@ -25,6 +25,9 @@ export default {
     "content-type-builder": {
       visible: true,
     },
+    i18n: {
+      localized: true,
+    },
   },
   attributes: {
     user: {

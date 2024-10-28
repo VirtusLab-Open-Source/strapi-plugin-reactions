@@ -2,7 +2,7 @@ import { pluginId } from './pluginId';
 import Initializer from './components/Initializer';
 
 import pluginPermissions from "./permissions";
-// import { EditViewSummary } from './injections/EditViewSummary';
+import { EditViewSummary, InjectionInitializer } from './injections';
 import { flattenObject, prefixPluginTranslations } from '@sensinum/strapi-utils';
 import trads from "./translations";
 
@@ -11,10 +11,12 @@ const displayName = "Reactions";
 
 export default {
   bootstrap(app: any) {
-    // app.getPlugin('content-manager').injectComponent()('editView', 'informations', {
-    //   name: 'reactions-summary',
-    //   Component: EditViewSummary,
-    // });
+    app.getPlugin('content-manager').injectComponent('editView', 'right-links', {
+      name: 'reactions-counter',
+      Component: () => (<InjectionInitializer>
+        <EditViewSummary />
+      </InjectionInitializer>),
+    });
   },
 
   register(app: any) {
