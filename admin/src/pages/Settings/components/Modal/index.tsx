@@ -1,158 +1,243 @@
-import React, { useEffect, useRef, useState } from "react";
+import { Button, Divider, Field as NativeField, Flex, Grid, Loader, Modal, Toggle, Typography } from '@strapi/design-system';
 
-import { isNil } from "lodash";
-import { Formik } from "formik";
+import { Form, InputProps, useNotification } from '@strapi/strapi/admin';
 
-import { Form, GenericInput, useNotification, useLibrary } from "@strapi/helper-plugin";
-import { Button } from '@strapi/design-system/Button';
-import { Divider } from '@strapi/design-system/Divider';
-import { Grid, GridItem } from '@strapi/design-system/Grid';
-import { ModalLayout, ModalBody, ModalHeader, ModalFooter } from '@strapi/design-system/ModalLayout';
-import { Loader } from '@strapi/design-system/Loader';
-import { Stack } from '@strapi/design-system/Stack';
-import { TextInput } from '@strapi/design-system/TextInput';
-import { ToggleInput } from '@strapi/design-system/ToggleInput';
-import { Typography } from '@strapi/design-system/Typography';
-import { getMessage } from "../../../../utils";
-import { pluginId } from "../../../../pluginId";
-import useUtils from "../../../../hooks/useUtils";
-import { ReactionTypeSwitch } from "./styles";
-import { ReactionEmojiSelect } from "../ReactionEmojiSelect";
-import { ToBeFixed } from "../../../../../../types";
+import { StrapiImage, Field } from '@sensinum/strapi-utils';
+
+import { isArray, isEmpty, isNil } from 'lodash';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { CTReactionType } from '../../../../../../@types';
+import useUtils from '../../../../hooks/useUtils';
+
+import { getMessage } from '../../../../utils';
+import { ReactionEmojiSelect } from '../ReactionEmojiSelect';
+import { ReactionTypeSwitch } from './styles';
+import { reactionForm } from '../../../../schemas';
+import { ZodIssue } from 'zod';
 
 type CUModalProps = {
   data: any;
+  fields: any;
+  trigger?: React.ReactNode;
+  isModalOpened: boolean;
   isLoading: boolean;
-  onClose: Function;
+  onClose: () => void;
   onSubmit: (values: any) => void | Promise<any>;
 };
 
-const CUModal = ({ data = {}, isLoading = false, onSubmit, onClose }: CUModalProps) => {
-  const toggleNotification = useNotification();
-  const slugGenerationTimeout = useRef<any>();
-  const [slugSource, setSlugSource] = useState();
+export type ReactionFormPayload = CTReactionType & {
+  name: string;
+  slug: string
+  emoji?: string;
+  image?: StrapiImage;
+};
+
+type ReactionFormErrors = {
+  [key: keyof ReactionFormPayload]: string;
+}
+
+type MediaFieldType = Omit<InputProps, 'options' | 'type'> & {
+  value: any;
+  multiple: boolean;
+};
+
+const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, trigger, onSubmit, onClose }: CUModalProps) => {
+  const { toggleNotification } = useNotification();
+  const slugGenerationTimeout = useRef<NodeJS.Timeout>();
+  const [slugSource, setSlugSource] = useState<string>();
   const [slug, setSlug] = useState(data.slug || '');
+  const [errors, setErrors] = useState<ReactionFormErrors>({});
+  const [lockWindow, setLockWindow] = useState<boolean>();
   const [imageVariant, setImageVariant] = useState(isNil(data.emoji));
   const { slugMutation } = useUtils(toggleNotification);
-  const { fields } = useLibrary();
 
   useEffect(() => {
     slugMutation.reset();
     clearTimeout(slugGenerationTimeout.current);
 
     if (slugSource) {
+      setLockWindow(true);
+
       slugGenerationTimeout.current = setTimeout(async () => {
         const slug = await slugMutation.mutateAsync({
           value: slugSource,
-          id: data.id,
+          documentId: data.documentId,
         });
+
         setSlug(slug);
+        setLockWindow(false);
       }, 1000);
     }
   }, [slugSource]);
 
   const handleImageVariantChange = () => setImageVariant(!imageVariant);
 
-  const submitForm = async (values: any) => onSubmit({
-    ...values,
-    image: imageVariant ? values.image : null,
-    emoji: imageVariant ? null : values.emoji,
-    emojiFallbackUrl: imageVariant ? null : values.emojiFallbackUrl,
-    slug: slug || values.slug,
-  });
+  const setFormErrors = (errors: Array<ZodIssue>) => {
+    if (!isEmpty(errors)) {
+      setErrors(errors.reduce((acc, error: ZodIssue) => {
+        const path = isArray(error?.path) ? error?.path.join('.') : error?.path;
+        return {
+          ...acc,
+          [path]: getMessage(error?.message),
+        };
+      }, {}));
+    } else {
+      setErrors({});
+    }
+  };
 
-  const formLocked = slugMutation.isLoading;
+  const submitForm = async (e: React.MouseEvent, values: ReactionFormPayload) => {
+    e.preventDefault();
 
-  return (<Formik
-    initialValues={data}
-    enableReinitialize={true}
-    onSubmit={submitForm}>
-    {({ handleSubmit, setFieldValue, values }) => (
-      <Form noValidate onSubmit={handleSubmit}>
-        <ModalLayout onClose={onClose} labelledBy="title">
-          <ModalHeader>
-            <Typography fontWeight="bold" textColor="neutral800" as="h2" id="title">
-              {getMessage(`page.settings.modal.title.${isNil(data) ? 'create' : 'update'}`)}
-            </Typography>
-          </ModalHeader>
-          <ModalBody>
-            <Stack gap={4}>
-              <ReactionTypeSwitch>
-                <ToggleInput size="S"
-                  hint={getMessage("page.settings.form.type.hint")}
-                  label={getMessage("page.settings.form.type.label")}
-                  name="enable-provider"
-                  onLabel={getMessage("page.settings.form.type.image.label")}
-                  offLabel={getMessage("page.settings.form.type.emoji.label")}
-                  checked={imageVariant}
-                  onChange={handleImageVariantChange} />
-              </ReactionTypeSwitch>
-              <Divider useMargin />
-              <Grid gap={4}>
-                <GridItem col={4} xs={12}>
-                  { imageVariant && (<GenericInput
-                    customInputs={fields}
-                    intlLabel={{ id: `${pluginId}.page.settings.form.icon.label` }}
-                    multiple={false}
-                    type="media"
-                    name="icon"
-                    value={values.icon || undefined}
-                    required={true}
-                    onChange={({ target: { value } }: ToBeFixed) =>
-                      setFieldValue("icon", value, false)
-                    }
-                  />)}
-                  { !imageVariant && (<ReactionEmojiSelect value={values.emoji} onChange={setFieldValue} />)}
-                </GridItem>
-                <GridItem col={8} xs={12}>
-                  <Stack gap={4}>
-                    <Grid>
-                      <GridItem col={12}>
-                        <TextInput
-                          type="text"
-                          name="name"
-                          label={getMessage(
-                            "page.settings.form.name.label"
-                          )}
-                          value={values.name}
-                          onChange={({ target: { value } }: ToBeFixed) => {
-                            setSlugSource(value);
-                            return setFieldValue("name", value, false);
-                          }
-                          }
-                        />
-                      </GridItem>
-                    </Grid>
-                    <Grid>
-                      <GridItem col={12}>
-                        <TextInput
-                          type="text"
-                          name="slug"
-                          label={getMessage(
-                            "page.settings.form.slug.label"
-                          )}
-                          hint={getMessage(
-                            "page.settings.form.slug.hint"
-                          )}
-                          value={slug}
-                          disabled={true}
-                          endAction={slugMutation.isLoading && (<Loader small />)}
-                        />
-                      </GridItem>
-                    </Grid>
-                  </Stack>
-                </GridItem>
-              </Grid>
-            </Stack>
-          </ModalBody>
-          <ModalFooter startActions={<Button onClick={onClose} variant="tertiary">
-            {getMessage("page.settings.modal.action.cancel")}
-          </Button>} endActions={<>
-            <Button onClick={handleSubmit} disabled={formLocked} loading={isLoading}>{getMessage("page.settings.modal.action.submit")}</Button>
-          </>} />
-        </ModalLayout>
-      </Form>)}
-  </Formik>)
+    if (!formLocked) {
+      const paload = {
+        ...values,
+        image: imageVariant ? values.image : null,
+        emoji: imageVariant ? null : values.emoji,
+        emojiFallbackUrl: imageVariant ? null : values.emojiFallbackUrl,
+        slug: slug || values.slug,
+      };
+
+      const { success, error } = reactionForm.safeParse(paload)
+      if (success) {
+        return onSubmit(paload);
+      }
+      setFormErrors(error?.issues);
+    }
+  };
+
+  const formLocked = slugMutation.isPending || lockWindow;
+
+  const MediaField = fields.media as React.ComponentType<MediaFieldType>;
+
+  return (
+    <Modal.Root
+      open={isModalOpened}
+      onOpenChange={onClose}
+      labelledBy="title">
+      {trigger && (<Modal.Trigger>{trigger}</Modal.Trigger>)}
+      <Modal.Content>
+        <Form
+          method="POST"
+          initialValues={data}
+        >
+          {({ values, onChange }) => (
+            <>
+              <Modal.Header>
+                <Typography fontWeight="bold" textColor="neutral800" tag="h2" id="title">
+                  {getMessage(`page.settings.modal.title.${isNil(data) ? 'create' : 'update'}`)}
+                </Typography>
+              </Modal.Header>
+              <Modal.Body>
+                <Flex direction="column" gap={4}>
+                  <ReactionTypeSwitch>
+                    <Field
+                      name="enable-provider"
+                      hint={getMessage('page.settings.form.type.hint')}
+                      label={getMessage('page.settings.form.type.label')}>
+                      <Toggle
+                        width="100%"
+                        size="S"
+                        onLabel={getMessage('page.settings.form.type.image.label')}
+                        offLabel={getMessage('page.settings.form.type.emoji.label')}
+                        checked={imageVariant}
+                        onChange={handleImageVariantChange}
+                      />
+                    </Field>
+                  </ReactionTypeSwitch>
+                  <Divider width="100%" />
+                  <Grid.Root width="100%" gap={4}>
+                    <Grid.Item col={4} xs={12}>
+                      {imageVariant && (
+                        <Field
+                          name="icon"
+                          label={getMessage('page.settings.form.icon.label')}
+                          error={errors?.icon}
+                          required>
+                          <MediaField
+                            multiple={false}
+                            name="icon"
+                            value={values.icon || undefined}
+                            required={imageVariant}
+                          />
+                        </Field>
+                      )}
+                      {!imageVariant && (<ReactionEmojiSelect
+                        value={values.emoji}
+                        error={errors?.emoji}
+                        required={!imageVariant}
+                        onChange={onChange} />)}
+                    </Grid.Item>
+                    <Grid.Item col={8} xs={12}>
+                      <Flex width="100%" direction="column" gap={4}>
+                        <Grid.Root width="100%">
+                          <Grid.Item col={12}>
+                            <Field
+                              name="name"
+                              label={getMessage('page.settings.form.name.label')}
+                              error={errors?.name}
+                              required>
+                              <NativeField.Input
+                                type="text"
+                                name="name"
+                                value={values.name}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                  setSlugSource(e.target.value);
+                                  onChange(e);
+                                }}
+                                required
+                              />
+                            </Field>
+                          </Grid.Item>
+                        </Grid.Root>
+                        <Grid.Root width="100%">
+                          <Grid.Item col={12}>
+                            <Field
+                              name="slug"
+                              label={getMessage('page.settings.form.slug.label')}
+                              hint={getMessage('page.settings.form.slug.hint')}
+                              error={errors?.slug}
+                              required
+                            >
+                              <NativeField.Input
+                                type="text"
+                                value={slug}
+                                disabled={true}
+                                name="slug"
+                                endAction={slugMutation.isPending && (<Loader small />)}
+                                required
+                              />
+                            </Field>
+                          </Grid.Item>
+                        </Grid.Root>
+                      </Flex>
+                    </Grid.Item>
+                  </Grid.Root>
+                </Flex>
+              </Modal.Body>
+              <Modal.Footer>
+                <Modal.Close>
+                  <Button
+                    onClick={onClose}
+                    variant="tertiary">
+                    {getMessage('page.settings.modal.action.cancel')}
+                  </Button>
+                </Modal.Close>
+                <Button
+                  disabled={formLocked}
+                  loading={isLoading}
+                  type="submit"
+                  onClick={(e: React.MouseEvent) => submitForm(e, values)}
+                >
+                  {getMessage('page.settings.modal.action.submit')}
+                </Button>
+              </Modal.Footer>
+            </>
+          )}
+        </Form>
+      </Modal.Content>
+    </Modal.Root>
+  );
 };
 
 export default CUModal;

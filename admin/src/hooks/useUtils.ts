@@ -1,14 +1,28 @@
-//@ts-nocheck
+import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
 
-import { useMutation, useQueryClient } from "react-query";
+import { Data } from "@strapi/strapi";
+import { useFetchClient } from '@strapi/strapi/admin';
+
 import {
   generateSlug,
   syncAssociations,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
 
-const useUtils = (toggleNotification) => {
+type SlugMutationPayload = {
+  value: string;
+  documentId: Data.DocumentID;
+};
+
+export type useUtilsResult = {
+  slugMutation: UseMutationResult<string | undefined, Error, SlugMutationPayload>;
+  syncAssociationsMutation: UseMutationResult<any, Error, void>;
+};
+
+const useUtils = (toggleNotification: any): useUtilsResult => {
   const queryClient = useQueryClient();
+  const fetchClient = useFetchClient();
+  const config = { toggleNotification, fetchClient };
 
   const handleError = (type: string, callback = () => {}) => {
     toggleNotification({
@@ -30,19 +44,21 @@ const useUtils = (toggleNotification) => {
       });
     }
     if (invalidateQueries) {
-      queryClient.invalidateQueries("generate-slug");
+      queryClient.invalidateQueries({ queryKey: ["generateSlug"] });
     }
     callback();
   };
 
-  const slugMutation = useMutation(generateSlug, {
+  const slugMutation = useMutation({
+    mutationFn: ({ value, documentId }: SlugMutationPayload) => generateSlug({ value, documentId}, config),
     onSuccess: () => handleSuccess(),
-    onError: () => handleError('generate-slug'),
+    onError: () => handleError('generateSlug'),
   });
 
-  const syncAssociationsMutation = useMutation(syncAssociations, {
-    onSuccess: () => handleSuccess('sync-associations'),
-    onError: () => handleError('sync-associations'),
+  const syncAssociationsMutation = useMutation({
+    mutationFn: () => syncAssociations(config),
+    onSuccess: () => handleSuccess('syncAssociations'),
+    onError: () => handleError('syncAssociations'),
   });
 
   return { slugMutation, syncAssociationsMutation };

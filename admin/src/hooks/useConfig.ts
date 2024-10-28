@@ -1,47 +1,72 @@
-// TODO
-//@ts-nocheck
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
+import { useIntl } from "react-intl";
+import { useFetchClient } from '@strapi/strapi/admin';
+
 import {
   fetchConfig,
   updateConfig,
   deleteReactionType,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
+import { CTReactionType } from '../../../@types';
 
-const useConfig = (toggleNotification) => {
-  const queryClient = useQueryClient();
+type SubmitPayload = {
+  body: CTReactionType;
+  toggleNotification: any;
+};
 
-  const fetch = useQuery("get-config", () => fetchConfig(toggleNotification));
+export type useConfigResult = {
+  fetch: UseQueryResult<any, Error>;
+  submitMutation: UseMutationResult<any, Error, SubmitPayload>;
+  deleteMutation: UseMutationResult<any, Error>;
+};
 
-  const handleError = (type, callback = () => {}) => {
+const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
+  const queryClient = useQueryClient(client);
+  const fetchClient = useFetchClient();
+  const { formatMessage } = useIntl();
+  const config = { toggleNotification, fetchClient };
+
+  const fetch = useQuery({
+    queryKey: ["get-config"], 
+    queryFn: () => fetchConfig(config),
+  });
+
+  const handleError = (type: any, callback = () => {}) => {
     toggleNotification({
       type: "warning",
-      message: `${pluginId}.page.settings.notification.${type}.error`,
+      message: formatMessage({
+        id: `${pluginId}.page.settings.notification.${type}.error`,
+      }),
     });
     callback();
   };
 
   const handleSuccess = (
-    type,
+    type: any,
     callback = () => {},
     invalidateQueries = true,
   ) => {
     if (invalidateQueries) {
-      queryClient.invalidateQueries("get-config");
+      queryClient.invalidateQueries({ queryKey: ["get-config"] });
     }
     toggleNotification({
       type: "success",
-      message: `${pluginId}.page.settings.notification.${type}.success`,
+      message: formatMessage({
+        id: `${pluginId}.page.settings.notification.${type}.success`,
+      }),
     });
     callback();
   };
 
-  const submitMutation = useMutation(updateConfig, {
+  const submitMutation = useMutation({
+    mutationFn: ({ body }: SubmitPayload) => updateConfig(body, config),
     onSuccess: () => handleSuccess("submit"),
     onError: () => handleError("submit"),
   });
 
-  const deleteMutation = useMutation(deleteReactionType, {
+  const deleteMutation = useMutation({
+    mutationFn: ({ documentId }: any) => deleteReactionType(documentId, config),
     onSuccess: () => handleSuccess("reaction.delete"),
     onError: () => handleError("reaction.delete"),
   });

@@ -1,13 +1,23 @@
-import { UID } from "@strapi/strapi";
+import { Data, UID } from "@strapi/strapi";
+import qs from "qs";
 
-import { getApiURL, axiosInstance } from "../../utils";
-import { StrapiId } from "../../../../types";
+import { getApiURL } from "../../utils";
 
-// eslint-disable-next-line import/prefer-default-export
-export const fetchReactions = async (uid: UID.ContentType, id?: StrapiId) => {
-  try {
-    const { data } = await axiosInstance.get(getApiURL(`zone/count/${uid}${id ? `/${id}` : ''}`));
+type FetchConfig = {
+  get: Function;
+};
 
-    return data;
-  } catch (err) { }
+export const fetchReactions = async (uid: UID.ContentType, documentId?: Data.DocumentID, locale?: string, config?: FetchConfig) => {
+  if (config) {
+    const { get } = config;
+    const queryParams = qs.stringify({
+      locale,
+    });
+
+    try {
+      const { data } = await get(getApiURL(`zone/count/${uid}${documentId ? `/${documentId}` : ''}${queryParams ? `?${queryParams}` : ''}`));
+
+      return data;
+    } catch (err) { }
+  }
 }

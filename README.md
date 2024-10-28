@@ -14,7 +14,7 @@
     <img src="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions.svg?style=shield" alt="CircleCI" />
   </a>
   <a href="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
-    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg?branch=master" alt="codecov.io" />
+    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg" alt="codecov.io" />
   </a>
 </div>
 
@@ -41,8 +41,8 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 11. [👨‍💻 Community support](#-community-support)
 
 ## 💎 Versions
-- **Strapi v5** - [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/v5)
-- **Strapi v4** - (current) [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
+- **Strapi v5** - [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
+- **Strapi v4** - (current) [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/strapi-v4)
 
 ## ✨ Features
 
@@ -51,14 +51,6 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 - **Emoji &amp; Image reactions:** You can define reaction types using predefined set of [Emoji](https://github.com/ealush/emoji-picker-react) or use your own.
 - **Content Manager Injection Zone:** Making use of Strapi built-in batteries like *Injection Zones* to provide you highers user experience. Visual representation of reactions counter for any Content Types - useful!
 - **Developer Experience boosted:** A dedicated *Enrich* service provided to let you extend your Content API controllers by a single line to get reactions per each!
- 
-### Current backlog
-Before releasing the RC and first Public Release we would like to introduce:
-
-- ✅ Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
-- ✅ GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
-- ✅ Associations sync - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/7)
-- ⌛ Examples created in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
 
 **Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
 
@@ -123,8 +115,8 @@ In our minimum support we're following [official Node.js releases timelines](htt
 
 **Supported Strapi versions**:
 
-- Strapi v4.25.11 (recently tested)
-- Strapi v4.x
+- Strapi v5.1.1 (recently tested)
+- Strapi v5.x
 
 **Plugin dependencies**
 - `@strapi/plugin-graphql` - required to run because built-in support for GraphQL handled by this plugin 
@@ -138,7 +130,7 @@ To start your journey with **Reactions plugin** you must first setup types of re
 There is no need to provide any specific changed in the plugin configuration files extept enabling it.
 
 ```js
-module.exports = ({ env }) => ({
+export default () => ({
   //...
   reactions: {
     enabled: true,
@@ -165,7 +157,7 @@ For any role different than **Super Admin**, to access the **Reactions settings*
 ### Reaction kind / type
 ```json
 {
-  "id": 1,
+  "documentId": "njx99iv4p4txuqp307ye8625",
   "name": "Like",
   "slug": "like",
   "emoji": "👍",
@@ -180,14 +172,14 @@ For any role different than **Super Admin**, to access the **Reactions settings*
 
 ```json
 {
-  "id": 1,
+  "documentId": "njx99iv4p4txuqp307ye8625",
   "kind": { // Type of reaction, not provided when listing by exact kind
-    "id": 1,
+    "documentId": "njx99iv4p4txuqp307ye8625",
     "slug": "like",
     "name": "Like" 
   },
   "user": { // User who trigger reaction, not provided when listing by exact user
-    "id": 1,
+    "documentId": "njx99iv4p4txuqp307ye8625",
     "username": "Joe Doe",
     "email": "jdoe@sample.com",
   },
@@ -213,7 +205,7 @@ Return a list of available reaction kinds to use on the end user interface and e
 ```json
 [
   {
-  "id": 1,
+  "documentId": "njx99iv4p4txuqp307ye8625",
   "name": "Like",
   "slug": "like",
   "emoji": "👍",
@@ -230,31 +222,31 @@ Return a list of available reaction kinds to use on the end user interface and e
 
 _GraphQL equivalent: [Public GraphQL API -> List all reactions associated with Content Type](#list-all-reactions-associated-with-content-type-1)_
 
-`GET <host>/api/reactions/list/single/<single type UID>`
-`GET <host>/api/reactions/list/collection/<collection type UID>/<id>`
+`GET <host>/api/reactions/list/single/<single type UID>?locale=<locale code>`
+`GET <host>/api/reactions/list/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Return all reactions assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+Return all reactions assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
 - all related with user - if call is done with user context via `Authorization` header
 
-**Example URL**: `https://localhost:1337/api/reactions/list/single/api::homepage.homepage`
-**Example URL**: `https://localhost:1337/api/reactions/list/collection/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/list/single/api::homepage.homepage?locale=en`
+**Example URL**: `https://localhost:1337/api/reactions/list/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
 
 **Example response body**
 
 ```json
 [
   {
-    "id": 1,
+    "documentId": "njx99iv4p4txuqp307ye8625",
     "createdAt": "2023-09-14T20:13:01.649Z",
     "updatedAt": "2023-09-14T20:13:01.670Z",
     "kind":{
-      "id": 1,
+      "documentId": "njx99iv4p4txuqp307ye8625",
       "slug": "like",
       "name": "Like"
     },
     "user":{ // Added if no user context provided to identify who made such reaction
-      "id": 1,
+      "documentId": "njx99iv4p4txuqp307ye8625",
       "username": "mziarko+1@virtuslab.com",
       "email": "mziarko+1@virtuslab.com"
     }
@@ -267,26 +259,26 @@ Return all reactions assiciated with provided Collection / Single Type UID and C
 
 _GraphQL equivalent: [Public GraphQL API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type-1)_
 
-`GET <host>/api/reactions/list/<type slug>/single/<single type UID>`
-`GET <host>/api/reactions/list/<type slug>/collection/<collection type UID>/<id>`
+`GET <host>/api/reactions/list/<type slug>/single/<single type UID>?locale=<locale code>`
+`GET <host>/api/reactions/list/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
 - all related with user - if call is done with user context via `Authorization` header
 
-**Example URL**: `https://localhost:1337/api/reactions/list/like/single/api::homepage.homepage`
-**Example URL**: `https://localhost:1337/api/reactions/list/like/collection/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/list/like/single/api::homepage.homepage?locale=en`
+**Example URL**: `https://localhost:1337/api/reactions/list/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
 
 **Example response body**
 
 ```json
 [
   {
-    "id": 1,
+    "documentId": "njx99iv4p4txuqp307ye8625",
     "createdAt": "2023-09-14T20:13:01.649Z",
     "updatedAt": "2023-09-14T20:13:01.670Z",
     "user":{ // Added if no user context provided to identify who made such reaction
-      "id": 1,
+      "documentId": "njx99iv4p4txuqp307ye8625",
       "username": "mziarko+1@virtuslab.com",
       "email": "mziarko+1@virtuslab.com"
     }
@@ -299,24 +291,24 @@ Return all reactions of specific kind / type assiciated with provided Collection
 
 _GraphQL equivalent: [Public GraphQL API -> Set reaction for Content Type](#set-reaction-for-content-type-1)_
 
-`POST <host>/api/reactions/set/<type slug>/single/<single type UID>`
-`POST <host>/api/reactions/set/<type slug>/collection/<collection type UID>/<id>`
+`POST <host>/api/reactions/set/<type slug>/single/<single type UID>?locale=<locale code>`
+`POST <host>/api/reactions/set/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
-**Example URL**: `https://localhost:1337/api/reactions/set/like/single/api::homepage.homepage`
-**Example URL**: `https://localhost:1337/api/reactions/set/like/collection/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/set/like/single/api::homepage.homepage?locale=en`
+**Example URL**: `https://localhost:1337/api/reactions/set/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
 
 **Example response body**
 
 ```json
 {
-  "id": 1,
+  "documentId": "njx99iv4p4txuqp307ye8625",
   "createdAt": "2023-09-14T20:13:01.649Z",
   "updatedAt": "2023-09-14T20:13:01.670Z",
-  "relatedUid": "api::blog-post.blog-post:1"
+  "relatedUid": "api::post.post:njx99iv4p4txuqp307ye8625"
 }
 ```
 
@@ -324,15 +316,15 @@ Create reaction of specific kind / type assiciated with provided Collection / Si
 
 _GraphQL equivalent: [Public GraphQL API -> Unset reaction for Content Type](#unset-reaction-for-content-type-1)_
 
-`DELETE <host>/api/reactions/unset/<type slug>/single/<single type UID>`
-`DELETE <host>/api/reactions/unset/<type slug>/collection/<collection type UID>/<id>`
+`DELETE <host>/api/reactions/unset/<type slug>/single/<single type UID>?locale=<locale code>`
+`DELETE <host>/api/reactions/unset/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
-**Example URL**: `https://localhost:1337/api/reactions/unset/like/single/api::homepage.homepage`
-**Example URL**: `https://localhost:1337/api/reactions/unset/like/collection/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/unset/like/single/api::homepage.homepage?locale=en`
+**Example URL**: `https://localhost:1337/api/reactions/unset/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
 
 **Example response body**
 
@@ -344,24 +336,24 @@ true
 
 _GraphQL equivalent: [Public GraphQL API -> Toggle reaction for Content Type](#toggle-reaction-for-content-type-1)_
 
-`POST <host>/api/reactions/toggle/<type slug>/single/<single type UID>`
-`POST <host>/api/reactions/toggle/<type slug>/collection/<collection type UID>/<id>`
+`POST <host>/api/reactions/toggle/<type slug>/single/<single type UID>?locale=<locale code>`
+`POST <host>/api/reactions/toggle/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
-**Example URL**: `https://localhost:1337/api/reactions/toggle/like/single/api::homepage.homepage`
-**Example URL**: `https://localhost:1337/api/reactions/toggle/like/collection/api::blog-post.blog-post/1`
+**Example URL**: `https://localhost:1337/api/reactions/toggle/like/single/api::homepage.homepage?locale=en`
+**Example URL**: `https://localhost:1337/api/reactions/toggle/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
 
 **Example response body**
 
 ```json
 {
-  "id": 1,
+  "documentId": "njx99iv4p4txuqp307ye8625",
   "createdAt": "2023-09-14T20:13:01.649Z",
   "updatedAt": "2023-09-14T20:13:01.670Z",
-  "relatedUid": "api::blog-post.blog-post:1"
+  "relatedUid": "api::post.post:njx99iv4p4txuqp307ye8625"
 }
 
 // or
@@ -422,7 +414,7 @@ query {
 
 _REST API equivalent: [Public REST API -> List all reactions associated with Content Type](#list-all-reactions-associated-with-content-type)_
 
-Return all reactions assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+Return all reactions assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - Query `reactionsListAll` - no `Authorization` header provided (open for public)
 - Query `reactionsListPerUser` - an `Authorization` header is mandatory
 
@@ -430,8 +422,8 @@ Return all reactions assiciated with provided Collection / Single Type UID and C
 
 ```graphql
 query {
-  reactionsListAll(uid: "api::blog-post.blog-post", id: 1) {
-    id
+  reactionsListAll(uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
+    documentId
     kind {
       slug
       name
@@ -446,8 +438,8 @@ query {
 
 ```graphql
 query {
-  reactionsListPerUser(uid: "api::blog-post.blog-post", id: 1) {
-    id
+  reactionsListPerUser(uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
+    documentId
     kind {
       slug
       name
@@ -464,7 +456,7 @@ query {
   "data": {
     "reactionsListAll": [
       {
-        "id": 1,
+        "documentId": "njx99iv4p4txuqp307ye8625",
         "kind": {
           "slug": "like",
           "name": "Like",
@@ -483,7 +475,7 @@ query {
   "data": {
     "reactionsListPerUser": [
       {
-        "id": 1,
+        "documentId": "njx99iv4p4txuqp307ye8625",
         "kind": {
           "slug": "like",
           "name": "Like",
@@ -500,7 +492,7 @@ query {
 
 _REST API equivalent: [Public REST API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type)_
 
-Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID with following combinations:
+Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - Query `reactionsListAll` - no `Authorization` header provided (open for public)
 - Query `reactionsListPerUser` - an `Authorization` header is mandatory
 
@@ -508,8 +500,8 @@ Return all reactions of specific kind / type assiciated with provided Collection
 
 ```graphql
 query {
-  reactionsListAll(kind: "like", uid: "api::blog-post.blog-post", id: 1) {
-    id
+  reactionsListAll(kind: "like", uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
+    documentId
     user {
       email
     }
@@ -520,8 +512,8 @@ query {
 
 ```graphql
 query {
-  reactionsListPerUser(kind: "like", uid: "api::blog-post.blog-post", id: 1) {
-    id
+  reactionsListPerUser(kind: "like", uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
+    documentId
     createdAt
   }
 }
@@ -534,7 +526,7 @@ query {
   "data": {
     "reactionsListAll": [
       {
-        "id": 1,
+        "documentId": "njx99iv4p4txuqp307ye8625",
         "user": {
           "email": "mziarko+1@virtuslab.com"
         },
@@ -548,7 +540,7 @@ query {
   "data": {
     "reactionsListPerUser": [
       {
-        "id": 1,
+        "documentId": "njx99iv4p4txuqp307ye8625",
         "createdAt": "2023-09-14T20:13:01.670Z"
       }
     ]
@@ -560,7 +552,7 @@ query {
 
 _REST API equivalent: [Public REST API -> Set reaction for Content Type](#set-reaction-for-content-type)_
 
-Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -571,11 +563,12 @@ mutation reactionSet {
   reactionSet(
     input: {
       kind: "like",
-      uid: "api::blog-post.blog-post"
-      id: 1
+      uid: "api::post.post",
+      documentId: "njx99iv4p4txuqp307ye8625",
+      locale: "en"
     }
   ) {
-    id
+    documentId
   }
 }
 ```
@@ -586,7 +579,7 @@ mutation reactionSet {
 {
   "data": {
     "reactionSet": {
-      "id": 1
+      "documentId": "njx99iv4p4txuqp307ye8625"
     }
   }
 }
@@ -596,7 +589,7 @@ mutation reactionSet {
 
 _REST API equivalent: [Public REST API -> Unset reaction for Content Type](#unset-reaction-for-content-type)_
 
-Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -607,11 +600,12 @@ mutation reactionUnset {
   reactionUnset(
     input: {
       kind: "like",
-      uid: "api::blog-post.blog-post"
-      id: 1
+      uid: "api::post.post",
+      documentId: "njx99iv4p4txuqp307ye8625",
+      locale: "en"
     }
   ) {
-    id
+    documentId
   }
 }
 ```
@@ -622,7 +616,7 @@ mutation reactionUnset {
 {
   "data": {
     "reactionUnset": {
-      "id": null
+      "documentId": null
     }
   }
 }
@@ -632,7 +626,7 @@ mutation reactionUnset {
 
 _REST API equivalent: [Public REST API -> Toggle reaction for Content Type](#toggle-reaction-for-content-type)_
 
-Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type ID.
+Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -643,11 +637,12 @@ mutation reactionToggle {
   reactionToggle(
     input: {
       kind: "like",
-      uid: "api::blog-post.blog-post"
-      id: 1
+      uid: "api::post.post",
+      documentId: "njx99iv4p4txuqp307ye8625",
+      locale: "en"
     }
   ) {
-    id
+    documentId
   }
 }
 ```
@@ -658,7 +653,7 @@ mutation reactionToggle {
 {
   "data": {
     "reactionToggle": {
-      "id": 1
+      "documentId": "njx99iv4p4txuqp307ye8625"
     }
   }
 }
@@ -668,7 +663,7 @@ mutation reactionToggle {
 {
   "data": {
     "reactionToggle": {
-      "id": null
+      "documentId": null
     }
   }
 }
@@ -702,23 +697,23 @@ What is important, service method does not modify default `data` schema of **Str
 
 #### Example extension
 ```ts
-// src/api/blog-post/controllers/blog-post.js
+// src/api/post/controllers/post.ts
 
 'use strict';
 
 /**
- *  blog-post controller
+ *  post controller
  */
 
-const { createCoreController } = require('@strapi/strapi').factories;
+import { factories } from '@strapi/strapi'
 
-module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) => ({
+export default factories.createCoreController('api::post.post', ({ strapi }) => ({
   async findOne(ctx) {
     const response = await super.findOne(ctx);
 
     return strapi
       .service('plugin::reactions.enrich')
-      .enrichOne('api::blog-post.blog-post', response);
+      .enrichOne('api::post.post', response);
   },
 }));
 ```
@@ -727,7 +722,7 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
 ```json
 {
   "data":{
-    "id": 1,
+    "documentId": "njx99iv4p4txuqp307ye8625",
     "attributes":{
       // Content type attributes 
     }
@@ -735,12 +730,12 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
   "meta":{
     "reactions":{
       "like":[{
-          "id": 1,
+          "documentId": "njx99iv4p4txuqp307ye8625",
           "createdAt": "2023-09-14T20:13:01.649Z",
           "updatedAt": "2023-09-14T20:13:01.670Z",
-          "relatedUid": "api::blog-post.blog-post:2",
+          "relatedUid": "api::post.post:2",
           "kind":{
-            "id": 1,
+            "documentId": "njx99iv4p4txuqp307ye8625",
             "name": "Like",
             "slug": "like",
             "emoji": "👍",
@@ -748,7 +743,7 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
             "icon": null
           },
           "user":{
-            "id": 1,
+            "documentId": "njx99iv4p4txuqp307ye8625",
             "username": "mziarko+1@virtuslab.com",
             "email": "mziarko+1@virtuslab.com"
           }
@@ -784,23 +779,23 @@ What is important, service method does not modify default `data` schema of **Str
 
 #### Example extension
 ```ts
-// src/api/blog-post/controllers/blog-post.js
+// src/api/post/controllers/post.ts
 
 'use strict';
 
 /**
- *  blog-post controller
+ *  post controller
  */
 
-const { createCoreController } = require('@strapi/strapi').factories;
+import { factories } from '@strapi/strapi'
 
-module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) => ({
+export default factories.createCoreController('api::post.post', ({ strapi }) => ({
   async find(ctx) {
     const response = await super.find(ctx);
 
     return strapi
       .service('plugin::reactions.enrich')
-      .enrichMany('api::blog-post.blog-post', response);
+      .enrichMany('api::post.post', response);
   },
 }));
 ```
@@ -809,12 +804,12 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
 ```json
 {
   "data": [{
-      "id": 1,
+      "documentId": "njx99iv4p4txuqp307ye8625",
       "attributes":{
         // Content type attributes 
       }
     }, {
-      "id": 2,
+      "documentId": 2,
       "attributes":{
         // Content type attributes 
       }
@@ -822,14 +817,14 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
   ],
   "meta":{
     "reactions":{
-      "1": {
+      "njx99iv4p4txuqp307ye8625": {
         "like":[{
-            "id": 1,
+            "documentId": "njx99iv4p4txuqp307ye8625",
             "createdAt": "2023-09-14T20:13:01.649Z",
             "updatedAt": "2023-09-14T20:13:01.670Z",
-            "relatedUid": "api::blog-post.blog-post:2",
+            "relatedUid": "api::post.post:2",
             "kind":{
-              "id": 1,
+              "documentId": "njx99iv4p4txuqp307ye8625",
               "name": "Like",
               "slug": "like",
               "emoji": "👍",
@@ -837,7 +832,7 @@ module.exports = createCoreController('api::blog-post.blog-post', ({ strapi }) =
               "icon": null
             },
             "user":{
-              "id": 1,
+              "documentId": "njx99iv4p4txuqp307ye8625",
               "username": "mziarko+1@virtuslab.com",
               "email": "mziarko+1@virtuslab.com"
             }
@@ -870,7 +865,7 @@ _The only thing you might need to do after import is described below_ ⬇️
 
 You might need to use one of special admin actions for the Reactions plugin like **"Synchronize associations"**. To get access to it, you must be **Super Admin** or have assigned **Settings: Admin permission** to any of your roles. 
 
-This is *not destructive* action and it just goes through all existing Reactions and update their search key according to linked Content Type UID and ID like `api::blog-post.blog-post:1`.
+This is *not destructive* action and it just goes through all existing Reactions and update their search key according to linked Content Type UID and ID like `api::post.post:njx99iv4p4txuqp307ye8625`.
 
 ---
 
@@ -884,20 +879,28 @@ Feel free to fork and make a Pull Request to this plugin project. All the input 
    git clone git@github.com:VirtusLab-Open-Source/strapi-plugin-reactions.git
    ```
 
-2. Create a soft link in your strapi project to plugin `dist` folder
-
-   ```sh
-   ln -s <your path>/strapi-plugin-reactions/dist <your path>/strapi-project/src/plugins/reactions
-   ```
-
-3. Run develop or build command
+2. Run `install` & `watch:link` command
 
    ```ts
-   // Watch for file changes
-   yarn develop
-   // or run build without nodemon
-   yarn build:dev
+   // Install all dependencies
+   yarn install
+
+   // Watch for file changes using `plugin-sdk` and follow the instructions provided by this official Strapi developer tool
+   yarn watch:link
    ```
+
+3. Within the Strapi project, modify `config/plugins.{js,ts}` for `imgix`
+
+```ts
+//...
+'reactions': {
+  enabled: true,
+  //...
+}
+//...
+```
+
+4. Run your Strapi instance
 
 ## 👨‍💻 Community support
 

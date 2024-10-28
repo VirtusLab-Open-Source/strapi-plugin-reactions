@@ -1,85 +1,108 @@
-import React, { useEffect, useRef, useState } from 'react';
-import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
-
-import { Button } from '@strapi/design-system/Button';
-import { CarouselInput } from '@strapi/design-system';
-import { Flex } from '@strapi/design-system/Flex';
-import { Icon } from '@strapi/design-system/Icon';
+import { Button, CarouselInput, Field, Flex, Popover } from '@strapi/design-system';
 
 import { EmotionHappy } from '@strapi/icons';
-
-import { ReactionEmojiSelectContainer, ReactionEmojiSelectDisplay, ReactionEmojiSelectInner, ReactionEmojiSelectPopover, ReactionEmojiSelectTypography } from './styles';
+import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getMessage } from '../../../../utils';
 
+import { ReactionEmojiSelectContainer, ReactionEmojiSelectDisplay, ReactionEmojiSelectInner, ReactionEmojiSelectPopoverContent, ReactionEmojiSelectTypography } from './styles';
+import { FieldValue } from '@strapi/strapi/admin';
+
 type ReactionEmojiSelectProps = {
-    value: string;
-    onChange: Function;
+  value: string;
+  error?: string;
+  hint?: string;
+  required?: boolean;
+  onChange: FieldValue['onChange'];
 };
 
-type ReactionEmojiProps = Pick<EmojiClickData, "emoji" | "imageUrl">;
+type ReactionEmojiProps = Pick<EmojiClickData, 'emoji' | 'imageUrl'>;
 
-export const ReactionEmojiSelect = ({ value, onChange }: ReactionEmojiSelectProps) => {
+export const ReactionEmojiSelect = ({ value, error, hint, required, onChange }: ReactionEmojiSelectProps) => {
 
-    const [selectorVisible, setSelectorVisible] = useState(false);
-    const [theme, setTheme] = useState(undefined);
-    const buttonRef = useRef();
+  const [selectorVisible, setSelectorVisible] = useState(false);
+  const [theme, setTheme] = useState(undefined);
+  const buttonRef = useRef<HTMLElement>();
 
-    const handleEmojiSelect = ({ emoji, imageUrl }: ReactionEmojiProps) => {
-        onChange("emoji", emoji, false);
-        onChange("emojiFallbackUrl", imageUrl, false);
-        setSelectorVisible(false);
-    };
+  const handleEmojiSelect = ({ emoji, imageUrl }: ReactionEmojiProps) => {
+    onChange('emoji', emoji);
+    onChange('emojiFallbackUrl', imageUrl);
+    setSelectorVisible(false);
+  };
 
-    useEffect(() => {
-        setTheme(window.localStorage?.STRAPI_THEME);
-    }, []);
+  useEffect(() => {
+    setTheme(window.localStorage?.STRAPI_THEME);
+  }, []);
 
-    return (<ReactionEmojiSelectContainer>
-        <CarouselInput
-            label={getMessage("page.settings.form.emoji.label")}
-            required>
-            <Flex
-                direction="column"
-                justifyContent="center"
-                alignItems="center"
-                height="100%"
-                width="100%"
-            >
-                <ReactionEmojiSelectInner>
-                    { !value && (<><Icon
-                        as={EmotionHappy}
-                        aria-hidden
-                        width="30px"
-                        height="24px"
-                        color="primary600"
-                        marginBottom={3}
-                    />
-                    <ReactionEmojiSelectTypography
-                        variant="pi"
-                        fontWeight="bold"
-                        textColor="neutral600"
-                        style={{ textAlign: 'center' }}
-                        as="span"
-                    >
-                        {getMessage("page.settings.form.emoji.empty")}
-                    </ReactionEmojiSelectTypography>
-                    </>)}
+  const handleSelectorVisibleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectorVisible(!selectorVisible);
+  };
 
-                    {value && (<ReactionEmojiSelectDisplay>
-                        {value}
-                    </ReactionEmojiSelectDisplay>)}
+  return (<ReactionEmojiSelectContainer>
+    <Field.Root hint={hint} error={error ? getMessage(error) : error} required={required}>
+      <CarouselInput
+        label={getMessage('page.settings.form.emoji.label')}
+        required>
+        <Flex
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          height="100%"
+          width="100%"
+        >
+          <ReactionEmojiSelectInner
+            direction="column"
+            gap={3}
+            justifyContent="center"
+            alignItems="center">
+            {!value && (<Flex direction="column" gap={3}>
+              <EmotionHappy
+                aria-hidden
+                width="30px"
+                height="24px"
+                color="primary600"
+              />
+              <ReactionEmojiSelectTypography
+                variant="pi"
+                fontWeight="bold"
+                textColor="neutral600"
+                style={{ textAlign: 'center' }}
+                tag="span"
+              >
+                {getMessage('page.settings.form.emoji.empty')}
+              </ReactionEmojiSelectTypography>
+            </Flex>)}
 
-                    <Button ref={buttonRef} onClick={() => setSelectorVisible(s => !s)} variant='secondary'>{getMessage("page.settings.form.emoji.button.label")}</Button>
-                    {selectorVisible && <ReactionEmojiSelectPopover centered source={buttonRef} spacing={16}>
-                        <EmojiPicker 
-                        theme={theme} 
-                        emojiStyle={EmojiStyle.NATIVE}
-                        searchPlaceholder={getMessage("page.settings.form.emoji.plugin.search.label")}
-                        onEmojiClick={handleEmojiSelect} />
-                    </ReactionEmojiSelectPopover>}
-                </ReactionEmojiSelectInner>
-            </Flex>
-        </CarouselInput>
-        <input type="hidden" value={value} />
-    </ReactionEmojiSelectContainer>)
-}
+            {value && (<ReactionEmojiSelectDisplay
+              direction="row"
+              justifyContent="center"
+              alignItems="center">
+              {value}
+            </ReactionEmojiSelectDisplay>)}
+
+
+            <Popover.Root open={selectorVisible}>
+              <Popover.Trigger>
+                <Button onClick={handleSelectorVisibleToggle} variant="secondary">{getMessage('page.settings.form.emoji.button.label')}</Button>
+              </Popover.Trigger>
+              <Popover.Content centered>
+                <ReactionEmojiSelectPopoverContent spacing={16}>
+                  <EmojiPicker
+                    theme={theme}
+                    emojiStyle={EmojiStyle.NATIVE}
+                    searchPlaceholder={getMessage('page.settings.form.emoji.plugin.search.label')}
+                    onEmojiClick={handleEmojiSelect} />
+                </ReactionEmojiSelectPopoverContent>
+              </Popover.Content>
+            </Popover.Root>
+          </ReactionEmojiSelectInner>
+        </Flex>
+      </CarouselInput>
+      <input type="hidden" name="emoji" value={value} />
+      <Field.Hint />
+      <Field.Error />
+    </Field.Root>
+  </ReactionEmojiSelectContainer>);
+};

@@ -1,30 +1,36 @@
 import React, { useState } from "react";
-import { Id } from "strapi-typed";
-import { isNil } from "lodash";
+
+import { Data } from "@strapi/strapi";
 
 import {
-  CheckPermissions,
-  LoadingIndicatorPage,
+  Page,
+  Layouts,
   useNotification,
   useRBAC,
-  useFocusWhenNavigate,
-  useOverlayBlocker,
-} from "@strapi/helper-plugin";
+  useStrapiApp
+} from '@strapi/strapi/admin';
 
-import { Main } from "@strapi/design-system/Main";
-import { ContentLayout, HeaderLayout } from "@strapi/design-system/Layout";
-import { Box } from "@strapi/design-system/Box";
-import { Button } from "@strapi/design-system/Button";
-import { Divider } from "@strapi/design-system/Divider";
-import { Grid, GridItem } from "@strapi/design-system/Grid";
-import { IconButton } from "@strapi/design-system/IconButton";
-import { Flex } from "@strapi/design-system/Flex";
-import { Stack } from "@strapi/design-system/Stack";
-import { Table, Thead, Tbody, TFooter, Tr, Th, Td } from "@strapi/design-system/Table";
-import { Typography } from "@strapi/design-system/Typography";
-import { VisuallyHidden } from "@strapi/design-system/VisuallyHidden";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Grid,
+  IconButton,
+  IconButtonGroup,
+  Table,
+  Thead,
+  Tbody,
+  TFooter,
+  Tr,
+  Th,
+  Td,
+  Typography,
+  VisuallyHidden
+} from "@strapi/design-system";
 
-import { Pencil, Plus, Refresh, Trash } from "@strapi/icons";
+import { Pencil, Plus, Trash, ArrowClockwise } from "@strapi/icons";
+import { ConfirmationDialog } from "@sensinum/strapi-utils";
 
 import pluginPermissions from "../../permissions";
 import useConfig from "../../hooks/useConfig";
@@ -32,11 +38,11 @@ import { getMessage } from "../../utils";
 import CUModal from "./components/Modal";
 import { ReactionIcon } from "./components/ReactionIcon";
 import useUtils from "../../hooks/useUtils";
-import ConfirmationModal from "../../components/ConfirmationModal";
 import { AdminAction } from "./components/AdminAction";
-import { ToBeFixed } from "../../../../types";
+import { CTReactionType, ToBeFixed } from "../../../../@types";
 
 const DEFAULT_BOX_PROPS = {
+  width: "100%",
   background: "neutral0",
   hasRadius: true,
   shadow: "filterShadow",
@@ -44,26 +50,23 @@ const DEFAULT_BOX_PROPS = {
 };
 
 const Settings = () => {
-  useFocusWhenNavigate();
-
-  const toggleNotification = useNotification();
-  const { lockApp, unlockApp } = useOverlayBlocker();
+  const { toggleNotification } = useNotification();
 
   const {
     isLoading: isLoadingForPermissions,
     allowedActions,
   } = useRBAC(pluginPermissions);
 
-  const { canSettingsChange: canChange, canSettingsAdmin: canAdmin } = allowedActions;
+  const fields = useStrapiApp('ReactionsPluginSettings', (state) => state.fields);
+
+  const { canChange, canAdmin } = allowedActions;
 
   const [isModalOpened, setModalOpened] = useState(false);
   const [syncAssiciationConfirmationVisible, setSyncAssiciationConfirmationVisible] = useState(false);
-  const [modalEntity, setModalEntity] = useState(undefined);
-  const [entityToDelete, setEntityToDelete] = useState<any>(undefined);
+  const [modalEntity, setModalEntity] = useState<CTReactionType | undefined>(undefined);
+  const [entityToDelete, setEntityToDelete] = useState<CTReactionType>();
 
-  const { fetch, submitMutation, deleteMutation } =
-    useConfig(toggleNotification);
-
+  const { fetch, submitMutation, deleteMutation } = useConfig(toggleNotification);
   const { syncAssociationsMutation } = useUtils(toggleNotification);
 
   const {
@@ -79,37 +82,34 @@ const Settings = () => {
     isConfigLoading;
   const isError = configErr;
 
-  const preparePayload = (form: any) => {
+  const preparePayload = (form: CTReactionType): CTReactionType => {
     return form;
   }
 
-  const handleCUD = async (form: any) => {
+  const handleCUD = async (form: CTReactionType) => {
     if (canChange) {
-      lockApp();
       try {
         const payload = preparePayload(form);
-        await submitMutation.mutateAsync(payload);
-      } finally {
+        await submitMutation.mutateAsync({ body: payload, toggleNotification });
         setModalOpened(false);
         setModalEntity(undefined);
+      } catch(e: any) {
+        console.error(e);
       }
-      unlockApp();
     }
   };
 
-  const handleDelete = async (id: Id) => {
+  const handleDelete = async (documentId: Data.DocumentID) => {
     if (canChange) {
-      lockApp();
       try {
-        await deleteMutation.mutateAsync(id);
+        await deleteMutation.mutateAsync({ documentId, toggleNotification });
       } finally {
         setEntityToDelete(undefined);
       }
-      unlockApp();
     }
   };
 
-  const handleOpenModal = (entity: any = undefined) => {
+  const handleOpenModal = (entity?: CTReactionType | undefined) => {
     setModalOpened(true);
     setModalEntity(entity);
   };
@@ -119,7 +119,7 @@ const Settings = () => {
     setModalEntity(undefined);
   };
 
-  const handleDeleteConfirmation = (entity: any) => {
+  const handleDeleteConfirmation = (entity: CTReactionType) => {
     setEntityToDelete(entity);
   };
 
@@ -137,51 +137,46 @@ const Settings = () => {
 
   const handleSyncAssociations = async () => {
     if (canAdmin) {
-      lockApp();
       try {
         await syncAssociationsMutation.mutateAsync();
       } finally {
         setSyncAssiciationConfirmationVisible(false);
       }
-      unlockApp();
     }
   };
 
   if (isLoading || isError) {
     return (
-      <LoadingIndicatorPage>
+      <Page.Loading>
         {getMessage("page.settings.loading")}
-      </LoadingIndicatorPage>
+      </Page.Loading>
     );
   }
 
   return (
-    <Main>
-      <HeaderLayout
+    <Page.Main>
+      <Page.Title>{getMessage("page.settings.header.title")}</Page.Title>
+      <Layouts.Header
         title={getMessage("page.settings.header.title")}
         subtitle={getMessage("page.settings.header.description")}
-        primaryAction={
-          <CheckPermissions
-            permissions={pluginPermissions.settingsChange}
+        primaryAction={canChange && (<>
+          <Button
+            type="submit"
+            startIcon={<Plus />}
+            onClick={(e: React.FormEvent) => { e.preventDefault(); handleOpenModal(); }}
           >
-            <Button
-              type="submit"
-              startIcon={<Plus />}
-              onClick={(e: React.FormEvent) => { e.preventDefault(); handleOpenModal(); }}
-            >
-              {getMessage("page.settings.action.create")}
-            </Button>
-          </CheckPermissions>
-        }
+            {getMessage("page.settings.action.create")}
+          </Button>
+        </>)}
       />
-      <ContentLayout>
-        <Stack size={4}>
-          <Box hasRadius={false} paddingBottom={6}>
-            <Table colCount={5} rowCount={1} footer={<TFooter
+      <Layouts.Content>
+        <Flex direction="column" gap={6}>
+          <Box width="100%" hasRadius={false}>
+            <Table colCount={5} rowCount={types.length} footer={canChange && (<TFooter
               onClick={(e: React.FormEvent) => { e.preventDefault(); handleOpenModal(); }}
               icon={<Plus />}>
               {getMessage("page.settings.table.action.add")}
-            </TFooter>}>
+            </TFooter>)}>
               <Thead>
                 <Tr>
                   <Th>
@@ -202,10 +197,10 @@ const Settings = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {types.map((entry: ToBeFixed) => <Tr key={entry.id}>
+                {types.map((entry: ToBeFixed) => <Tr key={entry.documentId}>
                   <Td>
                     {(entry.icon && !entry.emoji) && (<ReactionIcon src={entry.icon?.url} />)}
-                    {(!entry.icon && entry.emoji) && (<>{entry.emoji}</>)}
+                    {(!entry.icon && entry.emoji) && (<Typography variant="omega">{entry.emoji}</Typography>)}
                   </Td>
                   <Td>
                     <Typography textColor="neutral800">
@@ -223,93 +218,96 @@ const Settings = () => {
                     </Typography>
                   </Td>
                   <Td>
-                    <Flex>
-                      <IconButton onClick={() => handleOpenModal(entry)} label={getMessage("page.settings.table.action.edit")} noBorder icon={<Pencil />} />
-                      <Box paddingLeft={1}>
-                        <IconButton onClick={() => handleDeleteConfirmation(entry)} label={getMessage("page.settings.table.action.delete")} noBorder icon={<Trash />} />
-                      </Box>
-                    </Flex>
+                    {canChange && (<Flex width="100%" justifyContent="flex-end" alignItems="center">
+                      <IconButtonGroup>
+                        <IconButton onClick={() => handleOpenModal(entry)} label={getMessage("page.settings.table.action.edit")} noBorder>
+                          <Pencil />
+                        </IconButton>
+                        {( canChange) && (<ConfirmationDialog
+                            isVisible={entityToDelete?.documentId === entry.documentId}
+                            isLoading={deleteMutation.isPending}
+                            title={getMessage("page.settings.modal.title.delete")}
+                            labelCancel={getMessage("page.settings.modal.action.delete.cancel")}
+                            labelConfirm={getMessage("page.settings.modal.action.delete.submit")}
+                            iconConfirm={<Trash />}
+                            onConfirm={() => handleDelete(entityToDelete?.documentId)}
+                            onClose={handleDeleteDiscard}
+                            trigger={<IconButton variant="danger-light" onClick={() => handleDeleteConfirmation(entry)} label={getMessage("page.settings.table.action.delete")} noBorder>
+                              <Trash />
+                            </IconButton>}
+                          >
+                            {getMessage({
+                              id: "page.settings.modal.description.delete",
+                              props: {
+                                name: entityToDelete?.name,
+                              },
+                            })}
+                          </ConfirmationDialog>)}
+                      </IconButtonGroup>
+                    </Flex>)}
                   </Td>
                 </Tr>)}
               </Tbody>
             </Table>
           </Box>
-          <CheckPermissions
-            permissions={pluginPermissions.settingsAdmin}
-          >
+          {canAdmin && (
             <Box {...DEFAULT_BOX_PROPS}>
-              <Stack size={4}>
-                <Stack size={2}>
-                  <Typography variant="delta" as="h2">
-                    {getMessage("page.settings.section.administration-tools")}
+              <Flex width="100%" direction="column" gap={4}>
+                <Flex width="100%" direction="column" gap={2} alignItems="flexStart">
+                  <Typography variant="delta" tag="h2">
+                    {getMessage("page.settings.section.administrationTools.title")}
                   </Typography>
-                  <Typography variant="pi" as="h4">
-                    {getMessage("page.settings.section.administration-tools.subtitle")}
+                  <Typography variant="pi" tag="h4">
+                    {getMessage("page.settings.section.administrationTools.subtitle")}
                   </Typography>
-                </Stack>
-                <Grid gap={4}>
-                  <GridItem col={12} s={12} xs={12}>
-                    <Divider unsetMargin={false} />
-                    <AdminAction
-                      title={getMessage("page.settings.action.sync-associations.title")}
-                      description={getMessage("page.settings.action.sync-associations.description")}
-                      tip={getMessage("page.settings.action.sync-associations.tip")}>
-                      <Button
-                        variant="danger-light"
-                        startIcon={<Refresh />}
-                        onClick={handleSyncAssociationsConfirmation}
-                      >
-                        {getMessage("page.settings.action.sync-associations.button")}
-                      </Button>
-
-                      <ConfirmationModal
-                        isVisible={syncAssiciationConfirmationVisible}
-                        isLoading={syncAssociationsMutation.isLoading}
-                        title={getMessage("page.settings.modal.title.sync-associations")}
-                        labelCancel={getMessage("page.settings.modal.action.sync-associations.cancel")}
-                        labelConfirm={getMessage("page.settings.modal.action.sync-associations.submit")}
-                        iconConfirm={<Refresh />}
-                        onConfirm={handleSyncAssociations}
-                        onClose={handleSyncAssociationsCancel}
-                      >
-                        {getMessage(
-                          "page.settings.modal.description.sync-associations"
-                        )}
-                      </ConfirmationModal>
-                    </AdminAction>
-
-                  </GridItem>
-                </Grid>
-              </Stack>
+                </Flex>
+                <Flex width="100%" direction="column" gap={2} alignItems="flexStart">
+                  <Divider />
+                  <Grid.Root width="100%" gap={4} marginBottom={2}>
+                    <Grid.Item col={12} s={12} xs={12}>
+                      <AdminAction
+                        title={getMessage("page.settings.action.syncAssociations.title")}
+                        description={getMessage("page.settings.action.syncAssociations.description")}
+                        tip={getMessage("page.settings.action.syncAssociations.tip")}>
+                        <ConfirmationDialog
+                          isVisible={syncAssiciationConfirmationVisible}
+                          isLoading={syncAssociationsMutation.isPending}
+                          title={getMessage("page.settings.modal.title.syncAssociations")}
+                          labelCancel={getMessage("page.settings.modal.action.syncAssociations.cancel")}
+                          labelConfirm={getMessage("page.settings.modal.action.syncAssociations.submit")}
+                          iconConfirm={<ArrowClockwise />}
+                          onConfirm={handleSyncAssociations}
+                          onClose={handleSyncAssociationsCancel}
+                          trigger={<Button
+                            variant="danger-light"
+                            startIcon={<ArrowClockwise />}
+                            onClick={handleSyncAssociationsConfirmation}
+                          >
+                            {getMessage("page.settings.action.syncAssociations.button")}
+                          </Button>}
+                        >
+                          {getMessage(
+                            "page.settings.modal.description.syncAssociations"
+                          )}
+                        </ConfirmationDialog>
+                      </AdminAction>
+                    </Grid.Item>
+                  </Grid.Root>
+                </Flex>
+              </Flex>
             </Box>
-          </CheckPermissions>
-        </Stack>
+          )}
+        </Flex>
 
         {(isModalOpened && canChange) && (<CUModal
+          isModalOpened={isModalOpened}
           data={modalEntity}
-          isLoading={submitMutation.isLoading}
+          fields={fields}
+          isLoading={submitMutation.isPending}
           onSubmit={handleCUD}
           onClose={handleCloseModal} />)}
-
-        {(entityToDelete && canChange) && (<ConfirmationModal
-          isVisible={!isNil(entityToDelete)}
-          isLoading={deleteMutation.isLoading}
-          title={getMessage("page.settings.modal.title.delete")}
-          labelCancel={getMessage("page.settings.modal.action.delete.cancel")}
-          labelConfirm={getMessage("page.settings.modal.action.delete.submit")}
-          iconConfirm={<Trash />}
-          onConfirm={() => handleDelete(entityToDelete?.id)}
-          onClose={handleDeleteDiscard}
-        >
-          {getMessage({
-            id: "page.settings.modal.description.delete",
-            props: {
-              name: entityToDelete.name,
-            },
-          })}
-        </ConfirmationModal>)}
-      </ContentLayout>
-    </Main>);
+      </Layouts.Content>
+    </Page.Main>);
 };
 
 export default Settings;

@@ -1,22 +1,21 @@
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
-
-import { get } from "lodash";
-
-import pluginPkg from '../../package.json';
 import { pluginId } from './pluginId';
 import Initializer from './components/Initializer';
 
 import pluginPermissions from "./permissions";
-import trads, { TranslationKey, Translations } from './translations';
-import { EditViewSummary } from './injections/EditViewSummary';
+import { EditViewSummary, InjectionInitializer } from './injections';
+import { flattenObject, prefixPluginTranslations } from '@sensinum/strapi-utils';
+import trads from "./translations";
 
-const { name, displayName } = pluginPkg.strapi;
+const name = "reactions";
+const displayName = "Reactions";
 
 export default {
   bootstrap(app: any) {
-    app.injectContentManagerComponent('editView', 'informations', {
-      name: 'reactions-summary',
-      Component: EditViewSummary,
+    app.getPlugin('content-manager').injectComponent('editView', 'right-links', {
+      name: 'reactions-counter',
+      Component: () => (<InjectionInitializer>
+        <EditViewSummary />
+      </InjectionInitializer>),
     });
   },
 
@@ -25,7 +24,7 @@ export default {
       {
         id: pluginId,
         intlLabel: {
-          id: `${pluginId}.plugin.section`,
+          id: `${pluginId}.plugin.section.name`,
           defaultMessage: `${displayName} plugin`,
         },
       },
@@ -39,7 +38,7 @@ export default {
           to: `/settings/${pluginId}`,
           Component: async () => {
             const component = await import(
-              /* webpackChunkName: "documentation-settings" */ "./pages/Settings"
+              "./pages/SettingsInit"
             );
 
             return component;
@@ -59,14 +58,23 @@ export default {
     app.registerPlugin(plugin);
   },
 
-  registerTrads({ locales = [] }: { locales: Array<TranslationKey>}) {
-    return locales
-    .filter((locale: string) => Object.keys(trads).includes(locale))
-    .map((locale: string) => {
-      return {
-        data: prefixPluginTranslations(get<Translations, TranslationKey>(trads, locale as TranslationKey, trads.en), pluginId, {}),
-        locale,
-      };
-    });
+  registerTrads: async function ({ locales = [] }: { locales: string[] }) {
+    return Promise.all(
+      locales.map(async (locale: string) => {
+        if (locale in trads) {
+          const typedLocale = locale as keyof typeof trads;
+          return trads[typedLocale]().then(({ default: trad }) => {
+            return {
+              data: prefixPluginTranslations(flattenObject(trad), pluginId),
+              locale,
+            };
+          });
+        }
+        return {
+          data: prefixPluginTranslations(flattenObject({}), pluginId),
+          locale,
+        };
+      }),
+    );
   },
 };

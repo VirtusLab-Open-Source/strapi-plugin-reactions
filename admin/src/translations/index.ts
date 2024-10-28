@@ -1,15 +1,11 @@
-import { KeyValueSet } from "strapi-typed";
-import en from "./en.json";
-import fr from "./fr.json";
+import { Path } from '@sensinum/strapi-utils';
+import type { EN } from './en';
 
-export type TranslationKey = "en" | "fr";
-export type Translations = {
-  [key in TranslationKey]: KeyValueSet<string>
-};
+export type TranslationPath = Path<EN>;
 
-const trads: Translations = {
-  en,
-  fr,
+const trads = {
+  en: () => import('./en'),
+  fr: () => import('./fr'),
 };
 
 export default trads;

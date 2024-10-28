@@ -1,3 +1,4 @@
+import { useIntl } from "react-intl";
 import { pluginId } from "../pluginId";
 
 const handleAPIError = (
@@ -5,9 +6,13 @@ const handleAPIError = (
   toggleNotification: any = null,
   message = "app.components.notification.error"
 ) => {
+
+  const { formatMessage } = useIntl();
   toggleNotification({
     type: "warning",
-    message: `${pluginId}.${message}`,
+    message: formatMessage({
+      id: `${pluginId}.${message}`,
+    }),
   });
 
   if (err) {

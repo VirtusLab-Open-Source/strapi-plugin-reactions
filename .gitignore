@@ -9,6 +9,9 @@ Icon
 .Spotlight-V100
 .Trashes
 ._*
+.vscode
+.npmrc
+.yarnrc.yml
 
 
 ############################
@@ -112,4 +115,5 @@ junit.xml
 .env
 exports
 .cache
+.strapi
 dist

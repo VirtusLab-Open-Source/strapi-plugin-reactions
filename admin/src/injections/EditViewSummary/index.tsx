@@ -1,23 +1,24 @@
-import React from "react";
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { isEmpty } from "lodash";
+import { isEmpty, get } from "lodash";
+import qs from "qs";
 
-import { UID } from "@strapi/strapi";
+import { Data, UID } from "@strapi/strapi";
 import {
     useNotification
-} from "@strapi/helper-plugin";
+} from "@strapi/strapi/admin";
 
-import { Box } from '@strapi/design-system/Box';
-import { Divider } from '@strapi/design-system/Divider';
-import { Grid, GridItem } from '@strapi/design-system/Grid';
-import { Typography } from '@strapi/design-system/Typography';
+import { 
+    Box,
+    Grid, 
+    Typography } from '@strapi/design-system';
 
 import { ReactionCounter, ReactionCounterProps } from "./components/ReactionCounter";
 
 import useContentManager, { ContentManagerType } from "../../hooks/useContentManager";
 import useConfig from "../../hooks/useConfig";
 
-const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z-]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<id>\d*)/;
+const CONTENT_MANAGER_PATH_PATTERN = /.*\/(?<type>[a-zA-Z-]+)\/(?<uid>[a-z0-9-_]+::[a-z0-9-_]+\.[a-z0-9-_]+)\/?(?<documentId>.{24})?/;
 const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
     SINGLE_TYPE: 'single-types',
     COLLECTION_TYPE: 'collection-types',
@@ -26,7 +27,15 @@ const CONTENT_MANAGER_TYPES: { [key: string]: ContentManagerType } = {
 type ContentManagerPathProps = {
     type: ContentManagerType;
     uid: UID.ContentType;
-    id?: string | number;
+    documentId: Data.DocumentID;
+};
+
+type ContentManagerQueryParams = {
+    plugins: {
+        i18n: {
+            locale: string;
+        };
+    };
 };
 
 export const EditViewSummary = () => {
@@ -36,21 +45,28 @@ export const EditViewSummary = () => {
     const groups: ContentManagerPathProps = new RegExp(CONTENT_MANAGER_PATH_PATTERN, "gm")
         .exec(location.pathname)?.groups as ContentManagerPathProps;
 
-    const { uid, id, type } = groups;
+    const { uid, documentId, type } = groups ?? {};
+    const queryParams = qs.parse(location.search?.replace("?", "") ?? "") as ContentManagerQueryParams;
 
-    if (!id && (type === CONTENT_MANAGER_TYPES.COLLECTION_TYPE)) {
+    if (!documentId && (type === CONTENT_MANAGER_TYPES.COLLECTION_TYPE)) {
         return null;
     }
 
+    const locale = queryParams?.plugins?.i18n?.locale;
+
     const { fetch: fetchConfig } = useConfig(toggleNotification);
-    const { fetch: fetchReactions } = useContentManager(uid, id);
+    const { fetch: fetchReactions } = useContentManager(uid, documentId, locale);
 
-    const { types = [] } = fetchConfig?.data || {};
+    const { types = [] } = fetchConfig?.data || {} as any;
 
-    const isLoading = fetchConfig.isLoading || fetchReactions.isLoading
+    const isLoading = fetchConfig.isPending || fetchReactions.isPending
     const isNotInjectable = isLoading
         || isEmpty(fetchReactions.data)
         || (!types || isEmpty(types));
+
+    useEffect(() => {
+        fetchReactions.refetch();
+    }, [locale]);
 
     if (isNotInjectable) {
         return null;
@@ -58,17 +74,16 @@ export const EditViewSummary = () => {
 
     const { data: reactionsCount } = fetchReactions;
 
-    return (<Box paddingTop={4}>
+    return (<Box width="100%" paddingTop={2}>
         <Typography variant="sigma" textColor="neutral600">Reactions</Typography>
-        <Divider unsetMargin={false} />
         <Box paddingTop={2}>
-            <Grid gap={4}>
+            <Grid.Root gap={4}>
                 {types.map(({ name, slug, icon, emoji }: ReactionCounterProps & { slug: string }) => (
-                    <GridItem key={`reaction-type-${slug}`} col={4} s={6} xs={12}>
-                        <ReactionCounter name={name} icon={icon} emoji={emoji} count={reactionsCount[slug]} />
-                    </GridItem>
+                    <Grid.Item key={`reaction-type-${slug}`} col={4} s={6} xs={12}>
+                        <ReactionCounter name={name} icon={icon} emoji={emoji} count={get(reactionsCount, slug)} />
+                    </Grid.Item>
                 ))}
-            </Grid>
+            </Grid.Root>
         </Box>
     </Box>);
 
