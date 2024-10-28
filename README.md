@@ -5,17 +5,20 @@
   <h1>Strapi - Reactions plugin</h1>
   <p>All-in-One reactions plugin for any Content Type. Simple & flexible</p>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
-    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions?label=npm&logo=npm">
+    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions/strapi-v4?label=npm&logo=npm">
   </a>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
     <img src="https://img.shields.io/npm/dm/strapi-plugin-reactions.svg" alt="Monthly download on NPM" />
   </a>
   <a href="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
-    <img src="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions.svg?style=shield" alt="CircleCI" />
+    <img src="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions/tree/strapi-v4.svg?style=shield" alt="CircleCI" />
   </a>
   <a href="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
-    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg?branch=master" alt="codecov.io" />
+    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg?branch=strapi-v4" alt="codecov.io" />
   </a>
+  <p>
+    <strong><small>Strapi 4.x compatible</small></strong>
+  </p>
 </div>
 
 ---
@@ -41,8 +44,8 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 11. [👨‍💻 Community support](#-community-support)
 
 ## 💎 Versions
-- **Strapi v5** - [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/v5)
-- **Strapi v4** - (current) [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
+- **Strapi v5** - [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
+- **Strapi v4** - (current) [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/strapi-v4)
 
 ## ✨ Features
 
@@ -51,14 +54,6 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 - **Emoji &amp; Image reactions:** You can define reaction types using predefined set of [Emoji](https://github.com/ealush/emoji-picker-react) or use your own.
 - **Content Manager Injection Zone:** Making use of Strapi built-in batteries like *Injection Zones* to provide you highers user experience. Visual representation of reactions counter for any Content Types - useful!
 - **Developer Experience boosted:** A dedicated *Enrich* service provided to let you extend your Content API controllers by a single line to get reactions per each!
- 
-### Current backlog
-Before releasing the RC and first Public Release we would like to introduce:
-
-- ✅ Injection zone summary component for Content Manager edit view - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/3)
-- ✅ GraphQL API support - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/1)
-- ✅ Associations sync - [backlog](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/7)
-- ⌛ Examples created in [strapi-examples](https://github.com/VirtusLab/strapi-examples)
 
 **Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
 
