@@ -1,7 +1,5 @@
 import PluginError from "../../src/utils/error";
 
-jest.mock;
-
 describe("PluginError", () => {
   describe("toString()", () => {
     it("should serialize error", () => {
