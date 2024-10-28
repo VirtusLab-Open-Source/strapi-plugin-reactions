@@ -1,7 +1,5 @@
 import { get, set, pick, isEmpty } from "lodash";
 
-
-// @ts-ignore
 const mockStrapi = (config: any = {}, toStore: boolean = false, database: any = {}) => {
   const dbConfig = toStore
     ? {
