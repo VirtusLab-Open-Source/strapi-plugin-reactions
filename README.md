@@ -32,13 +32,14 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 2. [✨ Features](#-features)
 3. [⏳ Installation](#-installation)
 4. [🖐 Requirements](#-requirements)
-5. [🔧 Configuration](#-configuration)
-6. [🕸️ Public API - REST](#%EF%B8%8F-public-rest-api-specification)
-7. [🕸️ Public API - GraphQL](#%EF%B8%8F-public-graphql-api-specification)
-8. [🔌 Enrich service for Strapi extensions](#-enrich-service-for-strapi-extensions)
-9. [💬 FAQ](#-faq)
-10. [🤝 Contributing](#-contributing)
-11. [👨‍💻 Community support](#-community-support)
+5. [🔧 Basic configuration](#-configuration)
+6. [🔧 GraphQL Configuration](#-gql-configuration)
+7. [🕸️ Public API - REST](#%EF%B8%8F-public-rest-api-specification)
+8. [🕸️ Public API - GraphQL](#%EF%B8%8F-public-graphql-api-specification)
+9. [🔌 Enrich service for Strapi extensions](#-enrich-service-for-strapi-extensions)
+10. [💬 FAQ](#-faq)
+11. [🤝 Contributing](#-contributing)
+12. [👨‍💻 Community support](#-community-support)
 
 ## 💎 Versions
 - **Strapi v5** - (current) [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
@@ -134,10 +135,42 @@ export default () => ({
   //...
   reactions: {
     enabled: true,
+    config: {
+      gql: {...},
+    },
   },
   //...
 });
 ```
+### Properties
+- `gql` - If you're using GraphQL that's the right place to put all necessary settings. More **[ here ](#gql-configuration)**
+
+## 🔧 GQL Configuration
+Using reactions with GraphQL requires both plugins to be installed and working. You can find installation guide for GraphQL plugin **[here](https://docs.strapi.io/developer-docs/latest/plugins/graphql.html#graphql)**. To properly configure GQL to work with reactions you should provide `gql` prop. This should contain union types that will be used to define GQL response format for your data while fetching:
+
+> **Important!**
+> If you're using `config/plugins.{js,ts}` to configure your plugins , please put `reactions` property before `graphql`. Otherwise types are not going to be properly added to GraphQL Schema. That's because of dynamic types which base on plugin configuration which are added on `bootstrap` stage, not `register`. This is not valid if you're using `graphql` plugin without any custom configuration, so most of cases in real.
+
+```gql
+related: ReactionRelated
+```
+
+This prop should look as follows:   
+
+```ts
+gql: {
+    reactionRelated: ['<your GQL related content types>'],
+},
+```
+
+for example:   
+
+```ts
+gql: {
+    reactionRelated: ['Page', 'BlogPost'],
+},
+```
+where `Page` and `BlogPost` are your type names for the **Content Types** you're using reactions with. 
 
 ## 👤 RBAC
 
@@ -225,7 +258,7 @@ _GraphQL equivalent: [Public GraphQL API -> List all reactions associated with C
 `GET <host>/api/reactions/list/single/<single type UID>?locale=<locale code>`
 `GET <host>/api/reactions/list/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Return all reactions assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
+Return all reactions associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
 - all related with user - if call is done with user context via `Authorization` header
 
@@ -255,6 +288,43 @@ Return all reactions assiciated with provided Collection / Single Type UID and C
 ]
 ```
 
+### List all reactions associated with particular user
+
+_GraphQL equivalent: [Public GraphQL API -> List all reactions associated with particular user](#list-all-reactions-associated-with-particular-user-1)_
+
+`GET <host>/api/reactions/list/user`
+`GET <host>/api/reactions/list/user/<user id>`
+
+Return all reactions associated with provided user:
+- for logged in user - if call is done with user context via `Authorization` header
+- for specific ID - if you're not providing the user context via `Authorization` header
+
+**Example URL**: `https://localhost:1337/api/reactions/list/user`
+**Example URL**: `https://localhost:1337/api/reactions/list/user/1`
+
+**Example response body**
+
+```json
+[
+  {
+    "documentId": "njx99iv4p4txuqp307ye8625",
+    "createdAt": "2023-09-14T20:13:01.649Z",
+    "updatedAt": "2023-09-14T20:13:01.670Z",
+    "kind":{
+      "slug": "like",
+      "name": "Like"
+    },
+    "related":{
+      "documentId": "njx99iv4p4txuqp307ye8625",
+      "id": 1,
+      "locale": "en",
+      //...
+    }
+  },
+  // ...
+]
+```
+
 ### List all reactions of kind / type associated with Content Type
 
 _GraphQL equivalent: [Public GraphQL API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type-1)_
@@ -262,7 +332,7 @@ _GraphQL equivalent: [Public GraphQL API -> List all reactions of kind / type as
 `GET <host>/api/reactions/list/<type slug>/single/<single type UID>?locale=<locale code>`
 `GET <host>/api/reactions/list/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
+Return all reactions of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
 - all related with user - if call is done with user context via `Authorization` header
 
@@ -287,6 +357,43 @@ Return all reactions of specific kind / type assiciated with provided Collection
 ]
 ```
 
+### List all reactions of kind associated with particular user
+
+_GraphQL equivalent: [Public GraphQL API -> List all reactions of kind associated with particular user](#list-all-reactions-of-kind-associated-with-particular-user-1)_
+
+`GET <host>/api/reactions/list/<type slug>/user`
+`GET <host>/api/reactions/list/<type slug>/user/<user id>`
+
+Return all reactions of specific kind associated with provided user:
+- for logged in user - if call is done with user context via `Authorization` header
+- for specific ID - if you're not providing the user context via `Authorization` header
+
+**Example URL**: `https://localhost:1337/api/reactions/list/like/user`
+**Example URL**: `https://localhost:1337/api/reactions/list/like/user/1`
+
+**Example response body**
+
+```json
+[
+  {
+    "documentId": "njx99iv4p4txuqp307ye8625",
+    "createdAt": "2023-09-14T20:13:01.649Z",
+    "updatedAt": "2023-09-14T20:13:01.670Z",
+    "kind":{
+      "slug": "like",
+      "name": "Like"
+    },
+    "related":{
+      "documentId": "njx99iv4p4txuqp307ye8625",
+      "id": 1,
+      "locale": "en",
+      //...
+    }
+  },
+  // ...
+]
+```
+
 ### Set reaction for Content Type
 
 _GraphQL equivalent: [Public GraphQL API -> Set reaction for Content Type](#set-reaction-for-content-type-1)_
@@ -294,7 +401,7 @@ _GraphQL equivalent: [Public GraphQL API -> Set reaction for Content Type](#set-
 `POST <host>/api/reactions/set/<type slug>/single/<single type UID>?locale=<locale code>`
 `POST <host>/api/reactions/set/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
+Create reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -319,7 +426,7 @@ _GraphQL equivalent: [Public GraphQL API -> Unset reaction for Content Type](#un
 `DELETE <host>/api/reactions/unset/<type slug>/single/<single type UID>?locale=<locale code>`
 `DELETE <host>/api/reactions/unset/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
+Delete reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -339,7 +446,7 @@ _GraphQL equivalent: [Public GraphQL API -> Toggle reaction for Content Type](#t
 `POST <host>/api/reactions/toggle/<type slug>/single/<single type UID>?locale=<locale code>`
 `POST <host>/api/reactions/toggle/<type slug>/collection/<collection type UID>/<documentId>?locale=<locale code>`
 
-Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
+Toggle reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -414,15 +521,15 @@ query {
 
 _REST API equivalent: [Public REST API -> List all reactions associated with Content Type](#list-all-reactions-associated-with-content-type)_
 
-Return all reactions assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
-- Query `reactionsListAll` - no `Authorization` header provided (open for public)
+Return all reactions associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
+- Query `reactionsList` - no `Authorization` header provided (open for public)
 - Query `reactionsListPerUser` - an `Authorization` header is mandatory
 
 **Example request**
 
 ```graphql
 query {
-  reactionsListAll(uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
+  reactionsList(uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
     documentId
     kind {
       slug
@@ -454,7 +561,7 @@ query {
 ```json
 {
   "data": {
-    "reactionsListAll": [
+    "reactionsList": [
       {
         "documentId": "njx99iv4p4txuqp307ye8625",
         "kind": {
@@ -488,19 +595,85 @@ query {
 }
 ```
 
+### List all reactions associated with particular user
+
+_REST API equivalent: [Public REST API -> List all reactions associated with particular user](#list-all-reactions-associated-with-particular-user)_
+
+Return all reactions associated with provided user:
+- Query `reactionsListAllPerUser` - an `Authorization` header is mandatory or `userId` in args
+
+**Example request**
+
+```graphql
+query {
+  reactionsListAllPerUser {
+    documentId
+    createdAt
+    kind {
+      slug
+    }
+    related {
+      documentId
+      id
+      locale
+    }
+  }
+}
+```
+
+```graphql
+query {
+  reactionsListAllPerUser(userId: 1) {
+    documentId
+    createdAt
+    kind {
+      slug
+    }
+    related {
+      documentId
+      id
+      locale
+    }
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionsListAllPerUser": [
+      {
+        "documentId": "njx99iv4p4txuqp307ye8625",
+        "createdAt": "2023-09-14T20:13:01.670Z",
+        "kind": {
+          "slug": "like"
+        },
+        "related": {
+          "documentId": "njx99iv4p4txuqp307ye8625",
+          "id": 1,
+          "locale": "en"
+        }
+      }
+    ]
+  }
+}
+```
+
 ### List all reactions of kind / type associated with Content Type
 
 _REST API equivalent: [Public REST API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type)_
 
-Return all reactions of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
-- Query `reactionsListAll` - no `Authorization` header provided (open for public)
+Return all reactions of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
+- Query `reactionsList` - no `Authorization` header provided (open for public)
 - Query `reactionsListPerUser` - an `Authorization` header is mandatory
 
 **Example request**
 
 ```graphql
 query {
-  reactionsListAll(kind: "like", uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
+  reactionsList(kind: "like", uid: "api::post.post", documentId: "njx99iv4p4txuqp307ye8625", locale: "en") {
     documentId
     user {
       email
@@ -524,7 +697,7 @@ query {
 ```json
 {
   "data": {
-    "reactionsListAll": [
+    "reactionsList": [
       {
         "documentId": "njx99iv4p4txuqp307ye8625",
         "user": {
@@ -548,11 +721,68 @@ query {
 }
 ```
 
+### List all reactions of kind associated with particular user
+
+_REST API equivalent: [Public REST API -> List all reactions of kind associated with particular user](#list-all-reactions-of-kind-associated-with-particular-user)_
+
+Return all reactions of specific kind associated with provided user:
+- Query `reactionsListAllPerUser` - an `Authorization` header is mandatory or `userId` in args
+
+**Example request**
+
+```graphql
+query {
+  reactionsListAllPerUser(kind: "like") {
+    documentId
+    createdAt
+    related {
+      documentId
+      id
+      locale
+    }
+  }
+}
+```
+
+```graphql
+query {
+  reactionsListAllPerUser(kind: "like", userId: 1) {
+    documentId
+    createdAt
+    related {
+      documentId
+      id
+      locale
+    }
+  }
+}
+```
+
+**Example response body**
+
+```json
+{
+  "data": {
+    "reactionsListAllPerUser": [
+      {
+        "documentId": "njx99iv4p4txuqp307ye8625",
+        "createdAt": "2023-09-14T20:13:01.670Z",
+        "related": {
+          "documentId": "njx99iv4p4txuqp307ye8625",
+          "id": 1,
+          "locale": "en"
+        }
+      }
+    ]
+  }
+}
+```
+
 ### Set reaction for Content Type
 
 _REST API equivalent: [Public REST API -> Set reaction for Content Type](#set-reaction-for-content-type)_
 
-Create reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
+Create reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -589,7 +819,7 @@ mutation reactionSet {
 
 _REST API equivalent: [Public REST API -> Unset reaction for Content Type](#unset-reaction-for-content-type)_
 
-Delete reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
+Delete reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 
@@ -626,7 +856,7 @@ mutation reactionUnset {
 
 _REST API equivalent: [Public REST API -> Toggle reaction for Content Type](#toggle-reaction-for-content-type)_
 
-Toggle reaction of specific kind / type assiciated with provided Collection / Single Type UID and Content Type Document ID.
+Toggle reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
 `Authorization` header is required
 

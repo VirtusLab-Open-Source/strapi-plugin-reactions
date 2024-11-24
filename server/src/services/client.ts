@@ -1,6 +1,6 @@
 import { Core, Data, UID } from '@strapi/strapi';
-import { isArray, isNil, first } from "lodash";
-import { AnyEntity, StrapiUser } from "@sensinum/strapi-utils";
+import { isArray, isNil, first, isObject } from "lodash";
+import { AnyEntity, StrapiUser, StrapiQueryParamsParsed, StrapiRequestQueryPopulateClause, Primitive } from "@sensinum/strapi-utils";
 
 import { CTReaction, CTReactionType, IServiceClient } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
@@ -91,6 +91,87 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     return (!isArray(entities) ? [entities] : entities);
+  },
+
+  async listPerUser(
+    this: IServiceClient,
+    user: unknown,
+    kind?: string,
+    query?: StrapiQueryParamsParsed,
+  ): Promise<Array<CTReaction>> {
+    const [reactionKind] = await this.prefetchConditions({
+      type: kind,
+    });
+
+    let fields = ['createdAt', 'updatedAt', 'relatedUid'];
+    let filters: Record<string, any> = {
+      ...(isObject(query?.filters) ? query?.filters : {}),
+      user,
+    };
+    let populate: StrapiRequestQueryPopulateClause = {
+      related: true,
+      ...(isObject(query?.populate) ? query?.populate : {}),
+    };
+
+    // Filter by provided `kind` or get all reactions with `kind` population
+    if (!isNil(kind)) {
+      filters = {
+        ...filters,
+        kind: reactionKind,
+      };
+    } else {
+      populate = {
+        ...populate,
+        kind: {
+          fields: ['slug', 'name']
+        },
+      };
+    }
+
+    const entities = await strapi
+      .documents(getModelUid("reaction"))
+      .findMany<CTReaction>({
+        fields,
+        filters,
+        populate,
+        sort: query?.sort || undefined,
+        pagination: query?.pagination || undefined,
+        locale: '*',
+      });
+
+    if (isNil(entities)) {
+      return [];
+    }
+
+    const isRelatedObjectPopulated = <T =  Record<string | 'related', Primitive>>(populateQuery: T): boolean => {
+      const { related } = populateQuery as T & { related: boolean | Array<string> | Object};
+      const objectPopulationExist = !isNil(related);
+      const stringPopulationExist = isArray(related) ? related.filter((_: string) => _.includes('related')).length > 0 : false;
+      return objectPopulationExist || stringPopulationExist;
+    }
+
+    const result = !isArray(entities) ? [entities] : entities;
+
+    return Promise.all(result.map(async (entity) => {
+      const { relatedUid, related } = entity;
+      if (query?.populate && isRelatedObjectPopulated(query.populate)) {
+        const [uid, documentId] = relatedUid.split(':');
+        const targetRelated = await strapi
+          .documents(uid)
+          .findOne({
+            documentId,
+            locale: entity.locale,
+          });
+        return {
+          ...entity,
+          related: targetRelated,
+        };
+      }
+      return {
+        ...entity,
+        related: isArray(related) ? first(related) : related,
+      };
+    }));
   },
 
   async create(
@@ -256,11 +337,11 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     reactions: Array<CTReaction>,
     locale?: string,
   ): Promise<boolean> {
-    const removedEntities = await Promise.all(reactions.map(async ({ documentId }) => 
+    const removedEntities = await Promise.all(reactions.map(async ({ documentId }) =>
       strapi.documents(getModelUid("reaction")).delete({
         documentId,
         locale,
-    })));
+      })));
     return removedEntities && (removedEntities.length === reactions.length);
   },
 

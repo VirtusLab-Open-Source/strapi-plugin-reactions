@@ -7,6 +7,7 @@ export default ({ nexus }: StrapiGraphQLContext) =>
       t.id("documentId");
       t.nonNull.field("kind", { type: "ReactionType" });
       t.nonNull.field("user", { type: "UsersPermissionsUser" });
+      t.field("related", { type: "ReactionRelated" });
       t.string("locale");
       t.string("createdAt");
       t.string("updatedAt");
