@@ -1,5 +1,5 @@
 import { Data, UID } from "@strapi/strapi";
-import { AnyEntity, StrapiUser } from "@sensinum/strapi-vl-utils";
+import { AnyEntity, StrapiUser, StrapiQueryParamsParsed } from "@sensinum/strapi-vl-utils";
 
 import { ToBeFixed } from "./common";
 import { type PrefetchConditionsProps } from "../server/src/services/client";
@@ -26,6 +26,7 @@ export interface IServiceAdmin {
 export interface IServiceClient {
   kinds(): Promise<Array<AnyEntity>>;
   list(kind?: string, uid?: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<Array<AnyEntity>>;
+  listPerUser(user: StrapiUser, kind?: string, populate?: StrapiQueryParamsParsed): Promise<Array<AnyEntity>>;
   create(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<AnyEntity>;
   delete(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<boolean>;
   toggle(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<AnyEntity | boolean>;

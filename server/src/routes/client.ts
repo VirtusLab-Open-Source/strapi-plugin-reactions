@@ -9,6 +9,22 @@ const routes = [
   },
   {
     method: 'GET',
+    path: '/list/user',
+    handler: 'clientController.listPerUser',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
+    path: '/list/user/:userId',
+    handler: 'clientController.listPerUser',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
     path: '/list/single/:uid',
     handler: 'clientController.list',
     config: {
@@ -19,6 +35,22 @@ const routes = [
     method: 'GET',
     path: '/list/collection/:uid/:documentId',
     handler: 'clientController.list',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
+    path: '/list/:kind/user',
+    handler: 'clientController.listPerUser',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'GET',
+    path: '/list/:kind/user/:userId',
+    handler: 'clientController.listPerUser',
     config: {
       policies: [],
     },

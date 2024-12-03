@@ -1,12 +1,14 @@
 import { INexusType, StrapiGraphQLContext } from "../../../../@types";
 
-import reactionsListAll from "./list";
+import reactionsListAllPerUser from "./list-all-per-user";
+import reactionsList from "./list";
 import reactionKinds from "./kinds";
 
 export default (context: StrapiGraphQLContext) => {
   const queries = {
-    reactionsListAll,
-    reactionsListPerUser: reactionsListAll,
+    reactionsListAllPerUser,
+    reactionsList,
+    reactionsListPerUser: reactionsList,
     reactionKinds,
   };
 
