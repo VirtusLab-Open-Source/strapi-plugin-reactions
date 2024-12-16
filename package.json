@@ -27,9 +27,9 @@
   "dependencies": {
     "@strapi/design-system": "^2.0.0-rc.14",
     "@strapi/icons": "^2.0.0-rc.14",
-    "@strapi/plugin-graphql": "^5.4.2",
-    "@strapi/upload": "^5.4.2",
-    "@strapi/utils": "^5.4.2",
+    "@strapi/plugin-graphql": "^5.5.1",
+    "@strapi/upload": "^5.5.1",
+    "@strapi/utils": "^5.5.1",
     "@tanstack/react-query": "^5.40.0",
     "emoji-picker-react": "^4.5.2",
     "lodash": "^4.17.21",
@@ -42,9 +42,9 @@
   "devDependencies": {
     "@sensinum/strapi-utils": "^1.0.4",
     "@strapi/sdk-plugin": "^5.2.7",
-    "@strapi/strapi": "^5.4.2",
-    "@strapi/types": "^5.4.2",
-    "@strapi/typescript-utils": "^5.4.2",
+    "@strapi/strapi": "^5.5.1",
+    "@strapi/types": "^5.5.1",
+    "@strapi/typescript-utils": "^5.5.1",
     "@types/jest": "^29.5.12",
     "@types/koa": "^2.15.0",
     "@types/koa-bodyparser": "^4.3.12",
@@ -72,7 +72,7 @@
   },
   "peerDependencies": {
     "@strapi/sdk-plugin": "^5.2.7",
-    "@strapi/strapi": "^5.4.2",
+    "@strapi/strapi": "^5.5.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
@@ -126,7 +126,7 @@
     "reactions"
   ],
   "engines": {
-    "node": ">=18.0.0 <=20.x.x",
+    "node": ">=18.0.0 <=22.x.x",
     "npm": ">=6.0.0"
   },
   "license": "MIT"

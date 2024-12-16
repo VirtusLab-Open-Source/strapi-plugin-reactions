@@ -116,7 +116,7 @@ In our minimum support we're following [official Node.js releases timelines](htt
 
 **Supported Strapi versions**:
 
-- Strapi v5.4.2 (recently tested)
+- Strapi v5.5.1 (recently tested)
 - Strapi v5.x
 
 **Plugin dependencies**
@@ -130,7 +130,7 @@ To start your journey with **Reactions plugin** you must first setup types of re
 
 There is no need to provide any specific changed in the plugin configuration files extept enabling it.
 
-```js
+```ts
 export default () => ({
   //...
   reactions: {
