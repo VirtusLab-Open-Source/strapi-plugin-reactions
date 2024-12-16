@@ -3797,7 +3797,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sensinum/strapi-utils@npm:^1.0.4":
+"@sensinum/strapi-utils@npm:^1.0.5":
   version: 1.0.5
   resolution: "@sensinum/strapi-utils@npm:1.0.5"
   dependencies:
@@ -15987,7 +15987,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "strapi-plugin-reactions@workspace:."
   dependencies:
-    "@sensinum/strapi-utils": "npm:^1.0.4"
+    "@sensinum/strapi-utils": "npm:^1.0.5"
     "@strapi/design-system": "npm:^2.0.0-rc.14"
     "@strapi/icons": "npm:^2.0.0-rc.14"
     "@strapi/plugin-graphql": "npm:^5.5.1"
