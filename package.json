@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-reactions",
-  "version": "2.1.2",
+  "version": "2.1.1",
   "description": "Strapi - Reactions plugin",
   "strapi": {
     "name": "reactions",
