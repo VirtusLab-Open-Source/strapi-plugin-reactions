@@ -119,6 +119,8 @@ const CUModal = ({ data = {}, fields, isLoading = false, isModalOpened = false, 
       <Modal.Content>
         <Form
           method="POST"
+          height="auto"
+          width="auto"
           initialValues={data}
         >
           {({ values, onChange }) => (
