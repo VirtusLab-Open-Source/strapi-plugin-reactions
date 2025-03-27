@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-reactions",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "Strapi - Reactions plugin",
   "strapi": {
     "name": "reactions",
@@ -25,11 +25,11 @@
     "url": "https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions"
   },
   "dependencies": {
-    "@strapi/design-system": "^2.0.0-rc.16",
-    "@strapi/icons": "^2.0.0-rc.16",
-    "@strapi/plugin-graphql": "^5.10.3",
-    "@strapi/upload": "^5.10.3",
-    "@strapi/utils": "^5.10.3",
+    "@strapi/design-system": "^2.0.0-rc.18",
+    "@strapi/icons": "^2.0.0-rc.18",
+    "@strapi/plugin-graphql": "^5.12.0",
+    "@strapi/upload": "^5.12.0",
+    "@strapi/utils": "^5.12.0",
     "@tanstack/react-query": "^5.40.0",
     "emoji-picker-react": "^4.5.2",
     "lodash": "^4.17.21",
@@ -40,11 +40,11 @@
     "zod": "^3.22.5"
   },
   "devDependencies": {
-    "@sensinum/strapi-utils": "^1.0.7",
+    "@sensinum/strapi-utils": "^1.0.8",
     "@strapi/sdk-plugin": "^5.3.2",
-    "@strapi/strapi": "^5.10.3",
-    "@strapi/types": "^5.10.3",
-    "@strapi/typescript-utils": "^5.10.3",
+    "@strapi/strapi": "^5.12.0",
+    "@strapi/types": "^5.12.0",
+    "@strapi/typescript-utils": "^5.12.0",
     "@types/jest": "^29.5.12",
     "@types/koa": "^2.15.0",
     "@types/koa-bodyparser": "^4.3.12",
@@ -72,7 +72,7 @@
   },
   "peerDependencies": {
     "@strapi/sdk-plugin": "^5.3.2",
-    "@strapi/strapi": "^5.10.3",
+    "@strapi/strapi": "^5.12.0",
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
