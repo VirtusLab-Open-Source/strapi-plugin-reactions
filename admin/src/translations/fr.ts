@@ -49,11 +49,11 @@ const fr = {
           syncAssociations: "Confirmer la synchronisation",
         },
         description: {
-          delete: "Voulez-vous vraiment supprimer le type de réaction \"{ name }\" et toutes les données corrélées?",
-          syncAssociations: "Voulez-vous vraiment effectuer la synchronisation des associations dans toutes les Réactions?",
+          delete: "Voulez-vous vraiment supprimer le type de réaction « { name } » et toutes les données associées ?",
+          syncAssociations: "Voulez-vous vraiment effectuer la synchronisation des associations dans toutes les réactions ?",
         },
         action: {
-          submit: "Soumettre",
+          submit: "Valider",
           cancel: "Annuler",
           delete: {
             cancel: "Annuler",
@@ -72,7 +72,7 @@ const fr = {
         },
         slug: {
           label: "Identifiant unique",
-          hint: "Les réactions peuvent être interrogées par cet identifiant convivial",
+          hint: "Les réactions peuvent être interrogées par cet identifiant lisible",
           required: "L'identifiant est requis",
         },
         icon: {
@@ -97,29 +97,29 @@ const fr = {
           },
           plugin: {
             search: {
-              label: "Rechercher un émoji...",
+              label: "Rechercher un émoji…",
             },
           },
           required: "L'émoji est requis",
         },
       },
-      loading: "Chargement de la configuration...",
+      loading: "Chargement de la configuration…",
       notification: {
         submit: {
-          success: "Type de réaction soumis avec succès",
-          error: "Quelque chose a mal tourné. Réessayez",
+          success: "Le type de réaction a bien été enregistré",
+          error: "Une erreur s'est produite. Veuillez réessayer plus tard",
         },
         generateSlug: {
           error: "Impossible de générer un identifiant unique",
         },
         syncAssociations: {
-          success: "Associations synchronisées avec succès",
-          error: "Impossible de synchroniser les associations. Veuillez réessayer",
+          success: "Les associtions ont bien été synchronisées",
+          error: "Impossible de synchroniser les associations. Veuillez réessayer plus tard",
         },
         reaction: {
           delete: {
-            success: "Type de réaction supprimé avec succès",
-            error: "Quelque chose a mal tourné. Réessayez",
+            success: "Le type de réaction a bien été supprimé",
+            error: "Une erreur s'est produite. Veuillez réessayer plus tard",
           },
         },
       },
@@ -127,7 +127,7 @@ const fr = {
     injection: {
       notification: {
         fetch: {
-          error: "Quelque chose a mal tourné. Réessayez",
+          error: "Une erreur s'est produite. Veuillez réessayer plus tard",
         },
       },
     },
