@@ -113,7 +113,7 @@ const fr = {
           error: "Impossible de générer un identifiant unique",
         },
         syncAssociations: {
-          success: "Les associtions ont bien été synchronisées",
+          success: "Les associations ont bien été synchronisées",
           error: "Impossible de synchroniser les associations. Veuillez réessayer plus tard",
         },
         reaction: {
