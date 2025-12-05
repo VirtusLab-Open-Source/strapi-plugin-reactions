@@ -25,13 +25,13 @@ export interface IServiceAdmin {
 
 export interface IServiceClient {
   kinds(): Promise<Array<AnyEntity>>;
-  list(kind?: string, uid?: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<Array<AnyEntity>>;
-  listPerUser(user: StrapiUser, kind?: string, populate?: StrapiQueryParamsParsed): Promise<Array<AnyEntity>>;
-  create(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<AnyEntity>;
-  delete(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<boolean>;
-  toggle(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string): Promise<AnyEntity | boolean>;
+  list(kind?: string, uid?: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string, authorId?: string): Promise<Array<AnyEntity>>;
+  listPerUser(user: StrapiUser, userId: string, kind?: string, populate?: StrapiQueryParamsParsed): Promise<Array<AnyEntity>>;
+  create(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string, authorId?: string): Promise<AnyEntity>;
+  delete(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string, authorId?: string): Promise<boolean>;
+  toggle(kind: string, uid: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string, authorId?: string): Promise<AnyEntity | boolean>;
   prefetchConditions(props: PrefetchConditionsProps): Promise<[AnyEntity, AnyEntity]>;
-  directCreate(uid: UID.ContentType, kind: AnyEntity, related: AnyEntity, user?: StrapiUser, locale?: string): Promise<AnyEntity>;
+  directCreate(uid: UID.ContentType, kind: AnyEntity, related: AnyEntity, user?: StrapiUser, locale?: string, authorId?: string): Promise<AnyEntity>;
   directDelete(reactions: Array<CTReaction>, locale?: string): Promise<boolean>;
 }
 

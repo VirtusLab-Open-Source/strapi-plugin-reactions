@@ -12,6 +12,7 @@ type ListAllResolverProps = {
   uid: UID.ContentType;
   locale?: string;
   documentId?: Data.DocumentID;
+  authorId?: string;
 };
 
 export default ({ nexus }: StrapiGraphQLContext) => {
@@ -24,15 +25,16 @@ export default ({ nexus }: StrapiGraphQLContext) => {
       uid: nonNull(stringArg()),
       documentId: stringArg(),
       locale: stringArg(),
+      authorId: stringArg(),
     },
     async resolve(
       _: Object, 
       args: ListAllResolverProps,
       ctx: Context) {
-      const { kind, uid, documentId, locale } = args;
+      const { kind, uid, documentId, locale, authorId } = args;
       const { state: { user = undefined } = {} } = ctx;
 
-      return await getPluginService<IServiceClient>("client").list(kind, uid, user, documentId, locale);
+      return await getPluginService<IServiceClient>("client").list(kind, uid, user, documentId, locale, authorId);
     },
   };
 };
