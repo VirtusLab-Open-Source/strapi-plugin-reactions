@@ -8,6 +8,7 @@ import PluginError from "../utils/error";
 import { throwError } from './utils/functions';
 
 import { IServiceClient } from '../../../@types';
+import { getModelUid } from "../services/utils/functions";
 
 type ReactionListUrlProps = {
   kind?: string;
@@ -37,10 +38,11 @@ export default () => ({
 
   async list(ctx: Context) {
     try {
+      const authorId = ctx.get('x-reactions-author');;
       const { params = {}, state: { user }, query = {} } = ctx;
       const { locale } = parseQuery(query);
       const { kind, uid, documentId } = parseParams<ReactionListUrlProps>(params);
-      return await this.getService<IServiceClient>().list(kind, uid, user, documentId, locale);
+      return await this.getService<IServiceClient>().list(kind, uid, user, documentId, locale, authorId);
     } catch (e) {
       throw throwError(ctx, e);
     }
@@ -48,13 +50,14 @@ export default () => ({
 
   async listPerUser(ctx: Context) {
     try {
+      const authorId = ctx.get('x-reactions-author');;
       const { params = {}, state: { user }, query = {} } = ctx;
-      const { populate, filters, sort, pagination } = parseQuery(query);
+      const { populate, filters, sort, pagination, locale } = parseQuery(query);
       const { kind, userId } = parseParams<ReactionListByUserUrlProps>(params);
 
       let targetUser: unknown;
       try {
-        if (userId) {
+        if (userId && !authorId) {
           targetUser = await strapi
             .plugin("users-permissions")
             .service("user")
@@ -66,11 +69,12 @@ export default () => ({
         throw new PluginError(400, "User not found");
       }
 
-      return await this.getService<IServiceClient>().listPerUser(targetUser, kind, {
+      return await this.getService<IServiceClient>().listPerUser(targetUser, authorId, kind, {
         populate,
         filters,
         sort,
         pagination,
+        locale
       });
     } catch (e) {
       throw throwError(ctx, e);
@@ -79,10 +83,11 @@ export default () => ({
 
   async create(ctx: Context) {
     try {
+      const authorId = ctx.get('x-reactions-author');;
       const { params = {}, state: { user }, query = {} } = ctx;
       const { kind, uid, documentId } = parseParams<ReactionsTypeUrlProps>(params);
       const { locale } = parseQuery(query);
-      return await this.getService<IServiceClient>().create(kind, uid, user, documentId, locale);
+      return await this.getService<IServiceClient>().create(kind, uid, user, documentId, locale, authorId);
     } catch (e) {
       throw throwError(ctx, e);
     }
@@ -90,10 +95,11 @@ export default () => ({
 
   async delete(ctx: Context) {
     try {
+      const authorId = ctx.get('x-reactions-author');;
       const { params = {}, state: { user }, query = {} } = ctx;
       const { kind, uid, documentId } = parseParams<ReactionsTypeUrlProps>(params);
       const { locale } = parseQuery(query);
-      return await this.getService<IServiceClient>().delete(kind, uid, user, documentId, locale);
+      return await this.getService<IServiceClient>().delete(kind, uid, user, documentId, locale, authorId);
     } catch (e) {
       throw throwError(ctx, e);
     }
@@ -101,10 +107,11 @@ export default () => ({
 
   async toggle(ctx: Context) {
     try {
+      const authorId = ctx.get('x-reactions-author');;
       const { params = {}, state: { user }, query = {} } = ctx;
       const { kind, uid, documentId } = parseParams<ReactionsTypeUrlProps>(params);
       const { locale } = parseQuery(query);
-      return await this.getService<IServiceClient>().toggle(kind, uid, user, documentId, locale);
+      return await this.getService<IServiceClient>().toggle(kind, uid, user, documentId, locale, authorId);
     } catch (e) {
       throw throwError(ctx, e);
     }

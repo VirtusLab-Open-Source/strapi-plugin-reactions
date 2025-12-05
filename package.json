@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-reactions",
-  "version": "2.1.10",
+  "version": "2.2.0-beta.1",
   "description": "Strapi - Reactions plugin",
   "strapi": {
     "name": "reactions",
@@ -129,5 +129,6 @@
     "node": ">=18.0.0 <=22.x.x",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "yarn@1.22.22"
 }
