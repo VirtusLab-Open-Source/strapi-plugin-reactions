@@ -68,7 +68,7 @@ const Settings = () => {
 
   const { fetch, submitMutation, deleteMutation } = useConfig(toggleNotification);
   const { syncAssociationsMutation } = useUtils(toggleNotification);
-
+  console.log("SETTIMGS PAGE")
   const {
     data,
     isLoading: isConfigLoading,

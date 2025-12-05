@@ -28,7 +28,7 @@ export default ({ nexus }: StrapiGraphQLContext) => {
       ctx: Context) {
       const { kind, userId } = args;
       const { state: { user = undefined } = {} } = ctx;
-
+      console.log(ctx.headers)
       let targetUser = user;
       try {
         if (!targetUser && userId) {
