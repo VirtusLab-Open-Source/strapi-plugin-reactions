@@ -103,8 +103,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async listPerUser(
     this: IServiceClient,
-    user: unknown,
-    userId: string,
+    user?: unknown,
+    userId?: string,
     kind?: string,
     query?: StrapiQueryParamsParsed,
   ): Promise<Array<CTReaction>> {
@@ -188,7 +188,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    user: StrapiUser,
+    user?: StrapiUser,
     documentId?: Data.DocumentID,
     locale?: string,
     authorId?: string,
@@ -232,7 +232,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     this: IServiceClient,
     kind: string,
     uid: UID.ContentType,
-    user: StrapiUser,
+    user?: StrapiUser,
     documentId?: Data.DocumentID,
     locale?: string,
     authorId?: string,
@@ -253,12 +253,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     const reactionsToRemove = existingReactions
-      .filter(({ documentId: reactionId }) => reactionId !== matchingReaction.documentId);
+      .filter(({ documentId: reactionId }) => reactionId !== matchingReaction?.documentId);
 
     const removed = await this.directDelete(reactionsToRemove, locale);
 
     if (!removed) {
-      throw new PluginError(405, `Can't perform toogle action reaction type of "${kind}" for Entity with Document ID: ${documentId || 'single'} of type: ${uid}`);
+      throw new PluginError(405, `Can't perform toggle action reaction type of "${kind}" for Entity with Document ID: ${documentId || 'single'} of type: ${uid}`);
     }
 
     if (isNil(matchingReaction)) {
@@ -266,8 +266,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     } else {
       return matchingReaction;
     }
-
-
   },
 
   async prefetchConditions(
@@ -326,7 +324,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     uid: UID.ContentType,
     kind: CTReactionType,
     related: AnyEntity,
-    user: StrapiUser,
+    user?: StrapiUser,
     locale?: string,
     authorId?: string,
   ): Promise<CTReaction> {
@@ -358,6 +356,5 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       })));
     return removedEntities && (removedEntities.length === reactions.length);
   },
-
 
 });
