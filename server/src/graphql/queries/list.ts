@@ -12,7 +12,6 @@ type ListAllResolverProps = {
   uid: UID.ContentType;
   locale?: string;
   documentId?: Data.DocumentID;
-  authorId?: string;
 };
 
 export default ({ nexus }: StrapiGraphQLContext) => {
@@ -25,14 +24,14 @@ export default ({ nexus }: StrapiGraphQLContext) => {
       uid: nonNull(stringArg()),
       documentId: stringArg(),
       locale: stringArg(),
-      authorId: stringArg(),
     },
     async resolve(
       _: Object, 
       args: ListAllResolverProps,
       ctx: Context) {
-      const { kind, uid, documentId, locale, authorId } = args;
-      const { state: { user = undefined } = {} } = ctx;
+      const { kind, uid, documentId, locale } = args;
+      const { state: { user = undefined } = {}, koaContext } = ctx;
+      const authorId = koaContext.get('x-reactions-author');
 
       return await getPluginService<IServiceClient>("client").list(kind, uid, user, documentId, locale, authorId);
     },

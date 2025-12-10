@@ -216,6 +216,7 @@ For any role different than **Super Admin**, to access the **Reactions settings*
     "username": "Joe Doe",
     "email": "jdoe@sample.com",
   },
+  "userId": "32", // Custom User ID provided if X-Reactions-Author header passed
   "createdAt": "2023-09-14T20:13:01.649Z",
   "updatedAt": "2023-09-14T20:13:01.670Z",
 }
@@ -260,7 +261,8 @@ _GraphQL equivalent: [Public GraphQL API -> List all reactions associated with C
 
 Return all reactions associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
-- all related with user - if call is done with user context via `Authorization` header
+- all related with Strapi user - if call is done with user context via `Authorization` header
+- all related with non-Strapi user - if call is done with user ID via `X-Reactions-Author` header
 
 **Example URL**: `https://localhost:1337/api/reactions/list/single/api::homepage.homepage?locale=en`
 **Example URL**: `https://localhost:1337/api/reactions/list/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
@@ -278,11 +280,12 @@ Return all reactions associated with provided Collection / Single Type UID and C
       "slug": "like",
       "name": "Like"
     },
-    "user":{ // Added if no user context provided to identify who made such reaction
+    "user":{ // Added if Strapi user context provided to identify who made such reaction
       "documentId": "njx99iv4p4txuqp307ye8625",
       "username": "mziarko+1@virtuslab.com",
       "email": "mziarko+1@virtuslab.com"
-    }
+    },
+    "userId": 17 // Added if non-Strapi user context provided to identify who made such reaction
   },
   // ...
 ]
@@ -297,7 +300,8 @@ _GraphQL equivalent: [Public GraphQL API -> List all reactions associated with p
 
 Return all reactions associated with provided user:
 - for logged in user - if call is done with user context via `Authorization` header
-- for specific ID - if you're not providing the user context via `Authorization` header
+- for specific Strapi user ID - if you're not providing the user context via `Authorization` header and you're providing the user context via `user-id` url param
+- for specific non-Strapi user ID - if you're not providing the user context via `Authorization` header and you're providing the user context via `X-Reactions-Author` header
 
 **Example URL**: `https://localhost:1337/api/reactions/list/user`
 **Example URL**: `https://localhost:1337/api/reactions/list/user/1`
@@ -334,7 +338,8 @@ _GraphQL equivalent: [Public GraphQL API -> List all reactions of kind / type as
 
 Return all reactions of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
 - all - if you're not providing the user context via `Authorization` header
-- all related with user - if call is done with user context via `Authorization` header
+- all related with Strapi user - if call is done with user context via `Authorization` header
+- all related with non-Strapi user - if call is done with user ID via `X-Reactions-Author` header
 
 **Example URL**: `https://localhost:1337/api/reactions/list/like/single/api::homepage.homepage?locale=en`
 **Example URL**: `https://localhost:1337/api/reactions/list/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
@@ -347,12 +352,13 @@ Return all reactions of specific kind / type associated with provided Collection
     "documentId": "njx99iv4p4txuqp307ye8625",
     "createdAt": "2023-09-14T20:13:01.649Z",
     "updatedAt": "2023-09-14T20:13:01.670Z",
-    "user":{ // Added if no user context provided to identify who made such reaction
+    "user":{ // Added if Strapi user context provided to identify who made such reaction
       "documentId": "njx99iv4p4txuqp307ye8625",
       "username": "mziarko+1@virtuslab.com",
       "email": "mziarko+1@virtuslab.com"
     }
   },
+  "userId": 17 // Added if non-Strapi user context provided to identify who made such reaction
   // ...
 ]
 ```
@@ -366,7 +372,8 @@ _GraphQL equivalent: [Public GraphQL API -> List all reactions of kind associate
 
 Return all reactions of specific kind associated with provided user:
 - for logged in user - if call is done with user context via `Authorization` header
-- for specific ID - if you're not providing the user context via `Authorization` header
+- for specific Strapi user ID - if you're not providing the user context via `Authorization` header and you're providing the user context via `user-id` url param
+- for specific non-Strapi user ID - if you're not providing the user context via `Authorization` header and you're providing the user context via `X-Reactions-Author` header
 
 **Example URL**: `https://localhost:1337/api/reactions/list/like/user`
 **Example URL**: `https://localhost:1337/api/reactions/list/like/user/1`
@@ -403,7 +410,10 @@ _GraphQL equivalent: [Public GraphQL API -> Set reaction for Content Type](#set-
 
 Create reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
-`Authorization` header is required
+To identify the reaction author, you must provide **one** of the following headers:
+
+- `Authorization` – use this header if you want to set a reaction for a Strapi user.
+- `X-Reactions-Author` – use this header if you want to set a reaction for a non-Strapi user. The value can be any identifier that uniquely distinguishes the reaction author in your system.
 
 **Example URL**: `https://localhost:1337/api/reactions/set/like/single/api::homepage.homepage?locale=en`
 **Example URL**: `https://localhost:1337/api/reactions/set/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
@@ -428,7 +438,10 @@ _GraphQL equivalent: [Public GraphQL API -> Unset reaction for Content Type](#un
 
 Delete reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
-`Authorization` header is required
+To identify the reaction author, you must provide **one** of the following headers:
+
+- `Authorization` – use this header if you want to set a reaction for a Strapi user.
+- `X-Reactions-Author` – use this header if you want to set a reaction for a non-Strapi user. The value can be any identifier that uniquely distinguishes the reaction author in your system.
 
 **Example URL**: `https://localhost:1337/api/reactions/unset/like/single/api::homepage.homepage?locale=en`
 **Example URL**: `https://localhost:1337/api/reactions/unset/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
@@ -448,7 +461,10 @@ _GraphQL equivalent: [Public GraphQL API -> Toggle reaction for Content Type](#t
 
 Toggle reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
-`Authorization` header is required
+To identify the reaction author, you must provide **one** of the following headers:
+
+- `Authorization` – use this header if you want to set a reaction for a Strapi user.
+- `X-Reactions-Author` – use this header if you want to set a reaction for a non-Strapi user. The value can be any identifier that uniquely distinguishes the reaction author in your system.
 
 **Example URL**: `https://localhost:1337/api/reactions/toggle/like/single/api::homepage.homepage?locale=en`
 **Example URL**: `https://localhost:1337/api/reactions/toggle/like/collection/api::post.post/njx99iv4p4txuqp307ye8625?locale=en`
@@ -469,9 +485,9 @@ true
 ```
 
 ### Possible scenarios
-1. No reaction set yet - after `toggle` reaction is set
-2. Single reaction already set - after `toogle` no reaction is set
-3. Multiple reactions already set - after `toggle` just specified reaction stays, rest becomes unset
+1. No reaction set yet - Calling `toggle` for a reaction sets that reaction.
+2. Same reaction already set - Calling `toggle` for a reaction that is already set will **unset** it (result: no reaction).
+3. Different reaction already set - If another reaction is set, calling `toggle` for a new reaction will **switch** to that reaction: the specified reaction becomes set, and any previously set reactions of that type are unset.
 
 ## 🕸️ Public GraphQL API specification
 
@@ -522,8 +538,10 @@ query {
 _REST API equivalent: [Public REST API -> List all reactions associated with Content Type](#list-all-reactions-associated-with-content-type)_
 
 Return all reactions associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
-- Query `reactionsList` - no `Authorization` header provided (open for public)
-- Query `reactionsListPerUser` - an `Authorization` header is mandatory
+- Query `reactionsList` – returns all reactions for the specified document. No `Authorization` header is required (public access).
+- Query `reactionsListPerUser` – returns reactions added by a specific author. One of the following headers is required:
+  - `Authorization` – to fetch reactions for a Strapi user.
+  - `X-Reactions-Author` – to fetch reactions for a non-Strapi user, identified by any custom author ID.
 
 **Example request**
 
@@ -600,7 +618,9 @@ query {
 _REST API equivalent: [Public REST API -> List all reactions associated with particular user](#list-all-reactions-associated-with-particular-user)_
 
 Return all reactions associated with provided user:
-- Query `reactionsListAllPerUser` - an `Authorization` header is mandatory or `userId` in args
+- Query `reactionsListAllPerUser` – one of the following headers is required:
+  - `Authorization` – to fetch reactions for a Strapi user.
+  - `X-Reactions-Author` – to fetch reactions for a non-Strapi user, identified by any custom author ID.
 
 **Example request**
 
@@ -666,8 +686,11 @@ query {
 _REST API equivalent: [Public REST API -> List all reactions of kind / type associated with Content Type](#list-all-reactions-of-kind--type-associated-with-content-type)_
 
 Return all reactions of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID with following combinations:
-- Query `reactionsList` - no `Authorization` header provided (open for public)
-- Query `reactionsListPerUser` - an `Authorization` header is mandatory
+- Query `reactionsList` – returns all reactions for the specified document. No `Authorization` header is required (public access).
+- Query `reactionsListPerUser` – returns reactions added by a specific author. One of the following headers is required:
+  - `Authorization` – to fetch reactions for a Strapi user.
+  - `X-Reactions-Author` – to fetch reactions for a non-Strapi user, identified by any custom author ID.
+
 
 **Example request**
 
@@ -726,7 +749,9 @@ query {
 _REST API equivalent: [Public REST API -> List all reactions of kind associated with particular user](#list-all-reactions-of-kind-associated-with-particular-user)_
 
 Return all reactions of specific kind associated with provided user:
-- Query `reactionsListAllPerUser` - an `Authorization` header is mandatory or `userId` in args
+- Query `reactionsListAllPerUser` – one of the following headers is required:
+  - `Authorization` – to fetch reactions for a Strapi user.
+  - `X-Reactions-Author` – to fetch reactions for a non-Strapi user, identified by any custom author ID.
 
 **Example request**
 
@@ -784,7 +809,10 @@ _REST API equivalent: [Public REST API -> Set reaction for Content Type](#set-re
 
 Create reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
-`Authorization` header is required
+To identify the reaction author, you must provide **one** of the following headers:
+
+- `Authorization` – use this header if you want to set a reaction for a Strapi user.
+- `X-Reactions-Author` – use this header if you want to set a reaction for a non-Strapi user. The value can be any identifier that uniquely distinguishes the reaction author in your system.
 
 **Example request**
 
@@ -821,7 +849,10 @@ _REST API equivalent: [Public REST API -> Unset reaction for Content Type](#unse
 
 Delete reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
-`Authorization` header is required
+To identify the reaction author, you must provide **one** of the following headers:
+
+- `Authorization` – use this header if you want to set a reaction for a Strapi user.
+- `X-Reactions-Author` – use this header if you want to set a reaction for a non-Strapi user. The value can be any identifier that uniquely distinguishes the reaction author in your system.
 
 **Example request**
 
@@ -858,7 +889,10 @@ _REST API equivalent: [Public REST API -> Toggle reaction for Content Type](#tog
 
 Toggle reaction of specific kind / type associated with provided Collection / Single Type UID and Content Type Document ID.
 
-`Authorization` header is required
+To identify the reaction author, you must provide **one** of the following headers:
+
+- `Authorization` – use this header if you want to set a reaction for a Strapi user.
+- `X-Reactions-Author` – use this header if you want to set a reaction for a non-Strapi user. The value can be any identifier that uniquely distinguishes the reaction author in your system.
 
 **Example request**
 
@@ -900,9 +934,9 @@ mutation reactionToggle {
 ```
 
 ### Possible scenarios
-1. No reaction set yet - after `toggle` reaction is set
-2. Single reaction already set - after `toogle` no reaction is set
-3. Multiple reactions already set - after `toggle` just specified reaction stays, rest becomes unset
+1. No reaction set yet - Calling `toggle` for a reaction sets that reaction.
+2. Same reaction already set - Calling `toggle` for a reaction that is already set will **unset** it (result: no reaction).
+3. Different reaction already set - If another reaction is set, calling `toggle` for a new reaction will **switch** to that reaction: the specified reaction becomes set, and any previously set reactions of that type are unset.
 
 ## 🔌 Enrich service for Strapi extensions
 

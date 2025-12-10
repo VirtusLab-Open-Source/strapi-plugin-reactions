@@ -71,6 +71,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
           $eq: authorId,
         },
       };
+      fields = [...fields, 'userId'];
     } else if (!isNil(user)) {
       filters = {
         ...filters,
@@ -83,6 +84,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
           fields: ['documentId', 'username', 'email']
         },
       };
+      fields = [...fields, 'userId'];
     }
 
     const entities = await strapi
@@ -247,15 +249,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const existingReactions = await this.list(undefined, uid, user, documentId, locale, authorId);
     const matchingReaction = existingReactions
       .find(({ kind: { slug } }) => kind === slug);
-      
+
     if (matchingReaction) {
       return this.directDelete(existingReactions, locale);
     }
 
-    const reactionsToRemove = existingReactions
-      .filter(({ documentId: reactionId }) => reactionId !== matchingReaction?.documentId);
-
-    const removed = await this.directDelete(reactionsToRemove, locale);
+    const removed = await this.directDelete(existingReactions, locale);
 
     if (!removed) {
       throw new PluginError(405, `Can't perform toggle action reaction type of "${kind}" for Entity with Document ID: ${documentId || 'single'} of type: ${uid}`);
