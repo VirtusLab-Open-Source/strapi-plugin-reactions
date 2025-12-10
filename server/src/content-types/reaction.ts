@@ -36,6 +36,11 @@ export default {
       target: "plugin::users-permissions.user",
       configurable: false,
     },
+    userId: {
+      type: "string",
+      configurable: false,
+      required: false,
+    },
     kind: {
       type: 'relation',
       relation: "manyToOne",

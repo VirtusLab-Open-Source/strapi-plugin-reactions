@@ -1,8 +1,9 @@
 export default () => ({
 	'Query.reactionKinds': { auth: false },
-	'Query.reactionsListAll': { auth: false },
-	'Query.reactionsListPerUser': { auth: true },
-	'Mutation.reactionSet': { auth: true },
-	'Mutation.reactionUnset': { auth: true },
-	'Mutation.reactionToggle': { auth: true },
+	'Query.reactionsList': { auth: false },
+	'Query.reactionsListPerUser': { auth: false },
+	'Query.reactionsListAllPerUser': { auth: false },
+	'Mutation.reactionSet': { auth: false },
+	'Mutation.reactionUnset': { auth: false },
+	'Mutation.reactionToggle': { auth: false },
 });

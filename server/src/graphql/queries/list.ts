@@ -30,9 +30,10 @@ export default ({ nexus }: StrapiGraphQLContext) => {
       args: ListAllResolverProps,
       ctx: Context) {
       const { kind, uid, documentId, locale } = args;
-      const { state: { user = undefined } = {} } = ctx;
+      const { state: { user = undefined } = {}, koaContext } = ctx;
+      const authorId = koaContext.get('x-reactions-author');
 
-      return await getPluginService<IServiceClient>("client").list(kind, uid, user, documentId, locale);
+      return await getPluginService<IServiceClient>("client").list(kind, uid, user, documentId, locale, authorId);
     },
   };
 };

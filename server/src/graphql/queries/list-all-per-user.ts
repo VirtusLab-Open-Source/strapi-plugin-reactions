@@ -27,7 +27,8 @@ export default ({ nexus }: StrapiGraphQLContext) => {
       args: ListAllPerUserResolverProps,
       ctx: Context) {
       const { kind, userId } = args;
-      const { state: { user = undefined } = {} } = ctx;
+      const { state: { user = undefined } = {}, koaContext } = ctx;
+      const authorId = koaContext.get('x-reactions-author');
 
       let targetUser = user;
       try {
@@ -41,7 +42,11 @@ export default ({ nexus }: StrapiGraphQLContext) => {
         throw new PluginError(400, "User not found");
       }
 
-      return await getPluginService<IServiceClient>("client").listPerUser(user, kind);
+      if (!targetUser && !authorId) {
+        throw new PluginError(400, "User ID must be provided via x-reactions-author header (custom users) or Authorization header (Strapi users");
+      }
+
+      return await getPluginService<IServiceClient>("client").listPerUser(user, authorId, kind);
     },
   };
 };
