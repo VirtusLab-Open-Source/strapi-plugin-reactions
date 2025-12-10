@@ -88,7 +88,7 @@ describe("Test client service", () => {
       
       const documentsInstance = (global.strapi.documents as unknown as jest.Mock).mock.results[0].value;
       expect(documentsInstance.findMany).toHaveBeenCalledWith({
-        fields: ["createdAt", "updatedAt"],
+        fields: ["createdAt", "updatedAt", "userId"],
         filters: {
           relatedUid: {
             $contains: "",
@@ -121,7 +121,7 @@ describe("Test client service", () => {
       
       const reactionInstance = (global.strapi.documents as unknown as jest.Mock).mock.results[1].value;
       expect(reactionInstance.findMany).toHaveBeenCalledWith({
-        fields: ["createdAt", "updatedAt"],
+        fields: ["createdAt", "updatedAt", "userId"],
         filters: {
           relatedUid: {
             $contains: "",
@@ -170,7 +170,7 @@ describe("Test client service", () => {
       
       const reactionInstance = (global.strapi.documents as unknown as jest.Mock).mock.results[1].value;
       expect(reactionInstance.findMany).toHaveBeenCalledWith({
-        fields: ["createdAt", "updatedAt"],
+        fields: ["createdAt", "updatedAt", "userId"],
         filters: {
           relatedUid: {
             $eq: "api::article.article:123",
