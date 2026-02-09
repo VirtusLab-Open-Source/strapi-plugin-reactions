@@ -237,7 +237,7 @@ describe("Test client service", () => {
       });
     });
 
-    it("should find reactions per user and userId when both user and userId are provided", async () => {
+    it("should find reactions per user when both user and userId are provided (userId takes precedence)", async () => {
       setupStrapi({}, false, {}, {
         "plugins::reactions.reaction": [
           {
@@ -260,7 +260,6 @@ describe("Test client service", () => {
       expect(reactionInstance.findMany).toHaveBeenCalledWith({
         fields: ["createdAt", "updatedAt", "relatedUid"],
         filters: {
-          user: mockUser,
           userId: "user-2",
         },
         populate: {
