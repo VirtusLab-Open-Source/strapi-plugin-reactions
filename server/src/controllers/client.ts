@@ -68,7 +68,7 @@ export default () => ({
       } catch (e) {
         throw new PluginError(400, "User not found");
       }
-      console.log(authorId);
+
       if (!targetUser && !authorId) {
         throw new PluginError(400, "User ID must be provided via x-reactions-author header (custom users) or Authorization header (Strapi users");
       }

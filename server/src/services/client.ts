@@ -117,8 +117,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     let fields = ['createdAt', 'updatedAt', 'relatedUid'];
     let filters: Record<string, any> = {
       ...(isObject(query?.filters) ? query?.filters : {}),
-      ...(isObject(user) ? { user } : {}),
-      ...(userId ? { userId } : {})
+      ...(userId ? { userId } : isObject(user) ? { user } : {})
     };
     let populate: StrapiRequestQueryPopulateClause = {
       related: true,
