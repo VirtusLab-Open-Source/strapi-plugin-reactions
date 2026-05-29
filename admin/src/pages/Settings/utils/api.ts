@@ -28,6 +28,22 @@ export const fetchConfig = async ({ toggleNotification, fetchClient }: FetchConf
   }
 };
 
+export const updateConfig = async (
+  body: { blockedAuthorProps: string[] },
+  { toggleNotification, fetchClient }: FetchConfig,
+): Promise<ReactionsPluginConfig | undefined> => {
+  try {
+    const { data } = await fetchClient.put(
+      getApiURL(`settings/config`),
+      body,
+    );
+
+    return data;
+  } catch (err) {
+    handleAPIError(err, toggleNotification);
+  }
+};
+
 export const createReactionType = async (
   body: CTReactionType,
   { toggleNotification, fetchClient }: FetchConfig,
