@@ -10,12 +10,20 @@ import { CTReaction, CTReactionType } from "./model";
 
 export interface IServiceCommon {
   getPluginStore(): any;
+  getLocalConfig<K extends keyof import('./config').ReactionsPluginStoreConfig>(
+    prop: K,
+    defaultValue?: import('./config').ReactionsPluginStoreConfig[K],
+  ): import('./config').ReactionsPluginStoreConfig[K];
+  getConfig<K extends keyof import('./config').ReactionsPluginStoreConfig>(
+    prop?: K,
+    defaultValue?: import('./config').ReactionsPluginStoreConfig[K],
+  ): Promise<import('./config').ReactionsPluginStoreConfig | import('./config').ReactionsPluginStoreConfig[K]>;
 }
 
 export interface IServiceAdmin {
   fetchConfig<T extends ReactionsPluginConfig>(): Promise<T>;
   updateConfig(
-    body: CTReactionType,
+    body: Pick<ReactionsPluginConfig['config'], 'blockedAuthorProps'>,
   ): Promise<ReactionsPluginConfig>;
   deleteReactionType(documentId: Data.DocumentID): Promise<{ result: boolean }>;
   generateSlug(subject: string, documentId?: Data.DocumentID): Promise<{ slug: string }>;
@@ -24,6 +32,8 @@ export interface IServiceAdmin {
 }
 
 export interface IServiceClient {
+  getCommonService(): IServiceCommon;
+  sanitizeReactions(entities: Array<CTReaction>): Promise<Array<CTReaction>>;
   kinds(): Promise<Array<AnyEntity>>;
   list(kind?: string, uid?: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string, authorId?: string): Promise<Array<AnyEntity>>;
   listPerUser(user: StrapiUser, userId: string, kind?: string, populate?: StrapiQueryParamsParsed): Promise<Array<AnyEntity>>;
@@ -36,6 +46,8 @@ export interface IServiceClient {
 }
 
 export interface IServiceEnrich {
+  getCommonService(): IServiceCommon;
+  sanitizeReactions(reactions: Array<CTReaction>): Promise<Array<CTReaction>>;
   enrichOne<T extends AnyEntity, M extends any>(uid: UID.ContentType, response: T, populate: ToBeFixed, locale?: string): Promise<T>;
   enrichMany<T extends AnyEntity, M extends any>(uid: UID.ContentType, response: T, populate: ToBeFixed, locale?: string): Promise<T>;
   findReactions(filters: any, populate: ToBeFixed, locale?: string): null | AnyEntity | Array<AnyEntity>;

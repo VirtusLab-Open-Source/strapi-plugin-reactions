@@ -18,7 +18,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/settings/config',
-    handler: 'settingsController.update',
+    handler: 'settingsController.updateConfig',
     config: {
       policies: [],
     },

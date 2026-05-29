@@ -2,8 +2,10 @@ import { Core, Data, UID } from '@strapi/strapi';
 import { isArray, isNil, first, isObject } from "lodash";
 import { AnyEntity, StrapiUser, StrapiQueryParamsParsed, StrapiRequestQueryPopulateClause, Primitive } from "@sensinum/strapi-utils";
 
-import { CTReaction, CTReactionType, IServiceClient } from "../../../@types";
-import { buildRelatedId, getModelUid } from './utils/functions';
+import { CTReaction, CTReactionType, IServiceClient, IServiceCommon } from "../../../@types";
+import { buildRelatedId, getModelUid, sanitizeReactionEntity } from './utils/functions';
+import { CONFIG_PARAMS } from '../utils/constants';
+import { getPluginService } from '../utils/functions';
 import PluginError from '../utils/error';
 
 export type PrefetchConditionsProps = {
@@ -14,6 +16,16 @@ export type PrefetchConditionsProps = {
 };
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
+
+  getCommonService(): IServiceCommon {
+    return getPluginService<IServiceCommon>('common');
+  },
+
+  async sanitizeReactions(entities: Array<CTReaction>): Promise<Array<CTReaction>> {
+    const blockedAuthorProps = await this.getCommonService().getConfig(CONFIG_PARAMS.AUTHOR_BLOCKED_PROPS, []) as Array<string>;
+
+    return entities.map((entity) => sanitizeReactionEntity(entity, blockedAuthorProps ?? []));
+  },
 
   async kinds(
     this: IServiceClient,
@@ -100,7 +112,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return [];
     }
 
-    return (!isArray(entities) ? [entities] : entities);
+    const result = !isArray(entities) ? [entities] : entities;
+
+    return this.sanitizeReactions(result);
   },
 
   async listPerUser(
@@ -163,7 +177,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     const result = !isArray(entities) ? [entities] : entities;
 
-    return Promise.all(result.map(async (entity) => {
+    const enriched = await Promise.all(result.map(async (entity) => {
       const { relatedUid, related } = entity;
       if (query?.populate && isRelatedObjectPopulated(query.populate)) {
         const [uid, documentId] = relatedUid.split(':');
@@ -183,6 +197,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         related: isArray(related) ? first(related) : related,
       };
     }));
+    return this.sanitizeReactions(enriched);
   },
 
   async create(
