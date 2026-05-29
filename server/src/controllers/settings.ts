@@ -29,11 +29,23 @@ export default () => ({
     }
   },
 
-  async create(ctx: Context) {
+  async createReactionType(ctx: Context) {
     try {
       const { request: { body }} = ctx;
       if (body) {
-        return await this.getService<IServiceAdmin>().updateConfig(body);
+        return await this.getService<IServiceAdmin>().createReactionType(body);
+      }
+      throw throwError(ctx, new PluginError(400, 'Bad Request'));
+    } catch (e) {
+      throw throwError(ctx, e);
+    }
+  },
+
+  async updateReactionType(ctx: Context) {
+    try {
+      const { request: { body }} = ctx;
+      if (body) {
+        return await this.getService<IServiceAdmin>().updateReactionType(body);
       }
       throw throwError(ctx, new PluginError(400, 'Bad Request'));
     } catch (e) {

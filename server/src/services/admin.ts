@@ -56,8 +56,21 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     return this.fetchConfig();
   },
 
+  async createReactionType(
+    body: CTReactionType,
+  ): Promise<CTReactionType> {
+    return await strapi
+      .documents(getModelUid("reaction-type"))
+      .create({
+        data: body,
+      });
+  },
 
+  async updateReactionType(
+    body: CTReactionType,
+  ): Promise<CTReactionType> {
     const { documentId, ...rest } = body;
+
     return await strapi
       .documents(getModelUid("reaction-type"))
       .update({

@@ -25,6 +25,12 @@ export interface IServiceAdmin {
   updateConfig(
     body: Pick<ReactionsPluginConfig['config'], 'blockedAuthorProps'>,
   ): Promise<ReactionsPluginConfig>;
+  createReactionType(
+    body: CTReactionType,
+  ): Promise<CTReactionType>;
+  updateReactionType(
+    body: CTReactionType,
+  ): Promise<CTReactionType>;
   deleteReactionType(documentId: Data.DocumentID): Promise<{ result: boolean }>;
   generateSlug(subject: string, documentId?: Data.DocumentID): Promise<{ slug: string }>;
   uniqueSlug(slug: string, documentId?: Data.DocumentID): Promise<string>;

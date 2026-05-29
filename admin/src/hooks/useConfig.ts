@@ -60,7 +60,10 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   };
 
   const submitMutation = useMutation({
-    mutationFn: ({ body }: SubmitPayload) => updateConfig(body, config),
+    mutationFn: ({ body }: SubmitPayload) =>
+      body.documentId
+        ? updateReactionType(body, config)
+        : createReactionType(body, config),
     onSuccess: () => handleSuccess("submit"),
     onError: () => handleError("submit"),
   });

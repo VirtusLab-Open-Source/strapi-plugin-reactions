@@ -1,8 +1,7 @@
-import { isNil } from "lodash";
 import { Data } from "@strapi/strapi";
 import { getApiURL, handleAPIError } from "../../../utils";
 import qs from "qs";
-import { ReactionsPluginConfig, ToBeFixed } from "../../../../../@types";
+import { ReactionsPluginConfig, CTReactionType, ToBeFixed } from "../../../../../@types";
 
 export type FetchConfig = {
   toggleNotification: ToBeFixed;
@@ -29,11 +28,29 @@ export const fetchConfig = async ({ toggleNotification, fetchClient }: FetchConf
   }
 };
 
-export const updateConfig = async (body: ToBeFixed, { toggleNotification, fetchClient }: FetchConfig): Promise<ReactionsPluginConfig | undefined> => {
+export const createReactionType = async (
+  body: CTReactionType,
+  { toggleNotification, fetchClient }: FetchConfig,
+): Promise<ReactionsPluginConfig | undefined> => {
   try {
-    const method = isNil(body.documentId) ? fetchClient.post : fetchClient.put;
-    const { data } = await method(
-      getApiURL(`settings/config`),
+    const { data } = await fetchClient.post(
+      getApiURL(`settings/config/reaction-type`),
+      body,
+    );
+
+    return data;
+  } catch (err) {
+    handleAPIError(err, toggleNotification);
+  }
+};
+
+export const updateReactionType = async (
+  body: CTReactionType,
+  { toggleNotification, fetchClient }: FetchConfig,
+): Promise<ReactionsPluginConfig | undefined> => {
+  try {
+    const { data } = await fetchClient.put(
+      getApiURL(`settings/config/reaction-type`),
       body,
     );
 
