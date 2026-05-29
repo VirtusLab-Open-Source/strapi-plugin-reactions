@@ -41,7 +41,7 @@ export default () => ({
     }
   },
 
-  async update(ctx: Context) {
+  async updateConfig(ctx: Context) {
     try {
       const { request: { body }} = ctx;
       if (body) {

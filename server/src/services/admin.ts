@@ -6,14 +6,19 @@ import { ReactionsPluginConfig, IServiceAdmin, IServiceCommon, CTReactionType, C
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
+import { CONFIG_PARAMS } from '../utils/constants';
+import { ReactionsPluginStoreConfig } from '../config';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async fetchConfig() {
-    const pluginStore = getPluginService<IServiceCommon>('common')
-      .getPluginStore();
-    const config: ReactionsPluginConfig | unknown = await pluginStore?.get({
+    const commonService = getPluginService<IServiceCommon>('common');
+    const pluginStore = commonService.getPluginStore();
+    const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
       key: "config",
     });
+
+    const blockedAuthorProps = storedConfig?.blockedAuthorProps
+      ?? commonService.getLocalConfig(CONFIG_PARAMS.AUTHOR_BLOCKED_PROPS, []);
 
     const types = await strapi
       .documents(getModelUid("reaction-type"))
@@ -22,23 +27,35 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       });
 
     return {
-      config: config || {},
+      config: {
+        ...(storedConfig || {}),
+        blockedAuthorProps,
+      },
       types,
     };
   },
 
   async updateConfig(
     this: IServiceAdmin,
-    body: CTReactionType,
-  ): Promise<CTReactionType> {
+    body: Pick<ReactionsPluginStoreConfig, 'blockedAuthorProps'>,
+  ): Promise<ReactionsPluginConfig> {
+    const commonService = getPluginService<IServiceCommon>('common');
+    const pluginStore = commonService.getPluginStore();
+    const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
+      key: 'config',
+    });
 
-    if (isNil(body.documentId)) {
-      return await strapi
-        .documents(getModelUid("reaction-type"))
-        .create({
-          data: body,
-        });
-    }
+    await pluginStore?.set({
+      key: 'config',
+      value: {
+        ...(storedConfig || {}),
+        blockedAuthorProps: body.blockedAuthorProps,
+      },
+    });
+
+    return this.fetchConfig();
+  },
+
 
     const { documentId, ...rest } = body;
     return await strapi
