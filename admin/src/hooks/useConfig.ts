@@ -4,6 +4,8 @@ import { useFetchClient } from '@strapi/strapi/admin';
 
 import {
   fetchConfig,
+  createReactionType,
+  updateReactionType,
   updateConfig,
   deleteReactionType,
 } from "../pages/Settings/utils/api";
@@ -15,9 +17,15 @@ type SubmitPayload = {
   toggleNotification: any;
 };
 
+type UpdateConfigPayload = {
+  blockedAuthorProps: string[];
+  toggleNotification: any;
+};
+
 export type useConfigResult = {
   fetch: UseQueryResult<any, Error>;
   submitMutation: UseMutationResult<any, Error, SubmitPayload>;
+  updateConfigMutation: UseMutationResult<any, Error, UpdateConfigPayload>;
   deleteMutation: UseMutationResult<any, Error>;
 };
 
@@ -68,6 +76,12 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
     onError: () => handleError("submit"),
   });
 
+  const updateConfigMutation = useMutation({
+    mutationFn: ({ blockedAuthorProps }: UpdateConfigPayload) => updateConfig({ blockedAuthorProps }, config),
+    onSuccess: () => handleSuccess("pluginConfig"),
+    onError: () => handleError("pluginConfig"),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: ({ documentId }: any) => deleteReactionType(documentId, config),
     onSuccess: () => handleSuccess("reaction.delete"),
@@ -75,7 +89,7 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   });
 
 
-  return { fetch, submitMutation, deleteMutation };
+  return { fetch, submitMutation, updateConfigMutation, deleteMutation };
 };
 
 export default useConfig;

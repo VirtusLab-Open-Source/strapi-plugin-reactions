@@ -7,7 +7,7 @@ import {
   Layouts,
   useNotification,
   useRBAC,
-  useStrapiApp
+  useStrapiApp,
 } from '@strapi/strapi/admin';
 
 import {
@@ -39,15 +39,9 @@ import CUModal from "./components/Modal";
 import { ReactionIcon } from "./components/ReactionIcon";
 import useUtils from "../../hooks/useUtils";
 import { AdminAction } from "./components/AdminAction";
+import { AdditionalSettingsPanel } from "./components/AdditionalSettingsPanel";
 import { CTReactionType, ToBeFixed } from "../../../../@types";
-
-const DEFAULT_BOX_PROPS = {
-  width: "100%",
-  background: "neutral0",
-  hasRadius: true,
-  shadow: "filterShadow",
-  padding: 6,
-};
+import { BOX_DEFAULT_PROPS } from "./common/const";
 
 const Settings = () => {
   const { toggleNotification } = useNotification();
@@ -66,7 +60,7 @@ const Settings = () => {
   const [modalEntity, setModalEntity] = useState<CTReactionType | undefined>(undefined);
   const [entityToDelete, setEntityToDelete] = useState<CTReactionType>();
 
-  const { fetch, submitMutation, deleteMutation } = useConfig(toggleNotification);
+  const { fetch, submitMutation, updateConfigMutation, deleteMutation } = useConfig(toggleNotification);
   const { syncAssociationsMutation } = useUtils(toggleNotification);
 
   const {
@@ -75,7 +69,8 @@ const Settings = () => {
     err: configErr,
   }: any = fetch;
 
-  const { types = [] } = data || {};
+  const { types = [], config = {} } = data || {};
+  const blockedAuthorProps = config.blockedAuthorProps ?? [];
 
   const isLoading =
     isLoadingForPermissions ||
@@ -142,6 +137,18 @@ const Settings = () => {
       } finally {
         setSyncAssiciationConfirmationVisible(false);
       }
+    }
+  };
+
+  const handleConfigSubmit = async (values: { blockedAuthorProps: string }) => {
+    if (canChange) {
+      await updateConfigMutation.mutateAsync({
+        blockedAuthorProps: values.blockedAuthorProps
+          .split(',')
+          .map((prop: string) => prop.trim())
+          .filter(Boolean),
+        toggleNotification,
+      });
     }
   };
 
@@ -250,8 +257,15 @@ const Settings = () => {
               </Tbody>
             </Table>
           </Box>
+          {canChange && (
+            <AdditionalSettingsPanel
+              blockedAuthorProps={blockedAuthorProps}
+              isSubmitting={updateConfigMutation.isPending}
+              onSubmit={handleConfigSubmit}
+            />
+          )}
           {canAdmin && (
-            <Box {...DEFAULT_BOX_PROPS}>
+            <Box {...BOX_DEFAULT_PROPS}>
               <Flex width="100%" direction="column" gap={4}>
                 <Flex width="100%" direction="column" gap={2} alignItems="flexStart">
                   <Typography variant="delta" tag="h2">

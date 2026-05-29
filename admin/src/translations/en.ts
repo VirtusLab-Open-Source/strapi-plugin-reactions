@@ -14,6 +14,7 @@ const en = {
       },
       action : {
         create: "Add new reaction",
+        savePluginConfig: "Save settings",
         syncAssociations: {
           title: "Associations synchronization",
           description: "Perform synchronization of reactions associations to make the search keys be up-to-date",
@@ -22,6 +23,9 @@ const en = {
         },
       },
       section: {
+        additionalSettings: {
+          title: "Additional settings",
+        },
         administrationTools: {
           title: "Administration tools",
           subtitle: "Special purpose tools and actions which you can perform in the global plugin context",
@@ -66,6 +70,10 @@ const en = {
         },
       },
       form: {
+        blockedAuthorProps: {
+          label: "Blocked user details",
+          hint: "Specified properties will be filtered out from user details in public API responses (comma-separated)",
+        },
         name: {
           label: "Name",
           required: "Name is required",
@@ -105,6 +113,10 @@ const en = {
       },
       loading: "Loading configuration...",
       notification: {
+        pluginConfig: {
+          success: "Plugin settings saved successfully",
+          error: "Something went wrong. Try again",
+        },
         submit: {
           success: "Reaction type submitted successfully",
           error: "Something went wrong. Try again",
