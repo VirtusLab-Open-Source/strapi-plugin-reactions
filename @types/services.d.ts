@@ -1,4 +1,4 @@
-import { Data, UID } from "@strapi/strapi";
+import { Core, Data, UID } from "@strapi/strapi";
 import { AnyEntity, StrapiUser, StrapiQueryParamsParsed } from "@sensinum/strapi-vl-utils";
 
 import { ToBeFixed } from "./common";
@@ -9,7 +9,7 @@ import { ReactionsPluginConfig } from "./config";
 import { CTReaction, CTReactionType } from "./model";
 
 export interface IServiceCommon {
-  getPluginStore(): any;
+  getPluginStore(): Promise<ReturnType<Core.Strapi['store']>>;
   getLocalConfig<K extends keyof import('./config').ReactionsPluginStoreConfig>(
     prop: K,
     defaultValue?: import('./config').ReactionsPluginStoreConfig[K],
