@@ -2,7 +2,7 @@ import { Primitive } from "../../../@types";
 import PluginError from "./error";
 
 export const getPluginService = <T>(name: string): T =>
-  strapi.plugin("reactions").service(name);
+  strapi.plugin("reactions").service(name) as T;
 
 export const parseParams = <T = Record<string, unknown>>(
   params: Record<string, unknown>

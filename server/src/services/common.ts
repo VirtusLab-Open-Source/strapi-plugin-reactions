@@ -4,9 +4,9 @@ import { ReactionsPluginStoreConfig } from '../config';
 import { CONFIG_PARAMS, PLUGIN_SELECTOR } from '../utils/constants';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
-  getPluginStore(): any | undefined {
+  async getPluginStore(): Promise<ReturnType<typeof strapi.store>> {
     if (!isNil(strapi.store)) {
-      return strapi.store({ type: "plugin", name: "reactions" }) as any;
+      return await strapi.store({ type: "plugin", name: "reactions" });
     }
   },
 
@@ -24,8 +24,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     prop?: K,
     defaultValue?: ReactionsPluginStoreConfig[K],
   ): Promise<ReactionsPluginStoreConfig | ReactionsPluginStoreConfig[K]> {
-    const pluginStore = this.getPluginStore();
-    const storedConfig = await pluginStore?.get({ key: 'config' }) as ReactionsPluginStoreConfig | undefined;
+    const pluginStore = await this.getPluginStore();
+    const storedConfig = await pluginStore.get({ key: 'config' }) as ReactionsPluginStoreConfig | undefined;
 
     if (storedConfig) {
       if (prop) {

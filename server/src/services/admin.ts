@@ -12,7 +12,7 @@ import { ReactionsPluginStoreConfig } from '../config';
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async fetchConfig() {
     const commonService = getPluginService<IServiceCommon>('common');
-    const pluginStore = commonService.getPluginStore();
+    const pluginStore = await commonService.getPluginStore();
     const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
       key: "config",
     });
@@ -40,7 +40,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     body: Pick<ReactionsPluginStoreConfig, 'blockedAuthorProps'>,
   ): Promise<ReactionsPluginConfig> {
     const commonService = getPluginService<IServiceCommon>('common');
-    const pluginStore = commonService.getPluginStore();
+    const pluginStore = await commonService.getPluginStore();
     const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
       key: 'config',
     });
