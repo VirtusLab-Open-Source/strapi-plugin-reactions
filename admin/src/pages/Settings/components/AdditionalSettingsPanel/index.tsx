@@ -24,7 +24,7 @@ export const AdditionalSettingsPanel = ({
   onSubmit,
 }: AdditionalSettingsPanelProps) => {
   return (
-    <Box {...BOX_DEFAULT_PROPS}>
+    <Box width="100%" {...BOX_DEFAULT_PROPS}>
       <Typography variant="delta" as="h2">
         {getMessage("page.settings.section.additionalSettings.title")}
       </Typography>
