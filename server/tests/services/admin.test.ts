@@ -104,6 +104,16 @@ describe("Test admin service", () => {
         slug: "like",
       }));
     });
+
+    it("should return null when reaction type does not exist", async () => {
+      const documents = global.strapi.documents("plugins::reactions.reaction-type" as any);
+      const result = await documents.update({
+        documentId: "missing-type",
+        data: { name: "Missing" },
+      } as any);
+
+      expect(result).toBeNull();
+    });
   });
 
   describe("updateConfig", () => {
