@@ -25,6 +25,17 @@ describe('sanitizeReactionUser', () => {
 
     expect(sanitizeReactionUser(user, [])).toEqual(user);
   });
+
+  it('returns nullish and non-object users unchanged', () => {
+    expect(sanitizeReactionUser(null, ['email'])).toBeNull();
+    expect(sanitizeReactionUser(undefined, ['email'])).toBeUndefined();
+  });
+
+  it('returns original user when every property is blocked', () => {
+    const user = { email: 'joe@example.com' };
+
+    expect(sanitizeReactionUser(user, ['email'])).toBe(user);
+  });
 });
 
 describe('sanitizeReactionEntity', () => {
@@ -64,5 +75,14 @@ describe('sanitizeReactionEntity', () => {
       userId: 'anonymous-123',
       user: null,
     });
+  });
+
+  it('preserves entity when user is not an object', () => {
+    const entity = {
+      documentId: 'reaction-1',
+      user: 'legacy-user-id',
+    } as any;
+
+    expect(sanitizeReactionEntity(entity, ['email'])).toEqual(entity);
   });
 });
