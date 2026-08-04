@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
 import { useIntl } from "react-intl";
-import { useFetchClient } from '@strapi/strapi/admin';
+import { NotificationsContextValue, useFetchClient } from '@strapi/strapi/admin';
 
 import {
   fetchConfig,
@@ -10,17 +10,7 @@ import {
   deleteReactionType,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
-import { CTReactionType } from '../../../@types';
-
-type SubmitPayload = {
-  body: CTReactionType;
-  toggleNotification: any;
-};
-
-type UpdateConfigPayload = {
-  blockedAuthorProps: string[];
-  toggleNotification: any;
-};
+import type { ToggleNotification, SubmitPayload, UpdateConfigPayload } from '../../../@types';
 
 export type useConfigResult = {
   fetch: UseQueryResult<any, Error>;
@@ -29,7 +19,7 @@ export type useConfigResult = {
   deleteMutation: UseMutationResult<any, Error>;
 };
 
-const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
+const useConfig = (toggleNotification: ToggleNotification, client?: any): useConfigResult => {
   const queryClient = useQueryClient(client);
   const fetchClient = useFetchClient();
   const { formatMessage } = useIntl();

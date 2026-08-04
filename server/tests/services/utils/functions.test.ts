@@ -1,5 +1,16 @@
 import { sanitizeReactionEntity, sanitizeReactionUser } from '../../../src/services/utils/functions';
 
+beforeEach(() => {
+  Object.defineProperty(global, 'strapi', {
+    value: {
+      log: {
+        warn: jest.fn(),
+      },
+    },
+    writable: true,
+  });
+});
+
 describe('sanitizeReactionUser', () => {
   it('filters blocked user properties', () => {
     expect(
@@ -31,10 +42,16 @@ describe('sanitizeReactionUser', () => {
     expect(sanitizeReactionUser(undefined, ['email'])).toBeUndefined();
   });
 
-  it('returns original user when every property is blocked', () => {
-    const user = { email: 'joe@example.com' };
+  it('returns empty object when all user fields are filtered out', () => {
+    const user = {
+      email: 'joe@example.com',
+      username: 'joe',
+    };
 
-    expect(sanitizeReactionUser(user, ['email'])).toBe(user);
+    expect(sanitizeReactionUser(user, ['email', 'username'])).toEqual({});
+    expect(strapi.log.warn).toHaveBeenCalledWith(
+      'Strapi Reactions Plugin:You filtered out all of users properties, so the user is empty object',
+    );
   });
 });
 
@@ -84,5 +101,23 @@ describe('sanitizeReactionEntity', () => {
     } as any;
 
     expect(sanitizeReactionEntity(entity, ['email'])).toEqual(entity);
+  });
+
+  it('returns entity with empty user when all user fields are filtered out', () => {
+    const entity = {
+      documentId: 'reaction-1',
+      user: {
+        email: 'joe@example.com',
+        username: 'joe',
+      },
+    } as any;
+
+    expect(sanitizeReactionEntity(entity, ['email', 'username'])).toEqual({
+      documentId: 'reaction-1',
+      user: {},
+    });
+    expect(strapi.log.warn).toHaveBeenCalledWith(
+      'Strapi Reactions Plugin:You filtered out all of users properties, so the user is empty object',
+    );
   });
 });
