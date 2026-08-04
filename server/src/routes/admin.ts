@@ -9,8 +9,16 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/settings/config',
-    handler: 'settingsController.create',
+    path: '/settings/config/reaction-type',
+    handler: 'settingsController.createReactionType',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/settings/config/reaction-type',
+    handler: 'settingsController.updateReactionType',
     config: {
       policies: [],
     },
@@ -18,7 +26,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/settings/config',
-    handler: 'settingsController.update',
+    handler: 'settingsController.updateConfig',
     config: {
       policies: [],
     },

@@ -2,8 +2,10 @@ import { Core, Data, UID } from '@strapi/strapi';
 import { isArray, isNil, first, isObject } from "lodash";
 import { AnyEntity, StrapiUser, StrapiQueryParamsParsed, StrapiRequestQueryPopulateClause, Primitive } from "@sensinum/strapi-utils";
 
-import { CTReaction, CTReactionType, IServiceClient } from "../../../@types";
-import { buildRelatedId, getModelUid } from './utils/functions';
+import { CTReaction, CTReactionType, IServiceClient, IServiceCommon } from "../../../@types";
+import { buildRelatedId, getModelUid, sanitizeReactionEntity } from './utils/functions';
+import { CONFIG_PARAMS } from '../utils/constants';
+import { getPluginService } from '../utils/functions';
 import PluginError from '../utils/error';
 
 export type PrefetchConditionsProps = {
@@ -14,6 +16,16 @@ export type PrefetchConditionsProps = {
 };
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
+
+  getCommonService(): IServiceCommon {
+    return getPluginService<IServiceCommon>('common');
+  },
+
+  async sanitizeReactions(entities: Array<CTReaction>): Promise<Array<CTReaction>> {
+    const blockedAuthorProps = await this.getCommonService().getConfig(CONFIG_PARAMS.AUTHOR_BLOCKED_PROPS, []);
+
+    return entities.map((entity) => sanitizeReactionEntity(entity, blockedAuthorProps));
+  },
 
   async kinds(
     this: IServiceClient,
@@ -100,7 +112,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return [];
     }
 
-    return (!isArray(entities) ? [entities] : entities);
+    const result = !isArray(entities) ? [entities] : entities;
+
+    return this.sanitizeReactions(result);
   },
 
   async listPerUser(
@@ -163,26 +177,26 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     const result = !isArray(entities) ? [entities] : entities;
 
-    return Promise.all(result.map(async (entity) => {
-      const { relatedUid, related } = entity;
-      if (query?.populate && isRelatedObjectPopulated(query.populate)) {
-        const [uid, documentId] = relatedUid.split(':');
-        const targetRelated = await strapi
-          .documents(uid)
-          .findOne({
+    return await Promise.all(
+      result.map(async (entity) => {
+        const { relatedUid, related } = entity;
+        if (query?.populate && isRelatedObjectPopulated(query.populate)) {
+          const [uid, documentId] = relatedUid.split(":");
+          const targetRelated = await strapi.documents(uid).findOne({
             documentId,
             locale: entity.locale,
           });
+          return {
+            ...entity,
+            related: targetRelated,
+          };
+        }
         return {
           ...entity,
-          related: targetRelated,
+          related: isArray(related) ? first(related) : related,
         };
-      }
-      return {
-        ...entity,
-        related: isArray(related) ? first(related) : related,
-      };
-    }));
+      }),
+    ).then((enriched) => this.sanitizeReactions(enriched));
   },
 
   async create(

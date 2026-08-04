@@ -2,7 +2,7 @@ import { Core } from "@strapi/strapi";
 
 import { getModelUid } from "../services/utils/functions";
 import { getPluginService } from "../utils/functions";
-import { IServiceCommon } from "../../../@types";
+import { IServiceAdmin, ReactionsPluginConfig } from "../../../@types";
 
 import getTypes from "./types";
 import getQueries from "./queries";
@@ -15,9 +15,8 @@ export default async ({ strapi }: { strapi: Core.Strapi }) => {
   extensionService.shadowCRUD(getModelUid('reaction')).disable();
   extensionService.shadowCRUD(getModelUid('reaction-type')).disable();
 
-  const commonService = getPluginService<IServiceCommon>('common');
-  const pluginStore = commonService.getPluginStore()
-  const config = await pluginStore.get({ key: 'config' });
+  const config: ReactionsPluginConfig = await getPluginService<IServiceAdmin>("admin")
+    .fetchConfig();
 
   extensionService.use(({ strapi, nexus }: any) => {
     const types = getTypes({ strapi, nexus, config });

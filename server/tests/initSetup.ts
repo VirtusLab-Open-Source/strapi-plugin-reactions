@@ -1,4 +1,4 @@
-import { get, set, pick, isEmpty, isObject, isArray } from "lodash";
+import { get, set, pick, isEmpty } from "lodash";
 
 const mockStrapi = (config: any = {}, toStore: boolean = false, database: any = {}, documents: any = {}) => {
   const dbConfig = toStore
@@ -49,6 +49,8 @@ const mockStrapi = (config: any = {}, toStore: boolean = false, database: any = 
             new Promise((resolve) => resolve(value)),
           delete: async (value: any) =>
             new Promise((resolve) => resolve(value)),
+          deleteMany: async (value: any) =>
+            new Promise((resolve) => resolve(value)),
         };
       },
       ...dbConfig,
@@ -82,9 +84,22 @@ const mockStrapi = (config: any = {}, toStore: boolean = false, database: any = 
           const index = documentsData[uid]?.findIndex((r: any) => r.documentId === documentId || r.id === documentId);
           if (index !== undefined && index >= 0 && documentsData[uid]) {
             documentsData[uid].splice(index, 1);
-            return new Promise((resolve) => resolve(true));
+            return new Promise((resolve) => resolve({ documentId }));
           }
           return new Promise((resolve) => resolve(false));
+        }),
+        update: jest.fn(async (args: any = {}) => {
+          const { documentId, data } = args;
+          const index = documentsData[uid]?.findIndex((r: any) => r.documentId === documentId || r.id === documentId);
+          if (index !== undefined && index >= 0 && documentsData[uid]) {
+            documentsData[uid][index] = {
+              ...documentsData[uid][index],
+              ...data,
+              documentId,
+            };
+            return new Promise((resolve) => resolve(documentsData[uid][index]));
+          }
+          return new Promise((resolve) => resolve(null));
         }),
       };
     }),
@@ -133,6 +148,7 @@ const mockStrapi = (config: any = {}, toStore: boolean = false, database: any = 
           enrich: require("../src/services/enrich"),
           client: require("../src/services/client"),
           admin: require("../src/services/admin"),
+          common: require("../src/services/common"),
         },
         contentTypes: {
           reaction: {
@@ -155,8 +171,8 @@ const mockStrapi = (config: any = {}, toStore: boolean = false, database: any = 
       },
     },
     config: {
-      get: function (prop: string = "") {
-        return get(this.plugins, prop.replace("plugin.", ""));
+      get: function (prop: string = "", defaultValue?: unknown) {
+        return get(this.plugins, prop.replace("plugin.", ""), defaultValue);
       },
       set: function (prop: string = "", value: any) {
         return set(this.plugins, prop.replace("plugin.", ""), value);

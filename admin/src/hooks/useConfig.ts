@@ -1,27 +1,25 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query';
 import { useIntl } from "react-intl";
-import { useFetchClient } from '@strapi/strapi/admin';
+import { NotificationsContextValue, useFetchClient } from '@strapi/strapi/admin';
 
 import {
   fetchConfig,
+  createReactionType,
+  updateReactionType,
   updateConfig,
   deleteReactionType,
 } from "../pages/Settings/utils/api";
 import { pluginId } from "../pluginId";
-import { CTReactionType } from '../../../@types';
-
-type SubmitPayload = {
-  body: CTReactionType;
-  toggleNotification: any;
-};
+import type { ToggleNotification, SubmitPayload, UpdateConfigPayload } from '../../../@types';
 
 export type useConfigResult = {
   fetch: UseQueryResult<any, Error>;
   submitMutation: UseMutationResult<any, Error, SubmitPayload>;
+  updateConfigMutation: UseMutationResult<any, Error, UpdateConfigPayload>;
   deleteMutation: UseMutationResult<any, Error>;
 };
 
-const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
+const useConfig = (toggleNotification: ToggleNotification, client?: any): useConfigResult => {
   const queryClient = useQueryClient(client);
   const fetchClient = useFetchClient();
   const { formatMessage } = useIntl();
@@ -60,9 +58,18 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   };
 
   const submitMutation = useMutation({
-    mutationFn: ({ body }: SubmitPayload) => updateConfig(body, config),
+    mutationFn: ({ body }: SubmitPayload) =>
+      body.documentId
+        ? updateReactionType(body, config)
+        : createReactionType(body, config),
     onSuccess: () => handleSuccess("submit"),
     onError: () => handleError("submit"),
+  });
+
+  const updateConfigMutation = useMutation({
+    mutationFn: ({ blockedAuthorProps }: UpdateConfigPayload) => updateConfig({ blockedAuthorProps }, config),
+    onSuccess: () => handleSuccess("pluginConfig"),
+    onError: () => handleError("pluginConfig"),
   });
 
   const deleteMutation = useMutation({
@@ -72,7 +79,7 @@ const useConfig = (toggleNotification: any, client?: any): useConfigResult => {
   });
 
 
-  return { fetch, submitMutation, deleteMutation };
+  return { fetch, submitMutation, updateConfigMutation, deleteMutation };
 };
 
 export default useConfig;

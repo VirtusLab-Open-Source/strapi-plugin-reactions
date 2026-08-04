@@ -40,7 +40,7 @@ type ContentManagerQueryParams = {
 
 export const EditViewSummary = () => {
     const location = useLocation();
-    const toggleNotification = useNotification();
+    const { toggleNotification } = useNotification();
 
     const groups: ContentManagerPathProps = new RegExp(CONTENT_MANAGER_PATH_PATTERN, "gm")
         .exec(location.pathname)?.groups as ContentManagerPathProps;
