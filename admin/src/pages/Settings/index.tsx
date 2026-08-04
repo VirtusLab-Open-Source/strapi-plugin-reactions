@@ -167,7 +167,7 @@ const Settings = () => {
         <Layouts.Header
           title={getMessage("page.settings.header.title")}
           subtitle={getMessage("page.settings.header.description")}
-          primaryAction={canChange && (<>
+          primaryAction={canChange && (
             <Button
               type="submit"
               startIcon={<Plus />}
@@ -175,7 +175,7 @@ const Settings = () => {
             >
               {getMessage("page.settings.action.create")}
             </Button>
-          </>)}
+          )}
         />
         <Layouts.Content>
           <Flex direction="column" gap={6}>
@@ -231,7 +231,7 @@ const Settings = () => {
                           <IconButton onClick={() => handleOpenModal(entry)} label={getMessage("page.settings.table.action.edit")} noBorder>
                             <Pencil />
                           </IconButton>
-                          {( canChange) && (<ConfirmationDialog
+                          {canChange && (<ConfirmationDialog
                               isVisible={entityToDelete?.documentId === entry.documentId}
                               isLoading={deleteMutation.isPending}
                               title={getMessage("page.settings.modal.title.delete")}

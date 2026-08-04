@@ -2,7 +2,7 @@ import { Core, Data } from '@strapi/strapi';
 import { first, isArray, isEmpty, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 
-import { ReactionsPluginConfig, IServiceAdmin, IServiceCommon, CTReactionType, CTReaction } from "../../../@types";
+import { ReactionsPluginConfig, IServiceAdmin, IServiceCommon, CTReactionType, CTReaction, EditableReactionsPluginConfig } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
@@ -37,7 +37,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async updateConfig(
     this: IServiceAdmin,
-    body: Pick<ReactionsPluginStoreConfig, 'blockedAuthorProps'>,
+    body: EditableReactionsPluginConfig,
   ): Promise<ReactionsPluginConfig> {
     const commonService = getPluginService<IServiceCommon>('common');
     const pluginStore = await commonService.getPluginStore();

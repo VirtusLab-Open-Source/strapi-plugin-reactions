@@ -5,25 +5,27 @@ import { ToBeFixed } from "./common";
 import { type PrefetchConditionsProps } from "../server/src/services/client";
 import { StrapiReactions } from "../server/src/services/enrich";
 import { ReactionsCount } from "../server/src/services/zone";
-import { ReactionsPluginConfig } from "./config";
-import { CTReaction, CTReactionType } from "./model";
+import type { EditableReactionsPluginConfig, ReactionsPluginConfig, ReactionsPluginStoreConfig } from "./config";
+import type { CTReaction, CTReactionType } from "./model";
 
 export interface IServiceCommon {
   getPluginStore(): Promise<ReturnType<Core.Strapi['store']>>;
-  getLocalConfig<K extends keyof import('./config').ReactionsPluginStoreConfig>(
+  getLocalConfig(): ReactionsPluginStoreConfig;
+  getLocalConfig<K extends keyof ReactionsPluginStoreConfig>(
     prop: K,
-    defaultValue?: import('./config').ReactionsPluginStoreConfig[K],
-  ): import('./config').ReactionsPluginStoreConfig[K];
-  getConfig<K extends keyof import('./config').ReactionsPluginStoreConfig>(
+    defaultValue?: ReactionsPluginStoreConfig[K],
+  ): ReactionsPluginStoreConfig[K];
+  getConfig(): Promise<ReactionsPluginStoreConfig>;
+  getConfig<K extends keyof ReactionsPluginStoreConfig>(
     prop?: K,
-    defaultValue?: import('./config').ReactionsPluginStoreConfig[K],
-  ): Promise<import('./config').ReactionsPluginStoreConfig | import('./config').ReactionsPluginStoreConfig[K]>;
+    defaultValue?: ReactionsPluginStoreConfig[K],
+  ): Promise<ReactionsPluginStoreConfig[K]>;
 }
 
 export interface IServiceAdmin {
   fetchConfig<T extends ReactionsPluginConfig>(): Promise<T>;
   updateConfig(
-    body: Pick<ReactionsPluginConfig['config'], 'blockedAuthorProps'>,
+    body: EditableReactionsPluginConfig,
   ): Promise<ReactionsPluginConfig>;
   createReactionType(
     body: CTReactionType,

@@ -37,9 +37,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   },
 
   async sanitizeReactions(reactions: Array<ReactionEntity>): Promise<Array<ReactionEntity>> {
-    const blockedAuthorProps = await this.getCommonService().getConfig(CONFIG_PARAMS.AUTHOR_BLOCKED_PROPS, []) as Array<string>;
+    const blockedAuthorProps = await this.getCommonService().getConfig(CONFIG_PARAMS.AUTHOR_BLOCKED_PROPS, []);
 
-    return reactions.map((reaction) => sanitizeReactionEntity(reaction, blockedAuthorProps ?? []));
+    return reactions.map((reaction) => sanitizeReactionEntity(reaction, blockedAuthorProps));
   },
 
   async enrichOne<T extends ReactionEntity, M extends any>(
@@ -59,7 +59,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       relatedUid: buildRelatedId(uid, data.documentId),
     }, populate, data?.locale);
 
-    const sanitizedReactions = await this.sanitizeReactions(reactions || []);
+    const sanitizedReactions = reactions ? await this.sanitizeReactions(reactions) : [];
+    
     return {
       ...response,
       meta: {
@@ -89,7 +90,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       }
     }, populate, firstEntity?.locale);
 
-    const sanitizedReactions = await this.sanitizeReactions(reactions || []);
+    const sanitizedReactions = reactions ? await this.sanitizeReactions(reactions) : [];
 
     return {
       ...response,
