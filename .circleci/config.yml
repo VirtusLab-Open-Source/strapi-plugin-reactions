@@ -6,7 +6,7 @@ jobs:
     environment:
       CODECOV_TOKEN: 08a98f72-f099-432a-a6b5-49c1f134fe90
     docker:
-      - image: cimg/node:20.12.2
+      - image: cimg/node:22.23.2
     working_directory: ~/repo
     resource_class: large
     steps:
@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Install
           command: |
-            yarn install
+            yarn install --frozen-lockfile --non-interactive
       - run:
           name: Test
           command: |
@@ -58,7 +58,7 @@ jobs:
     environment:
       CODECOV_TOKEN: 08a98f72-f099-432a-a6b5-49c1f134fe90
     docker:
-      - image: cimg/node:20.12.2
+      - image: cimg/node:22.23.2
     working_directory: ~/repo
     resource_class: large
     steps:
@@ -79,7 +79,7 @@ jobs:
     environment:
       CODECOV_TOKEN: 08a98f72-f099-432a-a6b5-49c1f134fe90
     docker:
-      - image: cimg/node:20.12.2
+      - image: cimg/node:22.23.2
     working_directory: ~/repo
     resource_class: large
     steps:
