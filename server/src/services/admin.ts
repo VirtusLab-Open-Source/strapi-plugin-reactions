@@ -2,18 +2,23 @@ import { Core, Data } from '@strapi/strapi';
 import { first, isArray, isEmpty, isNil, isString } from 'lodash';
 import slugify from 'slugify';
 
-import { ReactionsPluginConfig, IServiceAdmin, IServiceCommon, CTReactionType, CTReaction } from "../../../@types";
+import { ReactionsPluginConfig, IServiceAdmin, IServiceCommon, CTReactionType, CTReaction, EditableReactionsPluginConfig } from "../../../@types";
 import { buildRelatedId, getModelUid } from './utils/functions';
 import PluginError from '../utils/error';
 import { getPluginService } from '../utils/functions';
+import { CONFIG_PARAMS } from '../utils/constants';
+import { ReactionsPluginStoreConfig } from '../config';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async fetchConfig() {
-    const pluginStore = getPluginService<IServiceCommon>('common')
-      .getPluginStore();
-    const config: ReactionsPluginConfig | unknown = await pluginStore?.get({
+    const commonService = getPluginService<IServiceCommon>('common');
+    const pluginStore = await commonService.getPluginStore();
+    const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
       key: "config",
     });
+
+    const blockedAuthorProps = storedConfig?.blockedAuthorProps
+      ?? commonService.getLocalConfig(CONFIG_PARAMS.AUTHOR_BLOCKED_PROPS, []);
 
     const types = await strapi
       .documents(getModelUid("reaction-type"))
@@ -22,25 +27,50 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       });
 
     return {
-      config: config || {},
+      config: {
+        ...(storedConfig || {}),
+        blockedAuthorProps,
+      },
       types,
     };
   },
 
   async updateConfig(
     this: IServiceAdmin,
+    body: EditableReactionsPluginConfig,
+  ): Promise<ReactionsPluginConfig> {
+    const commonService = getPluginService<IServiceCommon>('common');
+    const pluginStore = await commonService.getPluginStore();
+    const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
+      key: 'config',
+    });
+
+    await pluginStore?.set({
+      key: 'config',
+      value: {
+        ...(storedConfig || {}),
+        blockedAuthorProps: body.blockedAuthorProps,
+      },
+    });
+
+    return this.fetchConfig();
+  },
+
+  async createReactionType(
     body: CTReactionType,
   ): Promise<CTReactionType> {
+    return await strapi
+      .documents(getModelUid("reaction-type"))
+      .create({
+        data: body,
+      });
+  },
 
-    if (isNil(body.documentId)) {
-      return await strapi
-        .documents(getModelUid("reaction-type"))
-        .create({
-          data: body,
-        });
-    }
-
+  async updateReactionType(
+    body: CTReactionType,
+  ): Promise<CTReactionType> {
     const { documentId, ...rest } = body;
+
     return await strapi
       .documents(getModelUid("reaction-type"))
       .update({

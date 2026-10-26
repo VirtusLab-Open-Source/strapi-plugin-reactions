@@ -1,22 +1,38 @@
-import { Data, UID } from "@strapi/strapi";
+import { Core, Data, UID } from "@strapi/strapi";
 import { AnyEntity, StrapiUser, StrapiQueryParamsParsed } from "@sensinum/strapi-vl-utils";
 
 import { ToBeFixed } from "./common";
 import { type PrefetchConditionsProps } from "../server/src/services/client";
 import { StrapiReactions } from "../server/src/services/enrich";
 import { ReactionsCount } from "../server/src/services/zone";
-import { ReactionsPluginConfig } from "./config";
-import { CTReaction, CTReactionType } from "./model";
+import type { EditableReactionsPluginConfig, ReactionsPluginConfig, ReactionsPluginStoreConfig } from "./config";
+import type { CTReaction, CTReactionType } from "./model";
 
 export interface IServiceCommon {
-  getPluginStore(): any;
+  getPluginStore(): Promise<ReturnType<Core.Strapi['store']>>;
+  getLocalConfig(): ReactionsPluginStoreConfig;
+  getLocalConfig<K extends keyof ReactionsPluginStoreConfig>(
+    prop: K,
+    defaultValue?: ReactionsPluginStoreConfig[K],
+  ): ReactionsPluginStoreConfig[K];
+  getConfig(): Promise<ReactionsPluginStoreConfig>;
+  getConfig<K extends keyof ReactionsPluginStoreConfig>(
+    prop?: K,
+    defaultValue?: ReactionsPluginStoreConfig[K],
+  ): Promise<ReactionsPluginStoreConfig[K]>;
 }
 
 export interface IServiceAdmin {
   fetchConfig<T extends ReactionsPluginConfig>(): Promise<T>;
   updateConfig(
-    body: CTReactionType,
+    body: EditableReactionsPluginConfig,
   ): Promise<ReactionsPluginConfig>;
+  createReactionType(
+    body: CTReactionType,
+  ): Promise<CTReactionType>;
+  updateReactionType(
+    body: CTReactionType,
+  ): Promise<CTReactionType>;
   deleteReactionType(documentId: Data.DocumentID): Promise<{ result: boolean }>;
   generateSlug(subject: string, documentId?: Data.DocumentID): Promise<{ slug: string }>;
   uniqueSlug(slug: string, documentId?: Data.DocumentID): Promise<string>;
@@ -24,6 +40,8 @@ export interface IServiceAdmin {
 }
 
 export interface IServiceClient {
+  getCommonService(): IServiceCommon;
+  sanitizeReactions(entities: Array<CTReaction>): Promise<Array<CTReaction>>;
   kinds(): Promise<Array<AnyEntity>>;
   list(kind?: string, uid?: UID.ContentType, user?: StrapiUser, documentId?: Data.DocumentID, locale?: string, authorId?: string): Promise<Array<AnyEntity>>;
   listPerUser(user: StrapiUser, userId: string, kind?: string, populate?: StrapiQueryParamsParsed): Promise<Array<AnyEntity>>;
@@ -36,6 +54,8 @@ export interface IServiceClient {
 }
 
 export interface IServiceEnrich {
+  getCommonService(): IServiceCommon;
+  sanitizeReactions(reactions: Array<CTReaction>): Promise<Array<CTReaction>>;
   enrichOne<T extends AnyEntity, M extends any>(uid: UID.ContentType, response: T, populate: ToBeFixed, locale?: string): Promise<T>;
   enrichMany<T extends AnyEntity, M extends any>(uid: UID.ContentType, response: T, populate: ToBeFixed, locale?: string): Promise<T>;
   findReactions(filters: any, populate: ToBeFixed, locale?: string): null | AnyEntity | Array<AnyEntity>;

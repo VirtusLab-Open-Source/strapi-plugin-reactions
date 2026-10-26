@@ -137,6 +137,7 @@ export default () => ({
     enabled: true,
     config: {
       gql: {...},
+      blockedAuthorProps: ["username", "email"],
     },
   },
   //...
@@ -144,6 +145,7 @@ export default () => ({
 ```
 ### Properties
 - `gql` - If you're using GraphQL that's the right place to put all necessary settings. More **[ here ](#gql-configuration)**
+- `blockedAuthorProps` - list of author's entity properties removed from a response for client side.
 
 ## 🔧 GQL Configuration
 Using reactions with GraphQL requires both plugins to be installed and working. You can find installation guide for GraphQL plugin **[here](https://docs.strapi.io/developer-docs/latest/plugins/graphql.html#graphql)**. To properly configure GQL to work with reactions you should provide `gql` prop. This should contain union types that will be used to define GQL response format for your data while fetching:
