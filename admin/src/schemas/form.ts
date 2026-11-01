@@ -3,10 +3,10 @@ import { z } from 'zod';
 export type ReactionForm = z.infer<typeof reactionForm>;
 export const reactionForm = z.object({
   name: z.string({
-    required_error: "page.settings.form.name.required",
+    error: (issue) => issue.input === undefined ? "page.settings.form.name.required" : undefined,
   }),
   slug: z.string({
-    required_error: "page.settings.form.slug.required",
+    error: (issue) => issue.input === undefined ? "page.settings.form.slug.required" : undefined,
   }),
   icon: z.object({
     url: z.string(),
@@ -18,14 +18,14 @@ export const reactionForm = z.object({
   if (!emojiDefined) {
     if (!data.emoji) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         path: ["emoji"],
         message: "page.settings.form.emoji.required",
       });
     }
     if (!data.icon) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         path: ["icon"],
         message: "page.settings.form.icon.required",
       });

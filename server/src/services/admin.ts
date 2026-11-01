@@ -13,9 +13,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async fetchConfig() {
     const commonService = getPluginService<IServiceCommon>('common');
     const pluginStore = await commonService.getPluginStore();
-    const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
+    const storedConfig = await pluginStore?.get({
       key: "config",
-    });
+    }) as ReactionsPluginStoreConfig | undefined;
 
     const blockedAuthorProps = storedConfig?.blockedAuthorProps
       ?? commonService.getLocalConfig(CONFIG_PARAMS.AUTHOR_BLOCKED_PROPS, []);
@@ -41,9 +41,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   ): Promise<ReactionsPluginConfig> {
     const commonService = getPluginService<IServiceCommon>('common');
     const pluginStore = await commonService.getPluginStore();
-    const storedConfig: ReactionsPluginStoreConfig | undefined = await pluginStore?.get({
+    const storedConfig = await pluginStore?.get({
       key: 'config',
-    });
+    }) as ReactionsPluginStoreConfig | undefined;
 
     await pluginStore?.set({
       key: 'config',
