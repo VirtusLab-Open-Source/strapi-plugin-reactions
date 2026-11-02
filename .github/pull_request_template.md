@@ -1,6 +1,6 @@
 ## Ticket
 
-https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/-<your-ticket-#>
+https://github.com/Sensinum/strapi-plugin-reactions/issues/-<your-ticket-#>
 
 ## Summary
 

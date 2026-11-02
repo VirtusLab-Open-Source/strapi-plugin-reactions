@@ -2,27 +2,71 @@
   "name": "strapi-plugin-reactions",
   "version": "2.3.1",
   "description": "Strapi - Reactions plugin",
+  "keywords": [
+    "strapi",
+    "plugin",
+    "reactions"
+  ],
+  "license": "MIT",
+  "author": "Sensinum <hello@sensinum.com>",
+  "contributors": [
+    "Mateusz Ziarko <mziarko@virtuslab.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sensinum/strapi-plugin-reactions.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sensinum/strapi-plugin-reactions/issues"
+  },
+  "homepage": "https://github.com/Sensinum/strapi-plugin-reactions#readme",
+  "engines": {
+    "node": ">=22.0.0 <=26.x.x",
+    "npm": ">=6.0.0"
+  },
   "strapi": {
     "name": "reactions",
     "displayName": "Reactions",
     "description": "All-in-One reactions plugin for any Content Type. Simple & flexible.",
     "kind": "plugin"
   },
-  "author": {
-    "name": "VirtusLab",
-    "email": "strapi@virtuslab.com",
-    "url": "https://virtuslab.com"
-  },
-  "maintainers": [
-    {
-      "name": "VirtusLab // Mateusz Ziarko",
-      "email": "mziarko@virtuslab.com",
-      "url": "https://virtuslab.com"
+  "exports": {
+    "./package.json": "./package.json",
+    "./strapi-admin": {
+      "types": "./dist/admin/src/index.d.ts",
+      "source": "./admin/src/index.tsx",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "types": "./dist/server/src/index.d.ts",
+      "source": "./server/src/index.ts",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
     }
+  },
+  "files": [
+    "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions"
+  "scripts": {
+    "prepare": "husky install",
+    "publish:latest": "npm publish --tag latest",
+    "publish:beta": "npm publish --tag beta",
+    "build": "yarn clean && strapi-plugin build --minify",
+    "clean": "rm -rf dist",
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
+    "test:ts:back": "run -T tsc -p server/tsconfig.json",
+    "test:ts:front": "run -T tsc -p admin/tsconfig.json",
+    "test:unit": "jest --coverage",
+    "test:unit:watch": "jest --watch",
+    "test:unit:ci": "CI=true jest --ci --runInBand --verbose --coverage",
+    "coverage": "CI=true jest --ci --runInBand --verbose --coverage",
+    "verify": "strapi-plugin verify",
+    "watch": "strapi-plugin watch",
+    "watch:link": "strapi-plugin watch:link"
   },
   "dependencies": {
     "@strapi/design-system": "2.1.2",
@@ -82,53 +126,5 @@
     "hooks": {
       "pre-commit": "yarn format && yarn test:unit"
     }
-  },
-  "exports": {
-    "./package.json": "./package.json",
-    "./strapi-admin": {
-      "types": "./dist/admin/src/index.d.ts",
-      "source": "./admin/src/index.tsx",
-      "import": "./dist/admin/index.mjs",
-      "require": "./dist/admin/index.js",
-      "default": "./dist/admin/index.js"
-    },
-    "./strapi-server": {
-      "types": "./dist/server/src/index.d.ts",
-      "source": "./server/src/index.ts",
-      "import": "./dist/server/index.mjs",
-      "require": "./dist/server/index.js",
-      "default": "./dist/server/index.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "prepare": "husky install",
-    "publish:latest": "npm publish --tag latest",
-    "publish:beta": "npm publish --tag beta",
-    "build": "yarn clean && strapi-plugin build --minify",
-    "clean": "rm -rf dist",
-    "lint": "prettier --check .",
-    "format": "prettier --write .",
-    "test:ts:back": "run -T tsc -p server/tsconfig.json",
-    "test:ts:front": "run -T tsc -p admin/tsconfig.json",
-    "test:unit": "jest --coverage",
-    "test:unit:watch": "jest --watch",
-    "test:unit:ci": "CI=true jest --ci --runInBand --verbose --coverage",
-    "verify": "strapi-plugin verify",
-    "watch": "strapi-plugin watch",
-    "watch:link": "strapi-plugin watch:link"
-  },
-  "keywords": [
-    "strapi",
-    "plugin",
-    "reactions"
-  ],
-  "engines": {
-    "node": ">=18.0.0 <=22.x.x",
-    "npm": ">=6.0.0"
-  },
-  "license": "MIT",
-  "packageManager": "yarn@1.22.22"
+  }
 }
