@@ -5,16 +5,16 @@
   <h1>Strapi - Reactions plugin</h1>
   <p>All-in-One reactions plugin for any Content Type. Simple & flexible</p>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
-    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/VirtusLab-Open-Source/strapi-plugin-reactions?label=npm&logo=npm">
+    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/Sensinum/strapi-plugin-reactions?label=npm&logo=npm">
   </a>
   <a href="https://www.npmjs.org/package/strapi-plugin-reactions">
     <img src="https://img.shields.io/npm/dm/strapi-plugin-reactions.svg" alt="Monthly download on NPM" />
   </a>
-  <a href="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
-    <img src="https://circleci.com/gh/VirtusLab-Open-Source/strapi-plugin-reactions.svg?style=shield" alt="CircleCI" />
+  <a href="https://github.com/Sensinum/strapi-plugin-reactions/actions/workflows/ci.yml">
+    <img src="https://github.com/Sensinum/strapi-plugin-reactions/actions/workflows/ci.yml/badge.svg" alt="CI" />
   </a>
-  <a href="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions">
-    <img src="https://codecov.io/gh/VirtusLab-Open-Source/strapi-plugin-reactions/coverage.svg" alt="codecov.io" />
+  <a href="https://codecov.io/gh/Sensinum/strapi-plugin-reactions">
+    <img src="https://codecov.io/gh/Sensinum/strapi-plugin-reactions/coverage.svg?branch=main" alt="codecov.io" />
   </a>
 </div>
 
@@ -42,8 +42,8 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 12. [👨‍💻 Community support](#-community-support)
 
 ## 💎 Versions
-- **Strapi v5** - (current) [v2.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions)
-- **Strapi v4** - [v1.x](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/tree/strapi-v4)
+- **Strapi v5** - (current) [v2.x](https://github.com/Sensinum/strapi-plugin-reactions)
+- **Strapi v4** - [v1.x](https://github.com/Sensinum/strapi-plugin-reactions/tree/strapi-v4)
 
 ## ✨ Features
 
@@ -53,7 +53,7 @@ A plugin for [Strapi Headless CMS](https://github.com/strapi/strapi) that provid
 - **Content Manager Injection Zone:** Making use of Strapi built-in batteries like *Injection Zones* to provide you highers user experience. Visual representation of reactions counter for any Content Types - useful!
 - **Developer Experience boosted:** A dedicated *Enrich* service provided to let you extend your Content API controllers by a single line to get reactions per each!
 
-**Request a feature by [raising an issue](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues/new).**
+**Request a feature by [raising an issue](https://github.com/Sensinum/strapi-plugin-reactions/issues/new).**
 
 ## ⏳ Installation
 
@@ -1142,7 +1142,7 @@ Feel free to fork and make a Pull Request to this plugin project. All the input 
 1. Clone repository
 
    ```
-   git clone git@github.com:VirtusLab-Open-Source/strapi-plugin-reactions.git
+   git clone git@github.com:Sensinum/strapi-plugin-reactions.git
    ```
 
 2. Run `install` & `watch:link` command
@@ -1172,11 +1172,9 @@ Feel free to fork and make a Pull Request to this plugin project. All the input 
 
 For general help using Strapi, please refer to [the official Strapi documentation](https://strapi.io/documentation/). For additional help, you can use one of these channels to ask a question:
 
-- [Discord](https://discord.strapi.io/) We're present on official Strapi Discord workspace. Find us by `[VirtusLab]` prefix and DM.
-- [Slack - VirtusLab Open Source](https://virtuslab-oss.slack.com) We're present on a public channel #strapi-molecules
-- [GitHub](https://github.com/VirtusLab-Open-Source/strapi-plugin-reactions/issues) (Bug reports, Contributions, Questions and Discussions)
-- [E-mail](mailto:strapi@virtuslab.com) - we will respond back as soon as possible
+- [Discord](https://discord.strapi.io/) We're present on official Strapi Discord workspace. Find us by `[Sensinum]` prefix and DM.
+- [GitHub](https://github.com/Sensinum/strapi-plugin-reactions/issues) (Bug reports, Contributions, Questions and Discussions)
 
 ## 📝 License
 
-[MIT License](LICENSE.md) Copyright (c) [VirtusLab Sp. z o.o.](https://virtuslab.com/) &amp; [Strapi Solutions](https://strapi.io/).
+[MIT License](LICENSE.md) Copyright (c) [Sensinum Sp. z o.o.](https://www.sensinum.com/).
