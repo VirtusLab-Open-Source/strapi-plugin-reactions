@@ -51,7 +51,7 @@
     "dist"
   ],
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "publish:latest": "npm publish --tag latest",
     "publish:beta": "npm publish --tag beta",
     "build": "yarn clean && strapi-plugin build --minify",
@@ -97,7 +97,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-router-dom": "5.3.3",
     "codecov": "^3.7.2",
-    "husky": "7.0.4",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-cli": "^29.7.0",
     "jest-junit": "^16.0.0",
@@ -142,10 +142,5 @@
     "follow-redirects": "1.16.2",
     "handlebars": "4.7.10",
     "@tootallnate/once": "2.0.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn format && yarn test:unit"
-    }
   }
 }
