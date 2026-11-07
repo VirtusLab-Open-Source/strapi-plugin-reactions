@@ -41,7 +41,7 @@ export const ReactionEmojiSelect = ({ value, error, hint, required, onChange }: 
   };
 
   return (<ReactionEmojiSelectContainer>
-    <Field.Root hint={hint} error={error ? getMessage(error) : error} required={required}>
+    <Field.Root hint={hint} error={error} required={required}>
       <CarouselInput
         label={getMessage('page.settings.form.emoji.label')}
         required>
